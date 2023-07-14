@@ -1,10 +1,26 @@
 import styles from "@/styles/features.module.css";
 import { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Features",
   description: "The great and amazing features of TaskMaster",
 };
+
+
+const keyStr =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+
+const triplet = (e1: number, e2: number, e3: number) =>
+  keyStr.charAt(e1 >> 2) +
+  keyStr.charAt(((e1 & 3) << 4) | (e2 >> 4)) +
+  keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
+  keyStr.charAt(e3 & 63)
+
+const rgbDataURL = (r: number, g: number, b: number) =>
+  `data:image/gif;base64,R0lGODlhAQABAPAA${
+    triplet(0, r, g) + triplet(b, 255, 255)
+  }/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`
 
 const page = () => {
   return (
@@ -21,13 +37,15 @@ const page = () => {
               you can invite others to join.
             </p>
           </div>
-          <img
+          <Image
+          placeholder="blur"
+          blurDataURL={rgbDataURL(84,84,84)}
             src="/teamTasks.webp"
             width={600}
             height={450}
             alt="Finishing task picture"
             className={styles.image}
-          />
+          ></Image>
         </div>
         <div className={styles.feature}>
           <div className={styles.description}>
@@ -40,13 +58,15 @@ const page = () => {
               of it. With tasks you always know what to do and when to do it.
             </p>
           </div>
-          <img
-            src="/finishingTask.jpg"
+          <Image
+          placeholder="blur"
+          blurDataURL={rgbDataURL(0,0,0)}
+          src="/finishingTask.jpg"
             width={600}
             height={380}
             alt="Finishing task picture"
             className={styles.image}
-          />
+          ></Image>
         </div>
       </div>
     </main>

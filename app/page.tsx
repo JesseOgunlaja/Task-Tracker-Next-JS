@@ -17,13 +17,13 @@ const page = () => {
         </p>
       </div>
       <div className={styles.container2}>
-        <img
+        <Image
           className={styles.image}
           width={773.75}
           height={580}
           alt="Managing tasks"
           src="/sampleWebsite.png"
-        />
+        ></Image>
         <div className={styles.descriptions}>
           <div className={styles.description}>
             <p className={styles.descriptionTitle}>Access from anywhere</p>

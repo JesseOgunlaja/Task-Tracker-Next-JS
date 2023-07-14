@@ -1,6 +1,7 @@
 import styles from "@/styles/why-taskmaster.module.css";
 import Link from "next/link";
 import type { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Why TaskMaster",
@@ -22,13 +23,13 @@ const page = () => {
       </p>
       <div className={styles.facts}>
         <div className={styles.fact}>
-          <img
+          <Image
             className={styles.image}
             src="/folder.png"
             alt="Folder logo"
             height={64}
             width={80}
-          />
+          ></Image>
           <p className={styles.factTitle}>Keep it together</p>
           <p className={styles.factText}>
             Store tasks relating to different things in different folders. So
@@ -36,13 +37,13 @@ const page = () => {
           </p>
         </div>
         <div className={styles.fact}>
-          <img
+          <Image
             className={styles.image}
             src="/notes.jpg"
             alt="Folder logo"
             height={67.5}
             width={67.5}
-          />
+          ></Image>
           <p className={styles.factTitle}>Store notes</p>
           <p className={styles.factText}>
             Store notes on your scratchpad so you can get back to where you left
@@ -50,13 +51,13 @@ const page = () => {
           </p>
         </div>
         <div className={styles.fact}>
-          <img
+          <Image
             className={styles.image}
             src="/world.png"
             alt="Folder logo"
             height={64}
             width={64}
-          />
+          ></Image>
           <p className={styles.factTitle}>Access anywhere</p>
           <p className={styles.factText}>
             Connect to account from multiple devices, so that you can connect no
@@ -64,13 +65,13 @@ const page = () => {
           </p>
         </div>
         <div className={styles.fact}>
-          <img
+          <Image
             className={styles.image}
             src="/brain.png"
             alt="Folder logo"
             height={64}
             width={64}
-          />
+          ></Image>
           <p className={styles.factTitle}>Be creative</p>
           <p className={styles.factText}>
             There's so much more than just text you can add to your notes, such

@@ -8,6 +8,8 @@ import { SyntheticEvent, useRef, useState } from "react";
 
 const validEmails = ["com", "org", "co.uk", "net", "io", "online", "dev"];
 
+
+
 const page = () => {
   const [nameError, setNameError] = useState<String>("");
   const [emailError, setEmailError] = useState<String>("");
@@ -145,13 +147,13 @@ const page = () => {
       <title>Sign up</title>
       <div className={styles.container}>
         <div className={styles.header}>
-          <img
+          <Image
             className={styles.logo}
             src="/favicon.ico"
             alt="Website logo"
             height={45}
             width={45}
-          />
+          ></Image>
           <h1 className={styles.title}>TaskMaster</h1>
         </div>
         <form className={styles.form} onSubmit={submit}>
