@@ -60,7 +60,7 @@ const page = () => {
           </div>
           <Image
           placeholder="blur"
-          blurDataURL={rgbDataURL(0,0,0)}
+          blurDataURL={rgbDataURL(255,255,255)}
           src="/finishingTask.jpg"
             width={600}
             height={380}
