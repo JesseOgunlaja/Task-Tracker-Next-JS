@@ -40,25 +40,25 @@
 }
 
 .descriptions {
-    /* transform: translateY(50px); */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    height: 580px;
+  /* transform: translateY(50px); */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  height: 580px;
 }
 
 .description {
-    text-align: center;
+  text-align: center;
 }
 
 .descriptionText {
-    width: 425px
+  width: 425px;
 }
 
 .descriptionTitle {
-    font-size: 22.5px;
-    font-weight: bold;
-    margin-bottom: 2.5px;
+  font-size: 22.5px;
+  font-weight: bold;
+  margin-bottom: 2.5px;
 }
 
 @media (min-height: 100vw) {

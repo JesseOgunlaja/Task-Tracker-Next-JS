@@ -1,5 +1,11 @@
 import styles from "@/styles/features.module.css";
+import { Metadata } from "next";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Features",
+  description: "The great and amazing features of TaskMaster",
+};
 
 const page = () => {
   return (
@@ -20,8 +26,7 @@ const page = () => {
             src="/teamTasks.webp"
             width={600}
             height={450}
-          priority
-          alt="Finishing task picture"
+            alt="Finishing task picture"
             className={styles.image}
           ></Image>
         </div>
@@ -38,8 +43,7 @@ const page = () => {
           </div>
           <Image
             src="/finishingTask.jpg"
-          priority
-          width={600}
+            width={600}
             height={380}
             alt="Finishing task picture"
             className={styles.image}

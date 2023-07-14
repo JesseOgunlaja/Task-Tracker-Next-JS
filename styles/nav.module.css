@@ -85,7 +85,6 @@
     animation: slideNavOut 0.5s ease-in-out 0s 1 forwards;
   }
 
-  
   .sideNavTrue,
   .sideNavFalse,
   .phoneLinks {
@@ -101,28 +100,28 @@
   }
   @media (min-width: 500px) {
     .sideNavTrue,
-  .sideNavFalse,
-  .phoneLinks {
-    width: 50vw
-  }
+    .sideNavFalse,
+    .phoneLinks {
+      width: 50vw;
+    }
   }
 
   .sideNavFalse {
     animation: slideNavIn 0.5s ease-in-out 0s 1 forwards;
   }
-  
+
   .phoneLinks > * {
     text-decoration: none;
     color: inherit;
     padding: 15px;
   }
-  
+
   .sideNavTrue,
   .sideNavFalse {
     transform: translateX(-100vw);
     z-index: 2;
   }
-  
+
   .nav ul li:nth-child(2),
   .nav ul li:nth-child(3),
   .nav ul li:nth-child(4),
@@ -185,5 +184,5 @@
 }
 
 .image {
-  transform:translate(-5px,3px)
+  transform: translate(-5px, 3px);
 }

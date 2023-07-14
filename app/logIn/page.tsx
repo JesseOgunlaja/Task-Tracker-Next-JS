@@ -1,14 +1,20 @@
 "use client";
 
 import styles from "@/styles/logIn.module.css";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent } from "react";
 import { toast } from "react-toastify";
 
+export const metadata: Metadata = {
+  title: "Log in",
+  description: "Log in to TaskMaster",
+};
+
 const page = () => {
   const error = (text: string) => {
-    if(text != undefined && text != null && text !== "") {
+    if (text != undefined && text != null && text !== "") {
       toast.error(text, {
         position: "top-right",
         autoClose: 2500,
@@ -26,10 +32,10 @@ const page = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget); // create form data object
     const formValues = Object.fromEntries(formData.entries()); // convert form data object to plain object
-    console.log(formValues)
+    console.log(formValues);
     if (formValues.Username === "" || formValues.Password === "") {
-      console.log("Hi")
-      error("Invalid username or password")
+      console.log("Hi");
+      error("Invalid username or password");
     }
   }
 
@@ -38,7 +44,6 @@ const page = () => {
       <div className={styles.container}>
         <div className={styles.header}>
           <Image
-          priority
             className={styles.logo}
             src="/favicon.ico"
             alt="Website logo"

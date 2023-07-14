@@ -12,7 +12,7 @@
 
 .container {
   transform: translateY(75px);
-  padding: 50px 100px 20px 100px;;
+  padding: 50px 100px 20px 100px;
   background: black;
   border-radius: 10px;
   display: flex;
@@ -42,26 +42,26 @@
   font-size: 20px;
 }
 
-.form > [type=submit] {
+.form > [type="submit"] {
   margin-top: 35px;
-    background: darkblue;
-    color: white;
-    margin-bottom: 40px;
-    cursor: pointer;
+  background: darkblue;
+  color: white;
+  margin-bottom: 40px;
+  cursor: pointer;
 }
 
 .account {
-    text-align: center;
+  text-align: center;
 }
 
 .account > :nth-child(1) {
-    font-size: 20px;
-    margin-bottom: 15px;
+  font-size: 20px;
+  margin-bottom: 15px;
 }
 
 .account > :nth-child(2) {
-    color: #00a82d;
-    text-decoration: none;
+  color: #00a82d;
+  text-decoration: none;
 }
 
 .title {
@@ -70,8 +70,8 @@
 
 .error {
   display: block;
-    padding: 0px;
-    margin: 0px;
-    color: red;
-    font-size: 15px
+  padding: 0px;
+  margin: 0px;
+  color: red;
+  font-size: 15px;
 }

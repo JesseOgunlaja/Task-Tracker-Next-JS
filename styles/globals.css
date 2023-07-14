@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Play&family=Poppins&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Play&family=Poppins&display=swap");
 
 * {
-    padding: 0px;
-    margin: 0px;
-    border: 0px;
-    box-sizing: border-box;
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+  box-sizing: border-box;
 }
 
 body {
-    background: #0e1538;
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    overflow-x: hidden;
+  background: #0e1538;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
 }

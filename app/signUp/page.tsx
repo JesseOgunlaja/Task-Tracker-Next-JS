@@ -1,11 +1,17 @@
 "use client";
 
 import styles from "@/styles/signUp.module.css";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { SyntheticEvent, useRef, useState } from "react";
 
 const validEmails = ["com", "org", "co.uk", "net", "io", "online", "dev"];
+
+export const metadata: Metadata = {
+  title: "Sign up",
+  description: "Sign up to TaskMaster",
+};
 
 const page = () => {
   const [nameError, setNameError] = useState<String>("");
@@ -102,41 +108,40 @@ const page = () => {
   }
 
   function checkName(type: string) {
-    let symbols = /[^a-zA-Z0-9\s]/
-    let name = nameInput.current?.value
+    let symbols = /[^a-zA-Z0-9\s]/;
+    let name = nameInput.current?.value;
 
-    if(type === "change") {
-      if(name !== "" && nameError === "Username required") {
-        setNameError("")
+    if (type === "change") {
+      if (name !== "" && nameError === "Username required") {
+        setNameError("");
       }
-    }
-
-    else {
-      if(name === "" || name == null || name == undefined || typeof(name) !== "string") {
-        setNameError("Username required")
-      }
-      else if(name.length < 5 || name.length > 25) {
-        setNameError("Username must be between 5 and 25 characters")
-      }
-      else if(name.includes(" ")) {
-        setNameError("Spaces not allowed")
-      }
-      else if(symbols.test(name)) {
-        setNameError("No symbols allowed")
-      }
-      else {
-        setNameError("")
+    } else {
+      if (
+        name === "" ||
+        name == null ||
+        name == undefined ||
+        typeof name !== "string"
+      ) {
+        setNameError("Username required");
+      } else if (name.length < 5 || name.length > 25) {
+        setNameError("Username must be between 5 and 25 characters");
+      } else if (name.includes(" ")) {
+        setNameError("Spaces not allowed");
+      } else if (symbols.test(name)) {
+        setNameError("No symbols allowed");
+      } else {
+        setNameError("");
       }
     }
   }
 
   function submit(e: SyntheticEvent) {
-    e.preventDefault()
-    checkEmail("blur")
-    checkPassword("blur")
-    checkName("blur")
-    if(passwordError === "" && emailError === "" && nameError === "") {
-      console.log("Success")
+    e.preventDefault();
+    checkEmail("blur");
+    checkPassword("blur");
+    checkName("blur");
+    if (passwordError === "" && emailError === "" && nameError === "") {
+      console.log("Success");
     }
   }
 
@@ -147,15 +152,20 @@ const page = () => {
           <Image
             className={styles.logo}
             src="/favicon.ico"
-          priority
-          alt="Website logo"
+            alt="Website logo"
             height={45}
             width={45}
           ></Image>
           <h1 className={styles.title}>TaskMaster</h1>
         </div>
         <form className={styles.form} onSubmit={submit}>
-          <input ref={nameInput} onChange={() => checkName("change")} onBlur={() => checkName("blur")} type="text" placeholder="Username"/>
+          <input
+            ref={nameInput}
+            onChange={() => checkName("change")}
+            onBlur={() => checkName("blur")}
+            type="text"
+            placeholder="Username"
+          />
           {nameError !== "" && <div className={styles.error}>{nameError}</div>}
           <input
             onBlur={() => checkEmail("blur")}
@@ -164,7 +174,9 @@ const page = () => {
             type="text"
             placeholder="Email"
           />
-          {emailError !== "" && <div className={styles.error}>{emailError}</div>}
+          {emailError !== "" && (
+            <div className={styles.error}>{emailError}</div>
+          )}
           <input
             onBlur={() => checkPassword("blur")}
             onChange={() => checkPassword("change")}
@@ -172,7 +184,9 @@ const page = () => {
             type="password"
             placeholder="Password"
           />
-          {passwordError !== "" && <div className={styles.error}>{passwordError}</div>}
+          {passwordError !== "" && (
+            <div className={styles.error}>{passwordError}</div>
+          )}
           <input type="submit" />
         </form>
         <div className={styles.account}>
