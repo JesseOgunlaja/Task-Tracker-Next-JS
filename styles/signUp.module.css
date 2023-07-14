@@ -1,0 +1,70 @@
+.page {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  margin-bottom: 100px;
+}
+
+.container {
+  transform: translateY(75px);
+  padding: 50px 100px 20px 100px;;
+  background: black;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  min-height: 650px;
+  flex-direction: column;
+  margin-bottom: 100px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form > * {
+  width: 350px;
+  border-radius: 5px;
+  padding: 15px;
+  font-size: 20px;
+}
+
+.form > [type=submit] {
+  margin-top: 35px;
+    background: darkblue;
+    color: white;
+    margin-bottom: 40px;
+    cursor: pointer;
+}
+
+.account {
+    text-align: center;
+}
+
+.account > :nth-child(1) {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.account > :nth-child(2) {
+    color: #00a82d;
+    text-decoration: none;
+}
+
+.title {
+  font-size: 35px;
+}
+
+.error {
+  display: block;
+    padding: 0px;
+    margin: 0px;
+    color: red;
+    font-size: 15px
+}

@@ -1,0 +1,91 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(100px);
+  flex-direction: column;
+}
+
+.title {
+  font-size: 56px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.paragraph {
+  margin-bottom: 15px;
+  text-align: center;
+  width: 47.5vw;
+  font-size: 25px;
+}
+
+.signUp {
+  padding: 15px;
+  background: darkblue;
+  border-radius: 5px;
+  font-size: 25px;
+  width: 250px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.signUp a {
+  text-decoration: none;
+  color: white;
+}
+
+.container2 {
+  display: flex;
+  transform: translateY(75px);
+}
+
+.descriptions {
+    /* transform: translateY(50px); */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    height: 580px;
+}
+
+.description {
+    text-align: center;
+}
+
+.descriptionText {
+    width: 425px
+}
+
+.descriptionTitle {
+    font-size: 22.5px;
+    font-weight: bold;
+    margin-bottom: 2.5px;
+}
+
+@media (min-height: 100vw) {
+  .title,
+  .paragraph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100vw;
+  }
+  .image {
+    width: 90vw;
+    height: auto;
+  }
+  .container2 {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+  }
+  .descriptionText {
+    width: 100vw;
+  }
+}

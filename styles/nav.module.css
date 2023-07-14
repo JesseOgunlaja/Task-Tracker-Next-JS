@@ -1,0 +1,189 @@
+.nav ul li {
+  text-align: center;
+  float: left;
+  font-style: none;
+  padding: 10px;
+  z-index: 2;
+}
+
+.nav ul li a {
+  display: flex;
+  color: white;
+  font-family: "Poppins", sans-serif;
+  text-decoration: none;
+  font-size: 20px;
+  z-index: 2;
+}
+
+.nav {
+  position: fixed;
+  top: 0;
+  background: #0e1538;
+  width: 100vw;
+  z-index: 2;
+  padding: 15px;
+}
+
+.nav ul {
+  display: flex;
+  list-style: none;
+  align-items: center;
+  z-index: 2;
+}
+
+.nav ul li:nth-child(3) {
+  margin-left: 25px;
+  margin-right: 475px;
+}
+
+.nav ul li:nth-child(4) {
+  margin-right: 15px;
+}
+
+.nav ul li:nth-child(4),
+.nav ul li:nth-child(5) {
+  width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-image: -webkit-linear-gradient(
+      45deg,
+      rgb(0, 140, 255),
+      rgb(255, 140, 255)
+    )
+    1;
+  border-width: 2.5px;
+  border-style: solid;
+}
+
+.website {
+  font-size: 25px !important;
+  margin-right: 35px;
+  background: -webkit-linear-gradient(
+    45deg,
+    rgb(0, 140, 255),
+    rgb(255, 140, 255)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bar,
+.actualBar,
+.bar > * {
+  display: none;
+}
+
+.sideNavTrue,
+.sideNavFalse {
+  display: none;
+}
+
+@media (min-height: 100vw) {
+  .sideNavTrue {
+    animation: slideNavOut 0.5s ease-in-out 0s 1 forwards;
+  }
+
+  
+  .sideNavTrue,
+  .sideNavFalse,
+  .phoneLinks {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    gap: 10px;
+    background: rgba(84, 84, 84, 0.75);
+    height: 100vh;
+    width: 80vw;
+  }
+  @media (min-width: 500px) {
+    .sideNavTrue,
+  .sideNavFalse,
+  .phoneLinks {
+    width: 50vw
+  }
+  }
+
+  .sideNavFalse {
+    animation: slideNavIn 0.5s ease-in-out 0s 1 forwards;
+  }
+  
+  .phoneLinks > * {
+    text-decoration: none;
+    color: inherit;
+    padding: 15px;
+  }
+  
+  .sideNavTrue,
+  .sideNavFalse {
+    transform: translateX(-100vw);
+    z-index: 2;
+  }
+  
+  .nav ul li:nth-child(2),
+  .nav ul li:nth-child(3),
+  .nav ul li:nth-child(4),
+  .nav ul li:nth-child(5) {
+    display: none;
+  }
+
+  .actualBar {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5px;
+    width: 25px;
+    margin: 0;
+  }
+
+  .bar {
+    display: block;
+    transform: rotateY(180deg);
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+
+  .bar1 {
+    width: 25px;
+  }
+  .bar2 {
+    width: 17.5px;
+  }
+  .bar3 {
+    width: 10px;
+  }
+
+  .bar1,
+  .bar2,
+  .bar3 {
+    display: block;
+    height: 2.5px;
+    background: white;
+    cursor: pointer;
+  }
+}
+
+@keyframes slideNavOut {
+  from {
+    transform: translateX(-100vw);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideNavIn {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100vw);
+  }
+}
+
+.image {
+  transform:translate(-5px,3px)
+}
