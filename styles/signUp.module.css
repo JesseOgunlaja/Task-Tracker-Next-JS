@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Play&family=Poppins&display=swap");
+
 .page {
   width: 100vw;
   display: flex;
@@ -21,7 +23,7 @@
   border-radius: 10px;
   display: flex;
   align-items: center;
-  min-height: 650px;
+  min-height: 450px;
   flex-direction: column;
   margin-bottom: 100px;
   width: 550px;
@@ -31,6 +33,12 @@
   .container {
     width: 100vw;
   }
+}
+
+.email {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 25px;
 }
 
 .form {

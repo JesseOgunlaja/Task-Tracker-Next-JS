@@ -27,9 +27,7 @@ const page = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget); // create form data object
     const formValues = Object.fromEntries(formData.entries()); // convert form data object to plain object
-    console.log(formValues);
     if (formValues.Username === "" || formValues.Password === "") {
-      console.log("Hi");
       error("Invalid username or password");
     }
   }
