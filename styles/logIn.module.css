@@ -20,6 +20,7 @@
     min-height: 650px;
     flex-direction: column;
     margin-bottom: 100px;
+    width: 500px;
   }
   
   .form {
@@ -27,6 +28,7 @@
     flex-direction: column;
     gap: 20px;
   }
+
   
   .form > * {
     width: 350px;
@@ -35,6 +37,12 @@
     font-size: 20px;
   }
 
+  @media (max-width: 400px) {
+    .container {
+      width: 100vw;
+    }
+  }
+    
   .form > [type=submit] {
     margin-top: 35px;
       background: darkblue;
@@ -45,6 +53,7 @@
 
   .account {
     text-align: center;
+    width: 100vw;
 }
 
 .account > :nth-child(1) {

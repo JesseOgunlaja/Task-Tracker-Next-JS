@@ -20,9 +20,8 @@ const page = () => {
             src="/teamTasks.webp"
             width={600}
             height={450}
-            placeholder="blur"
-            blurDataURL="data:..."
-            alt="Finishing task picture"
+          priority
+          alt="Finishing task picture"
             className={styles.image}
           ></Image>
         </div>
@@ -39,7 +38,8 @@ const page = () => {
           </div>
           <Image
             src="/finishingTask.jpg"
-            width={600}
+          priority
+          width={600}
             height={380}
             alt="Finishing task picture"
             className={styles.image}

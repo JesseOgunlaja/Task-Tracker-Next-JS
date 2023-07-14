@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -14,7 +14,15 @@ const Navbar = () => {
         <ul>
           <li>
             <Link href="/" className={styles.website}>
-             <Image className={styles.image} src="/favicon.ico" alt="" height={35} width={35}></Image> TaskMaster
+              <Image
+                className={styles.image}
+          priority
+          src="/favicon.ico"
+                alt=""
+                height={35}
+                width={35}
+              ></Image>{" "}
+              TaskMaster
             </Link>
           </li>
           <li>
@@ -41,22 +49,30 @@ const Navbar = () => {
           </li>
         </ul>
       </nav>
-        <div
-          className={
-            navShowing != null
-              ? navShowing
-                ? styles.sideNavTrue
-                : styles.sideNavFalse
-              : undefined
-          }
-        >
-          <div className={navShowing != null ? styles.phoneLinks : undefined}>
-            <Link onClick={() => setNavShowing(false)} href="/why-taskmaster">Why TaskMaster?</Link>
-            <Link onClick={() => setNavShowing(false)} href="/features">Features</Link>
-            <Link onClick={() => setNavShowing(false)} href="/signUp">Sign up</Link>
-            <Link onClick={() => setNavShowing(false)} href="/logIn">Log In</Link>
-          </div>
+      <div
+        className={
+          navShowing != null
+            ? navShowing
+              ? styles.sideNavTrue
+              : styles.sideNavFalse
+            : undefined
+        }
+      >
+        <div className={navShowing != null ? styles.phoneLinks : undefined}>
+          <Link onClick={() => setNavShowing(false)} href="/why-taskmaster">
+            Why TaskMaster?
+          </Link>
+          <Link onClick={() => setNavShowing(false)} href="/features">
+            Features
+          </Link>
+          <Link onClick={() => setNavShowing(false)} href="/signUp">
+            Sign up
+          </Link>
+          <Link onClick={() => setNavShowing(false)} href="/logIn">
+            Log In
+          </Link>
         </div>
+      </div>
     </div>
   );
 };

@@ -38,6 +38,7 @@ const page = () => {
       <div className={styles.container}>
         <div className={styles.header}>
           <Image
+          priority
             className={styles.logo}
             src="/favicon.ico"
             alt="Website logo"
@@ -53,7 +54,7 @@ const page = () => {
         </form>
         <div className={styles.account}>
           <p>Don't have an account?</p>
-          <Link href="signUp">Log in now</Link>
+          <Link href="signUp">Sign up now</Link>
         </div>
       </div>
     </div>

@@ -25,7 +25,8 @@ const page = () => {
         <div className={styles.fact}>
           <Image
             className={styles.image}
-            src="/folder.png"
+          priority
+          src="/folder.png"
             alt="Folder logo"
             height={64}
             width={80}
@@ -40,7 +41,8 @@ const page = () => {
           <Image
             className={styles.image}
             src="/notes.jpg"
-            alt="Folder logo"
+          priority
+          alt="Folder logo"
             height={67.5}
             width={67.5}
           ></Image>
@@ -52,7 +54,8 @@ const page = () => {
         </div>
         <div className={styles.fact}>
           <Image
-            className={styles.image}
+          priority
+          className={styles.image}
             src="/world.png"
             alt="Folder logo"
             height={64}
@@ -67,7 +70,8 @@ const page = () => {
         <div className={styles.fact}>
           <Image
             className={styles.image}
-            src="/brain.png"
+          priority
+          src="/brain.png"
             alt="Folder logo"
             height={64}
             width={64}

@@ -147,7 +147,8 @@ const page = () => {
           <Image
             className={styles.logo}
             src="/favicon.ico"
-            alt="Website logo"
+          priority
+          alt="Website logo"
             height={45}
             width={45}
           ></Image>
