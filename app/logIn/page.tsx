@@ -7,11 +7,6 @@ import Link from "next/link";
 import { FormEvent } from "react";
 import { toast } from "react-toastify";
 
-export const metadata: Metadata = {
-  title: "Log in",
-  description: "Log in to TaskMaster",
-};
-
 const page = () => {
   const error = (text: string) => {
     if (text != undefined && text != null && text !== "") {
@@ -41,15 +36,16 @@ const page = () => {
 
   return (
     <div className={styles.page}>
+      <title>Log in</title>
       <div className={styles.container}>
         <div className={styles.header}>
-          <Image
+          <img
             className={styles.logo}
             src="/favicon.ico"
             alt="Website logo"
             height={45}
             width={45}
-          ></Image>
+          />
           <h1 className={styles.title}>TaskMaster</h1>
         </div>
         <form className={styles.form} onSubmit={submit}>

@@ -1,6 +1,5 @@
 import styles from "@/styles/features.module.css";
 import { Metadata } from "next";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Features",
@@ -22,13 +21,13 @@ const page = () => {
               you can invite others to join.
             </p>
           </div>
-          <Image
+          <img
             src="/teamTasks.webp"
             width={600}
             height={450}
             alt="Finishing task picture"
             className={styles.image}
-          ></Image>
+          />
         </div>
         <div className={styles.feature}>
           <div className={styles.description}>
@@ -41,13 +40,13 @@ const page = () => {
               of it. With tasks you always know what to do and when to do it.
             </p>
           </div>
-          <Image
+          <img
             src="/finishingTask.jpg"
             width={600}
             height={380}
             alt="Finishing task picture"
             className={styles.image}
-          ></Image>
+          />
         </div>
       </div>
     </main>
