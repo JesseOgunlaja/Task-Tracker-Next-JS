@@ -9,6 +9,20 @@ export const metadata: Metadata = {
     "TaskMaster allows you to store your tasks, notes and scheldues all in one place. All for free.",
 };
 
+const keyStr =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+
+const triplet = (e1: number, e2: number, e3: number) =>
+  keyStr.charAt(e1 >> 2) +
+  keyStr.charAt(((e1 & 3) << 4) | (e2 >> 4)) +
+  keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
+  keyStr.charAt(e3 & 63)
+
+const rgbDataURL = (r: number, g: number, b: number) =>
+  `data:image/gif;base64,R0lGODlhAQABAPAA${
+    triplet(0, r, g) + triplet(b, 255, 255)
+  }/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`
+
 const page = () => {
   return (
     <main className={styles.container}>
@@ -24,6 +38,8 @@ const page = () => {
       <div className={styles.facts}>
         <div className={styles.fact}>
           <Image
+          placeholder="blur"
+          blurDataURL={rgbDataURL(255,188,43)}
             className={styles.image}
             src="/folder.png"
             alt="Folder logo"
@@ -38,9 +54,11 @@ const page = () => {
         </div>
         <div className={styles.fact}>
           <Image
+          placeholder="blur"
+          blurDataURL={rgbDataURL(255,234,0)}
             className={styles.image}
             src="/notes.jpg"
-            alt="Folder logo"
+            alt="File logo"
             height={67.5}
             width={67.5}
           ></Image>
@@ -52,9 +70,11 @@ const page = () => {
         </div>
         <div className={styles.fact}>
           <Image
+          placeholder="blur"
+          blurDataURL={rgbDataURL(0,149,231)}
             className={styles.image}
             src="/world.png"
-            alt="Folder logo"
+            alt="World logo"
             height={64}
             width={64}
           ></Image>
@@ -66,9 +86,11 @@ const page = () => {
         </div>
         <div className={styles.fact}>
           <Image
+            placeholder="blur"
+            blurDataURL={rgbDataURL(241, 148, 32)}
             className={styles.image}
             src="/brain.png"
-            alt="Folder logo"
+            alt="Creative logo"
             height={64}
             width={64}
           ></Image>
