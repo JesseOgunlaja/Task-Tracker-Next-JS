@@ -20,7 +20,7 @@
   transform: translateY(75px);
   padding: 50px 100px 20px 100px;
   background: black;
-  border-radius: 10px;
+  border-radius: 10px 10px 0px 0px;
   display: flex;
   align-items: center;
   min-height: 450px;
@@ -29,8 +29,19 @@
   width: 550px;
 }
 
+.backButton {
+  width: 550px;
+  padding: 15px 30px;
+  font-size: 25px;
+  background: white;
+  color: black;
+  border-radius: 0px 0px 10px 10px;
+  transform: translateY(80px);
+  cursor: pointer;
+}
+
 @media (max-width: 400px) {
-  .container {
+  .container,.backButton {
     width: 100vw;
   }
 }

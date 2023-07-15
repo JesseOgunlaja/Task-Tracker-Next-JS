@@ -3,7 +3,7 @@ import VerificationCodeForm from "@/components/VerificationCodeForm";
 import Link from "next/link";
 import { SyntheticEvent, createContext, useRef, useState } from "react";
 
-const validEmails = ["com", "org", "co.uk", "net", "io", "online", "dev"];
+const validEmails = ["com", "org", "co.uk", "net", "io", "online", "dev", "co"];
 
 const SignUpForm = () => {
   const [nameError, setNameError] = useState<String>("");
@@ -128,13 +128,13 @@ const SignUpForm = () => {
 
   function submit(e: SyntheticEvent) {
     e.preventDefault();
-    if (emailError === "" && nameError === "" && passwordError === "") {
+    if (emailError === "" && nameError === "" && passwordError === "" && !checkEmail()?.error && !checkPassword()?.error && !checkName()?.error) {
       setSubmitted(true);
     }
     else {
-        console.log(checkEmail()?.error)
-        console.log(checkPassword()?.error)
-        console.log(checkName()?.error)
+        checkEmail()?.error
+        checkPassword()?.error
+        checkName()?.error
     }
   }
 
@@ -178,7 +178,10 @@ const SignUpForm = () => {
           </div>
         </>
       ) : (
+        <>
             <VerificationCodeForm email={emailInput.current?.value}/>
+            <button onClick={() => setSubmitted(false)} className={styles.backButton}>Back</button>
+        </>
       )}
     </>
   );
