@@ -12,12 +12,12 @@ export const metadata: Metadata = {
   description: "The best task tracker around.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  connectToDB()
+  await connectToDB()
   return (
     <html lang="en">
       <body className={inter.className}>
