@@ -1,5 +1,4 @@
 import styles from "@/styles/signUp.module.css";
-import { GLOBAL_KEY, SECRET_KEY } from "@/utils/constants";
 import { encryptString } from "@/utils/encryptString";
 import { errorToast, successToast } from "@/utils/toast";
 import { FormEvent, useEffect, useRef } from "react";
@@ -13,9 +12,9 @@ const SignUpForm = (props: any) => {
   useEffect(() => {
     async function sendEmail() {
       code = String(Math.floor(Math.random() * 1000000000));
-      const SECRET: String = process.env.NEXT_PUBLIC_SECRET_KEY ? process.env.NEXT_PUBLIC_SECRET_KEY : SECRET_KEY;
+      const SECRET: String = process.env.NEXT_PUBLIC_SECRET_KEY || "";
       const payload = {
-        KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY ? process.env.NEXT_PUBLIC_GLOBAL_KEY : GLOBAL_KEY,
+        KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
         exp: Math.floor(Date.now() / 1000) + 5,
       };
       const header = { alg: "HS256", typ: "JWT" };

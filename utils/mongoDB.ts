@@ -1,4 +1,3 @@
-import { MONGODB_URI } from "./constants";
 
 const mongoose = require("mongoose")
 const { Types } = mongoose.Schema;
@@ -32,7 +31,7 @@ export const connectToDB = async () => {
     return User;
   }
 
-  await mongoose.connect(process.env.MONGODB_URI ? process.env.MONGODB_URI : MONGODB_URI, {
+  await mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyJWT } from "./utils/auth";
-import { API_KEY, GLOBAL_KEY } from "./utils/constants";
 
 export async function middleware(request: NextRequest) {
   const headersList = new Headers(request.headers);
@@ -9,12 +8,12 @@ export async function middleware(request: NextRequest) {
 
   if (token?.startsWith("ThirdParty")) {
     token = token.replace("ThirdParty ", "");
-    if (token === process.env.API_KEY ? process.env.API_KEY : API_KEY) {
+    if (token === process.env.API_KEY) {
       return NextResponse.next();
     }
     else {
       return NextResponse.json(
-        { message: `Invalid API key ${API_KEY}` },
+        { message: `Invalid API key ${process.env.API_KEY}` },
         { status: 401 }
       );
     }
@@ -28,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
     try {
       const decoded = await verifyJWT(request);
-      if (decoded.payload.KEY === process.env.GLOBAL_KEY ? process.env.GLOBAL_KEY : GLOBAL_KEY) {
+      if (decoded.payload.KEY === process.env.GLOBAL_KEY) {
         return NextResponse.next();
       } else {
         return NextResponse.json({ message: `Invalid token` }, { status: 401 });

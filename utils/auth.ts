@@ -1,6 +1,5 @@
 import { jwtVerify } from 'jose'
 import { NextRequest } from 'next/server';
-import { SECRET_KEY } from './constants';
 
 export async function verifyJWT(req: NextRequest) {
     const headersList = new Headers(req.headers)
@@ -8,7 +7,7 @@ export async function verifyJWT(req: NextRequest) {
     try {
         const verified = await jwtVerify(
           token!,
-          new TextEncoder().encode(process.env.SECRET_KEY ? process.env.SECRET_KEY : SECRET_KEY)
+          new TextEncoder().encode(process.env.SECRET_KEY)
         )
         return verified as any
       } catch (error) {
