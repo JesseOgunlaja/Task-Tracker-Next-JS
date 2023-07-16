@@ -1,17 +1,21 @@
 import styles from "@/styles/signUp.module.css";
+import { decryptString } from "@/utils/decryptString";
 import { encryptString } from "@/utils/encryptString";
 import { errorToast, successToast } from "@/utils/toast";
-import { FormEvent, useEffect, useRef } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 const jwt = require("jsrsasign");
 
 
 const SignUpForm = (props: any) => {
-  let code: String;
+  
+  const [code,setCode] = useState<String>(encryptString(String(Math.floor(Math.random() * 1000000000)), true))
   const codeInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function sendEmail() {
-      code = String(Math.floor(Math.random() * 1000000000));
+      if(codeInput.current) {
+        codeInput.current.value = ""
+      }
       const SECRET: String = process.env.NEXT_PUBLIC_SECRET_KEY || "";
       const payload = {
         KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
@@ -33,7 +37,7 @@ const SignUpForm = (props: any) => {
           },
           body: JSON.stringify({
             email: props.email,
-          code: encryptString(code),
+          code: code,
         }),
       });
     }
@@ -46,7 +50,7 @@ const SignUpForm = (props: any) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
-    if(formValues.code === code) {
+    if(formValues.code === decryptString(code, true)) {
       const res = await fetch("/api/addUser", {
         method: 'POST',
         headers: {
@@ -61,6 +65,7 @@ const SignUpForm = (props: any) => {
       const data = await res.json()
       if(data.message === "Success") {
         successToast("User registered")
+        window.location.href = window.location.href.replace(window.location.pathname,"").concat("/logIn")
       }
     }
     else {

@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     from: "noreply4313@gmail.com",
     to: body.email,
     subject: "TaskMaster: Verification Code",
-    text: `Verification Code: ${decryptString(body.code)}`,
+    text: `Verification Code: ${decryptString(body.code, true)}`,
   };
 
   try {

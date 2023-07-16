@@ -3,7 +3,8 @@ import styles from "@/styles/page.module.css";
 import Link from "next/link";
 import Image from "next/image";
 
-const page = () => {
+
+const page = async () => {
   return (
     <>
       <div className={styles.container}>
