@@ -1,10 +1,9 @@
 const nodemailer = require("nodemailer");
-const jwt = require("jsonwebtoken")
-require("dotenv").config();
+const jwt = require("jsonwebtoken");
 
+import { GMAIL_PASSWORD } from "@/utils/constants";
 import { decryptString } from "@/utils/decryptString";
-import { NextRequest, NextResponse } from "next/server"
- 
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -13,7 +12,9 @@ export async function POST(req: NextRequest) {
     service: "gmail",
     auth: {
       user: "noreply4313@gmail.com",
-      pass: process.env.GMAIL_PASSWORD,
+      pass: process.env.GMAIL_PASSWORD
+        ? process.env.GMAIL_PASSWORD
+        : GMAIL_PASSWORD,
     },
   });
 

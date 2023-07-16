@@ -1,20 +1,21 @@
 import styles from "@/styles/signUp.module.css";
+import { GLOBAL_KEY, SECRET_KEY } from "@/utils/constants";
 import { encryptString } from "@/utils/encryptString";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { errorToast, successToast } from "@/utils/toast";
+import { FormEvent, useEffect, useRef } from "react";
 const jwt = require("jsrsasign");
 
-let code = String(Math.floor(Math.random() * 1000000000));
 
 const SignUpForm = (props: any) => {
-  const [codeError,setCodeError] = useState<boolean>(false)
+  let code: String;
   const codeInput = useRef<HTMLInputElement>(null);
-  const email = props.email;
 
   useEffect(() => {
     async function sendEmail() {
-      const SECRET_KEY = process.env.NEXT_PUBLIC_SECRET_KEY;
+      code = String(Math.floor(Math.random() * 1000000000));
+      const SECRET: String = process.env.NEXT_PUBLIC_SECRET_KEY ? process.env.NEXT_PUBLIC_SECRET_KEY : SECRET_KEY;
       const payload = {
-        KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
+        KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY ? process.env.NEXT_PUBLIC_GLOBAL_KEY : GLOBAL_KEY,
         exp: Math.floor(Date.now() / 1000) + 5,
       };
       const header = { alg: "HS256", typ: "JWT" };
@@ -24,38 +25,53 @@ const SignUpForm = (props: any) => {
         "HS256",
         sHeader,
         sPayload,
-        SECRET_KEY
-      );
-      await fetch("/api/sendEmail", {
-        method: "POST",
-        headers: {
-          authorization: globalToken
-        },
-        body: JSON.stringify({
-          email: email,
-          code: encryptString(code, true),
+        SECRET
+        );
+        await fetch("/api/sendEmail", {
+          method: "POST",
+          headers: {
+            authorization: globalToken
+          },
+          body: JSON.stringify({
+            email: props.email,
+          code: encryptString(code),
         }),
       });
     }
-    sendEmail();
-  }, []);
-
-  function submit(e: FormEvent<HTMLFormElement>) {
+    if(props.ready) {
+      sendEmail();
+    }
+  }, [props.ready]);
+  
+  async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
     if(formValues.code === code) {
-      setCodeError(false)
-      console.log("Correct")
+      const res = await fetch("/api/addUser", {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: props.name,
+          email: props.email,
+          password: props.password
+        })
+      })
+      const data = await res.json()
+      if(data.message === "Success") {
+        successToast("User registered")
+      }
     }
     else {
-      setCodeError(true)
+      errorToast("Incorrect code")
     }
   }
 
   return (
     <>
-      <p className={styles.email}>Just sent an email to: {email}</p>
+      <p className={styles.email}>Just sent an email to: {props.email}</p>
       <form className={styles.form} onSubmit={submit}>
         <input
           ref={codeInput}
@@ -63,7 +79,6 @@ const SignUpForm = (props: any) => {
           name="code"
           placeholder="Verification Code"
         />
-        {codeError && <p className={styles.error}>Incorrect code</p>}
         <input type="submit" />
       </form>
     </>
