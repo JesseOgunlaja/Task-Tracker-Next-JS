@@ -7,7 +7,6 @@ import Link from "next/link";
 import { FormEvent } from "react";
 
 const page = () => {
-
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget); // create form data object

@@ -2,7 +2,7 @@ import { connectToDB } from "@/utils/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 
 
-export async function GET(request: NextRequest) {
+export async function GET() {
     try {
         await connectToDB()
         return NextResponse.json({message: 'Success'}, {status: 200})

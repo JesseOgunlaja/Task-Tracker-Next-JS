@@ -5,19 +5,17 @@ import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const inter = Inter({ subsets: ["latin"] });
-import { connectToDB } from "@/utils/mongoDB";
 
 export const metadata: Metadata = {
   title: "TaskMaster",
   description: "The best task tracker around.",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  await connectToDB()
   return (
     <html lang="en">
       <body className={inter.className}>
