@@ -66,9 +66,12 @@ const SignUpForm = (props: any) => {
         fetchOptions,
         message,
         () =>
+        setTimeout(() => {
+
           (window.location.href = window.location.href
             .replace(window.location.pathname, "")
             .concat("/logIn"))
+        }, 3000)
       );
     } else {
       errorToast("Incorrect code");

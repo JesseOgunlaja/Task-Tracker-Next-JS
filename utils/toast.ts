@@ -41,13 +41,13 @@ export async function promiseToast(
   message: MessageType,
   successFunction?: Function
 ) {
-  let success
+  let success: Boolean = true
   const fetchRequest = new Promise((resolve, reject) => {
     fetch(fetchUrl, fetchOptions).then(async (response: Response) => {
       if (response.ok) {
-        success = true
         resolve("Success");
       } else {
+        success = false
         reject();
       }
     });
@@ -57,8 +57,7 @@ export async function promiseToast(
     success: message.success,
     error: message.error || "Error. Please try again",
   });
-  if(success && successFunction) {
-    console.log("hi")
+  if(success === true && successFunction) {
     successFunction()
   }
 }

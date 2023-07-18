@@ -3,8 +3,15 @@
 import SignUpForm from "@/components/SignUpForm";
 import styles from "@/styles/signUp.module.css";
 import Image from "next/image";
+import { useEffect } from "react";
 
 const page = () => {
+  useEffect(() => {
+    async function connect() {
+      await fetch("/api/connect")
+    }
+    connect()
+  }, [])
   return (
     <div className={styles.page}>
       <title>Sign up</title>

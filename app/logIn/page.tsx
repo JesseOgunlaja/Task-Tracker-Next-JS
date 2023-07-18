@@ -4,9 +4,15 @@ import styles from "@/styles/logIn.module.css";
 import { errorToast, promiseToast, successToast } from "@/utils/toast";
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 
 const page = () => {
+  useEffect(() => {
+    async function connect() {
+      await fetch("/api/connect")
+    }
+    connect()
+  }, [])
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget); // create form data object
