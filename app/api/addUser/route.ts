@@ -1,5 +1,4 @@
 import { connectToDB } from "@/utils/mongoDB";
-const mongoose = require("mongoose");
 import { NextRequest, NextResponse } from "next/server";
 const bcrypt = require("bcrypt");
 

@@ -1,18 +1,18 @@
-// "use client"
+"use client"
 
-// import React, { useEffect } from "react";
+import React, { useEffect } from "react";
 import styles from "@/styles/page.module.css";
 import Link from "next/link";
 import Image from "next/image";
 
 
-const page = async () => {
-  // useEffect(() => {
-  //   async function connect() {
-  //     await fetch("/api/connect")
-  //   }
-  //   connect()
-  // }, [])
+const page = () => {
+  useEffect(() => {
+    async function connect() {
+      await fetch("/api/connect")
+    }
+    connect()
+  }, [])
   return (
     <>
       <div className={styles.container}>

@@ -1,5 +1,5 @@
 import { connectToDB } from "@/utils/mongoDB";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 
 export async function GET() {
@@ -8,6 +8,6 @@ export async function GET() {
         return NextResponse.json({message: 'Success'}, {status: 200})
     }
     catch (error) {
-        return NextResponse.json({message: 'Error', error: error}, {status: 500})
+        return NextResponse.json({message: 'Error', error: `${error}`}, {status: 500})
     }
 }
