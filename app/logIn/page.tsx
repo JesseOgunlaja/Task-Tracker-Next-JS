@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "@/styles/logIn.module.css";
-import { errorToast, successToast } from "@/utils/toast";
+import { errorToast, promiseToast, successToast } from "@/utils/toast";
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent } from "react";
@@ -13,25 +13,23 @@ const page = () => {
     const formValues = Object.fromEntries(formData.entries()); // convert form data object to plain object
     if (formValues.Username === "" || formValues.Password === "") {
       errorToast("Invalid username or password");
-    }
-    else {
-      const res = await fetch('/api/logIn', {
-        method: 'POST',
-        headers:{
-          'Content-type': 'application/json'
+    } else {
+      const fetchUrl = "/api/logIn";
+      const fetchOptions = {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
         },
         body: JSON.stringify({
-          username: formValues.Username, 
-          password: formValues.Password
-        })
-      })
-      const data = await res.json()
-      if(data.message === "Success") {
-        successToast("Successful login")
-      }
-      else {
-        errorToast("Invalid credentials")
-      }
+          username: formValues.Username,
+          password: formValues.Password,
+        }),
+      };
+      const message = {
+        success: "Successful login",
+        error: "Invalid credentials",
+      };
+      promiseToast(fetchUrl,fetchOptions,message)
     }
   }
 

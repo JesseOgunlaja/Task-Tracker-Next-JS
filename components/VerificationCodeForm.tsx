@@ -1,20 +1,20 @@
 import styles from "@/styles/signUp.module.css";
 import { decryptString } from "@/utils/decryptString";
 import { encryptString } from "@/utils/encryptString";
-import { errorToast, successToast } from "@/utils/toast";
+import { errorToast, promiseToast, successToast } from "@/utils/toast";
 import { FormEvent, useEffect, useRef, useState } from "react";
 const jwt = require("jsrsasign");
 
-
 const SignUpForm = (props: any) => {
-  
-  const [code,setCode] = useState<String>(encryptString(String(Math.floor(Math.random() * 1000000000)), true))
+  const [code, setCode] = useState<String>(
+    encryptString(String(Math.floor(Math.random() * 1000000000)), true)
+  );
   const codeInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     async function sendEmail() {
-      if(codeInput.current) {
-        codeInput.current.value = ""
+      if (codeInput.current) {
+        codeInput.current.value = "";
       }
       const SECRET: String = process.env.NEXT_PUBLIC_SECRET_KEY || "";
       const payload = {
@@ -24,52 +24,54 @@ const SignUpForm = (props: any) => {
       const header = { alg: "HS256", typ: "JWT" };
       const sHeader = JSON.stringify(header);
       const sPayload = JSON.stringify(payload);
-      const globalToken = jwt.jws.JWS.sign(
-        "HS256",
-        sHeader,
-        sPayload,
-        SECRET
-        );
-        await fetch("/api/sendEmail", {
-          method: "POST",
-          headers: {
-            authorization: globalToken
-          },
-          body: JSON.stringify({
-            email: props.email,
+      const globalToken = jwt.jws.JWS.sign("HS256", sHeader, sPayload, SECRET);
+      await fetch("/api/sendEmail", {
+        method: "POST",
+        headers: {
+          authorization: globalToken,
+        },
+        body: JSON.stringify({
+          email: props.email,
           code: code,
         }),
       });
     }
-    if(props.ready) {
+    if (props.ready) {
       sendEmail();
     }
   }, [props.ready]);
-  
+
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
-    if(formValues.code === decryptString(code, true)) {
-      const res = await fetch("/api/addUser", {
-        method: 'POST',
+    if (formValues.code === decryptString(code, true)) {
+      const fetchUrl = "/api/addUser";
+      const fetchOptions = {
+        method: "POST",
         headers: {
-          'Content-type': 'application/json'
+          "Content-type": "application/json",
         },
         body: JSON.stringify({
           name: props.name,
           email: props.email,
-          password: props.password
-        })
-      })
-      const data = await res.json()
-      if(data.message === "Success") {
-        successToast("User registered")
-        window.location.href = window.location.href.replace(window.location.pathname,"").concat("/logIn")
-      }
-    }
-    else {
-      errorToast("Incorrect code")
+          password: props.password,
+        }),
+      };
+      const message = {
+        success: "User registered",
+      };
+      promiseToast(
+        fetchUrl,
+        fetchOptions,
+        message,
+        () =>
+          (window.location.href = window.location.href
+            .replace(window.location.pathname, "")
+            .concat("/logIn"))
+      );
+    } else {
+      errorToast("Incorrect code");
     }
   }
 
