@@ -1,3 +1,4 @@
+import OverallNav from "@/components/OverallNav";
 import styles from "@/styles/features.module.css";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -24,6 +25,8 @@ const rgbDataURL = (r: number, g: number, b: number) =>
 
 const page = () => {
   return (
+    <>
+    <OverallNav/>
     <main className={styles.container}>
       <div className={styles.features}>
         <div className={styles.feature}>
@@ -40,11 +43,11 @@ const page = () => {
           <Image
           placeholder="blur"
           blurDataURL={rgbDataURL(84,84,84)}
-            src="/teamTasks.webp"
-            width={600}
-            height={450}
-            alt="Finishing task picture"
-            className={styles.image}
+          src="/teamTasks.webp"
+          width={600}
+          height={450}
+          alt="Finishing task picture"
+          className={styles.image}
           ></Image>
         </div>
         <div className={styles.feature}>
@@ -66,10 +69,11 @@ const page = () => {
             height={380}
             alt="Finishing task picture"
             className={styles.image}
-          ></Image>
+            ></Image>
         </div>
       </div>
     </main>
+            </>
   );
 };
 

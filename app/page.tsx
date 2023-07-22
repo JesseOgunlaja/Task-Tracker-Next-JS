@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 import styles from "@/styles/page.module.css";
 import Link from "next/link";
 import Image from "next/image";
+import OverallNav from "@/components/OverallNav";
 
 
 const page = () => {
@@ -15,6 +16,7 @@ const page = () => {
   }, [])
   return (
     <>
+    <OverallNav/>
       <div className={styles.container}>
         <h1 className={styles.title}>Organize yourself, and your life.</h1>
         <p className={styles.paragraph}>

@@ -10,9 +10,9 @@ export async function middleware(request: NextRequest) {
   if(String(request.nextUrl.pathname) === "/dashboard" && await checkSignedIn(request) === false) {
     return NextResponse.redirect(new URL('/logIn', request.url))
   }
-  // if (String(request.nextUrl.pathname).includes("/api/user")) {
-  //   return userJWT(request);
-  // }
+  if (String(request.nextUrl.pathname).includes("/api/user")) {
+    return userJWT(request);
+  }
   if(String(request.nextUrl.pathname).includes("/api/sendEmail")) {
     return globalJWT(request)
   }

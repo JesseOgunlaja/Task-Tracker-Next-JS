@@ -1,5 +1,6 @@
 "use client"
 
+import OverallNav from "@/components/OverallNav";
 import SignUpForm from "@/components/SignUpForm";
 import styles from "@/styles/signUp.module.css";
 import Image from "next/image";
@@ -13,6 +14,8 @@ const page = () => {
     connect()
   }, [])
   return (
+    <>
+      <OverallNav/>
     <div className={styles.page}>
       <title>Sign up</title>
       <div className={styles.container}>
@@ -29,6 +32,7 @@ const page = () => {
         <SignUpForm/>
       </div>
     </div>
+            </>
   );
 };
 

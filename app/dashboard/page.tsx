@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "@/styles/dashboard.module.css";
 import { Metadata } from "next";
+import OverallNav from "@/components/OverallNav";
 
 type Task = {
   title: String;
@@ -20,7 +21,7 @@ type User = {
 };
 
 async function getData() {
-  const res = await fetch("/api/user", { next: { revalidate: 10 } });
+  const res = await fetch("/api/user", { next: { revalidate: 60 } });
   return res.json();
 }
 
@@ -32,6 +33,8 @@ const page = () => {
   }, []);
 
   return (
+    <>
+    <OverallNav/>
     <div className={styles.page}>
       <title>Dashboard</title>
       <div className={styles.container}>
@@ -41,19 +44,19 @@ const page = () => {
             {user &&
               user.tasks?.map(
                 (task) =>
-                  task.type === "to-do" && (
+                task.type === "to-do" && (
                     <div className={styles.task}>
                       <p className={styles.taskTitle}>{task.title}</p>
                       <p
                         id={
                           task.priority === "Low"
-                            ? styles.low
-                            : task.priority === "Medium"
-                            ? styles.medium
-                            : (task.priority === "High" && styles.high) || ""
+                          ? styles.low
+                          : task.priority === "Medium"
+                          ? styles.medium
+                          : (task.priority === "High" && styles.high) || ""
                         }
                         className={styles.priority}
-                      >
+                        >
                         {task.priority}
                       </p>
                     </div>
@@ -65,19 +68,19 @@ const page = () => {
             {user &&
               user.tasks?.map(
                 (task) =>
-                  task.type === "ongoing" && (
-                    <div className={styles.task}>
+                task.type === "ongoing" && (
+                  <div className={styles.task}>
                       <p className={styles.taskTitle}>{task.title}</p>
                       <p
                         id={
                           task.priority === "Low"
-                            ? styles.low
-                            : task.priority === "Medium"
-                            ? styles.medium
-                            : (task.priority === "High" && styles.high) || ""
+                          ? styles.low
+                          : task.priority === "Medium"
+                          ? styles.medium
+                          : (task.priority === "High" && styles.high) || ""
                         }
                         className={styles.priority}
-                      >
+                        >
                         {task.priority}
                       </p>
                     </div>
@@ -89,8 +92,8 @@ const page = () => {
             {user &&
               user.tasks?.map(
                 (task) =>
-                  task.type === "done" && (
-                    <div className={styles.task}>
+                task.type === "done" && (
+                  <div className={styles.task}>
                       <p className={styles.taskTitle}>{task.title}</p>
                       <p
                         id={
@@ -101,7 +104,7 @@ const page = () => {
                             : (task.priority === "High" && styles.high) || ""
                         }
                         className={styles.priority}
-                      >
+                        >
                         {task.priority}
                       </p>
                     </div>
@@ -111,6 +114,7 @@ const page = () => {
         </div>
       </div>
     </div>
+                  </>
   );
 };
 

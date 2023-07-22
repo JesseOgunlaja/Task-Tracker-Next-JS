@@ -1,16 +1,9 @@
-"use client"
-
-import Navbar from "@/components/Navbar";
-import SignedInNavbar from "@/components/SignedInNavbar";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { usePathname } from 'next/navigation'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const inter = Inter({ subsets: ["latin"] });
-
-const notSignedInPaths: String[] = ["/","why-taskmaster","features","signUp","logIn"]
 
 export const metadata: Metadata = {
   title: "TaskMaster",
@@ -25,11 +18,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {notSignedInPaths.every(val => val !== usePathname()) ? (
-          <SignedInNavbar/>
-        ): (
-          <Navbar />  
-        )}
         <main>
           {children}
           <ToastContainer

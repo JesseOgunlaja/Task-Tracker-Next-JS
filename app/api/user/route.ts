@@ -8,9 +8,8 @@ export async function GET() {
   const User = await connectToDB();
 
   try {
-    // const requestHeaders = headers();
-    // const id = requestHeaders.get("id");
-    const id = "64b6ac9b7d15620952f00500";
+    const requestHeaders = headers();
+    const id = requestHeaders.get("id");
     const user = await User.findById(id);
     return NextResponse.json({ user: user }, { status: 200 });
   } catch (err) {

@@ -1,5 +1,6 @@
 "use client";
 
+import OverallNav from "@/components/OverallNav";
 import styles from "@/styles/logIn.module.css";
 import { checkSignedIn } from "@/utils/checkSignedIn";
 import { errorToast, promiseToast, successToast } from "@/utils/toast";
@@ -47,6 +48,8 @@ const page = () => {
   }
 
   return (
+    <>
+    <OverallNav/>
     <div className={styles.page}>
       <title>Log in</title>
       <div className={styles.container}>
@@ -57,7 +60,7 @@ const page = () => {
             alt="Website logo"
             height={45}
             width={45}
-          ></Image>
+            ></Image>
           <h1 className={styles.title}>TaskMaster</h1>
         </div>
         <form className={styles.form} onSubmit={submit}>
@@ -71,6 +74,7 @@ const page = () => {
         </div>
       </div>
     </div>
+            </>
   );
 };
 
