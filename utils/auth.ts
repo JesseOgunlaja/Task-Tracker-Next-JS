@@ -1,12 +1,10 @@
 import { jwtVerify } from 'jose'
 import { NextRequest } from 'next/server';
 
-export async function verifyJWT(req: NextRequest) {
-    const headersList = new Headers(req.headers)
-    const token = headersList.get("authorization");
+export async function verifyJWT(jwt: string) {
     try {
         const verified = await jwtVerify(
-          token!,
+          jwt,
           new TextEncoder().encode(process.env.SECRET_KEY)
         )
         return verified as any

@@ -15,21 +15,26 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   tasks: [
     {
-      task: { type: String },
+      title: { type: String },
       date: { type: String },
-      reminder: { type: Boolean },
+      type: { type: String },
+      description: { type: String },
+      priority: { type: String },
     },
   ],
 });
 
 
 let isConnected = false;
+let User: any;
 
 export const connectToDB = async () => {
-  const User = mongoose.models.User || mongoose.model("User", UserSchema);
-
+  
   if(isConnected) {
     return User;
+  }
+  else {
+    User = mongoose.models.User || mongoose.model("User", UserSchema);
   }
 
   await mongoose.connect(process.env.MONGODB_URI, {

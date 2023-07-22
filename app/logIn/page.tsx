@@ -1,6 +1,7 @@
 "use client";
 
 import styles from "@/styles/logIn.module.css";
+import { checkSignedIn } from "@/utils/checkSignedIn";
 import { errorToast, promiseToast, successToast } from "@/utils/toast";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,10 +10,10 @@ import { FormEvent, useEffect } from "react";
 const page = () => {
   useEffect(() => {
     async function connect() {
-      await fetch("/api/connect")
+      await fetch("/api/connect");
     }
-    connect()
-  }, [])
+    connect();
+  }, []);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget); // create form data object
@@ -35,7 +36,13 @@ const page = () => {
         success: "Successful login",
         error: "Invalid credentials",
       };
-      promiseToast(fetchUrl,fetchOptions,message)
+      promiseToast(fetchUrl, fetchOptions, message, () =>
+        setTimeout(() => {
+          window.location.href = window.location.href
+            .replace(window.location.pathname, "")
+            .concat("/dashboard");
+        }, 3000)
+      );
     }
   }
 

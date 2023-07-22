@@ -1,0 +1,84 @@
+.container {
+  transform: translateY(50px);
+}
+
+.page {
+    margin-top: 25px;
+    width: 99vw;
+    display: flex;
+    justify-content: space-around;
+}
+
+.tasks {
+    display: flex;
+    gap: 30px;
+}
+
+.tasks > * {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    border-radius: 15px;
+}
+
+.task {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 25vw;
+    aspect-ratio: 2.5 / 1;
+    border-radius: 15px;
+    padding: 20px;
+    background: #404457;
+}
+
+.taskTitle {
+    font-size: 20px;
+}
+
+.sectionText {
+    text-align: center;
+    font-size: 25px;
+}
+
+.todo, .ongoing, .done {
+    padding: 20px;
+    background: #272938;
+    margin-bottom: 25px;
+}
+
+#low {
+    background: #00C27C
+}
+
+#medium {
+    background: #FF9100
+}
+
+
+#high {
+    background: #DC494C
+}
+
+.priority {
+    width: 90px;
+    border-radius: 20px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(205px, 5px)
+}
+
+@media (min-height: 100vw) {
+    .tasks {
+        display: flex;
+        flex-direction: column;
+    }
+    .task {
+        width: 90vw;
+    }
+    .page {
+        margin: 0px;
+    }
+}
