@@ -40,14 +40,6 @@ const page = () => {
   const typeInput = useRef<HTMLSelectElement>(null);
   const editInput = useRef<number>(0);
 
-  if(window != undefined) {
-
-    window.onkeydown = async () => {
-      console.log("hi")
-      await fetch("/api/revalidatePath")
-    }
-  }
-
   useEffect(() => {
     getData().then((val) => setUser(val.user));
   }, []);
