@@ -2,7 +2,6 @@
 
 import OverallNav from "@/components/OverallNav";
 import styles from "@/styles/logIn.module.css";
-import { checkSignedIn } from "@/utils/checkSignedIn";
 import { errorToast, promiseToast, successToast } from "@/utils/toast";
 import Image from "next/image";
 import Link from "next/link";
@@ -39,9 +38,7 @@ const page = () => {
       };
       promiseToast(fetchUrl, fetchOptions, message, () =>
         setTimeout(() => {
-          window.location.href = window.location.href
-            .replace(window.location.pathname, "")
-            .concat("/dashboard");
+          window.location.reload()
         }, 3000)
       );
     }
@@ -49,32 +46,32 @@ const page = () => {
 
   return (
     <>
-    <OverallNav/>
-    <div className={styles.page}>
-      <title>Log in</title>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <Image
-            className={styles.logo}
-            src="/favicon.ico"
-            alt="Website logo"
-            height={45}
-            width={45}
+      <OverallNav />
+      <div className={styles.page}>
+        <title>Log in</title>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <Image
+              className={styles.logo}
+              src="/favicon.ico"
+              alt="Website logo"
+              height={45}
+              width={45}
             ></Image>
-          <h1 className={styles.title}>TaskMaster</h1>
-        </div>
-        <form className={styles.form} onSubmit={submit}>
-          <input name="Username" type="text" placeholder="Username/Email" />
-          <input name="Password" type="password" placeholder="Password" />
-          <input type="Submit" />
-        </form>
-        <div className={styles.account}>
-          <p>Don't have an account?</p>
-          <Link href="signUp">Sign up now</Link>
+            <h1 className={styles.title}>TaskMaster</h1>
+          </div>
+          <form className={styles.form} onSubmit={submit}>
+            <input name="Username" type="text" placeholder="Username/Email" />
+            <input name="Password" type="password" placeholder="Password" />
+            <input type="Submit" />
+          </form>
+          <div className={styles.account}>
+            <p>Don't have an account?</p>
+            <Link href="signUp">Sign up now</Link>
+          </div>
         </div>
       </div>
-    </div>
-            </>
+    </>
   );
 };
 

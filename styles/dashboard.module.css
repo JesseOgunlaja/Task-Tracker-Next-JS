@@ -3,82 +3,247 @@
 }
 
 .page {
-    margin-top: 25px;
-    width: 99vw;
-    display: flex;
-    justify-content: space-around;
+  margin-top: 25px;
+  width: 99vw;
+  display: flex;
+  justify-content: space-around;
 }
 
 .tasks {
-    display: flex;
-    gap: 30px;
+  display: flex;
+  gap: 30px;
 }
 
 .tasks > * {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  border-radius: 15px;
 }
 
 .task {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 25vw;
-    aspect-ratio: 2.5 / 1;
-    border-radius: 15px;
-    padding: 20px;
-    background: #404457;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 25vw;
+  aspect-ratio: 2.5 / 1;
+  border-radius: 15px;
+  padding: 20px;
+  background: #404457;
+  cursor: pointer;
 }
 
 .taskTitle {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 .sectionText {
-    text-align: center;
-    font-size: 25px;
+  text-align: center;
+  font-size: 25px;
 }
 
-.todo, .ongoing, .done {
-    padding: 20px;
-    background: #272938;
-    margin-bottom: 25px;
+.sectionText:nth-child(1) {
+  min-width: 300px;
+  height: 50px;
+}
+
+.sectionText {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.todo,
+.ongoing,
+.done {
+  min-width: 25vw;
+  padding: 20px;
+  background: #272938;
+  margin-bottom: 25px;
 }
 
 #low {
-    background: #00C27C
+  background: #00c27c;
 }
 
 #medium {
-    background: #FF9100
+  background: #ff9100;
 }
 
-
 #high {
-    background: #DC494C
+  background: #dc494c;
+}
+
+.info {
+  transform: translateY(5px);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.info > :nth-child(1) {
+  opacity: 0.5;
+}
+
+.dialog {
+  display: none;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.dialog > :nth-child(1) {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50px 50px 0px 50px;
+  background: black;
+  border-radius: 10px 10px 0px 0px;
+  min-height: 550px;
+  width: 500px;
+}
+
+.backButton {
+  width: 500px;
+  padding: 15px 30px;
+  font-size: 25px;
+  background: white;
+  color: black;
+  border-radius: 0px 0px 10px 10px;
+  cursor: pointer;
+}
+
+.bottomButton > * {
+  width: 250px;
+  padding: 15px 30px;
+  font-size: 25px;
+  color: black;
+  cursor: pointer;
+}
+
+.delete {
+  border-radius: 0px 0px 10px 0px;
+  background: red;
+}
+
+.back {
+  border-radius: 0px 0px 0px 10px;
+  background: white
+}
+
+.form > input,
+.form > select {
+  width: 350px;
+  border-radius: 5px;
+  padding: 15px;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.form > textarea {
+  width: 350px;
+  border-radius: 5px;
+  padding: 15px;
+  font-size: 20px;
+  margin-bottom: 20px;
+  height: 100px;
+  resize: vertical
+}
+
+.form > label {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: white;
+  display: block;
+}
+
+.form > [type="submit"] {
+  margin-top: 35px;
+  background: darkblue;
+  color: white;
+  margin-bottom: 40px;
+  cursor: pointer;
+}
+
+.addUser {
+  background: rgb(0, 140, 255);
+  font-size: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  height: 50px;
+  width: 100px;
+  border-radius: 7.5px;
+  cursor: pointer;
 }
 
 .priority {
-    width: 90px;
-    border-radius: 20px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: translate(205px, 5px)
+  width: 90px;
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateX(10px);
 }
 
 @media (min-height: 100vw) {
-    .tasks {
-        display: flex;
-        flex-direction: column;
+  .dialog > :nth-child(1) {
+    min-height: 750px;
+    transform: translateY(30px)
+  }
+  .dialog {
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .form > textarea {
+    height: 75px;
+  }
+  .bottomButton > * {
+    width: 50vw;
+    border-radius: 0px;
+    transform: translateY(20px)
+  }
+  .todo,
+  .ongoing,
+  .done {
+    min-width: 90vw;
+  }
+  .container {
+    transform: translateY(70px);
+  }
+  .tasks {
+    display: flex;
+    flex-direction: column;
+  }
+  .task {
+    width: 90vw;
+  }
+  .page {
+    margin: 0px;
+  }
+  @media (min-width: 600px) {
+    .bottomButton > * {
+      width: 250px;
+    }
+    .dialog > :nth-child(1) {
+      min-height: 550px !important;
     }
     .task {
-        width: 90vw;
+      width: 50vw;
     }
-    .page {
-        margin: 0px;
-    }
+  }
 }

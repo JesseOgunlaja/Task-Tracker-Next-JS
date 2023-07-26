@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 import { cookies } from "next/headers";
 import { checkSignedIn } from "@/utils/checkSignedIn";
 
+
 export async function POST(req: NextRequest) {
   if (await checkSignedIn(req)) {
     return NextResponse.json({ message: "Success" }, { status: 200 });

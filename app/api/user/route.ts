@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 const bcrypt = require("bcrypt");
 
+
 export async function GET() {
   
   const User = await connectToDB();
@@ -11,7 +12,7 @@ export async function GET() {
     const requestHeaders = headers();
     const id = requestHeaders.get("id");
     const user = await User.findById(id);
-    return NextResponse.json({ user: user }, { status: 200 });
+    return NextResponse.json({ user: user }, { status: 200, headers: {'Cache-control': 'max-age=60'} });
   } catch (err) {
     return NextResponse.json({ error: `${err}` }, { status: 500 });
   }
