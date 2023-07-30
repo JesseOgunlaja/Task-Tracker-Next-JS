@@ -5,11 +5,6 @@ import styles from "@/styles/dashboard.module.css";
 import OverallNav from "@/components/OverallNav";
 import { errorToast } from "@/utils/toast";
 
-let id = document.cookie
-  .split(";")
-  .find((cookie) => cookie.trim().startsWith("id="))
-  ?.split("=")[1];
-
 type Task = {
   title: string;
   date: string;
