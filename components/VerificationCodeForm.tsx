@@ -12,6 +12,7 @@ const SignUpForm = (props: any) => {
   const codeInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    console.log(props.password);
     async function sendEmail() {
       if (codeInput.current) {
         codeInput.current.value = "";
@@ -66,12 +67,10 @@ const SignUpForm = (props: any) => {
         fetchOptions,
         message,
         () =>
-        setTimeout(() => {
-
-          (window.location.href = window.location.href
-            .replace(window.location.pathname, "")
-            .concat("/logIn"))
-        }, 3000)
+          (window.location.href = window.location.href.replace(
+            window.location.pathname,
+            "/logIn"
+          ))
       );
     } else {
       errorToast("Incorrect code");
@@ -80,7 +79,14 @@ const SignUpForm = (props: any) => {
 
   return (
     <>
-      <p className={styles.email}>Just sent an email to: {props.email}</p>
+      {props.email ? (
+        <p className={styles.email}> Just sent an email to: {props.email}</p>
+      ) : (
+        <p>
+          Just send a verification code to the email registered with your
+          account
+        </p>
+      )}
       <form className={styles.form} onSubmit={submit}>
         <input
           ref={codeInput}

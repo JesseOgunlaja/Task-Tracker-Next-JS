@@ -5,6 +5,11 @@ import styles from "@/styles/dashboard.module.css";
 import OverallNav from "@/components/OverallNav";
 import { errorToast } from "@/utils/toast";
 
+let id = document.cookie
+  .split(";")
+  .find((cookie) => cookie.trim().startsWith("id="))
+  ?.split("=")[1];
+
 type Task = {
   title: string;
   date: string;
@@ -20,9 +25,86 @@ type User = {
   name: String;
 };
 
+const { openDB } = require("idb");
+
+// Function to initialize and open the IndexedDB database
+async function initDB() {
+  // Specify the database name and version
+  const dbName = "my-db";
+  const dbVersion = 1;
+
+  // Open the database
+  return await openDB(dbName, dbVersion, {
+    upgrade(db: any) {
+      // Create an object store called 'data' with an auto-incrementing key
+      if (!db.objectStoreNames.contains("data")) {
+        db.createObjectStore("data", { autoIncrement: true });
+      }
+    },
+  });
+}
+
+// Function to add data to the database
+async function addData(data: any) {
+  const db = await initDB();
+  const tx = db.transaction("data", "readwrite");
+  const store = tx.objectStore("data");
+  await store.add(data);
+}
+
+// Function to get all data from the database
+async function getAllData() {
+  const db = await initDB();
+  const tx = db.transaction("data", "readonly");
+  const store = tx.objectStore("data");
+  return await store.getAll();
+}
+
+async function removeData(key: any) {
+  const db = await initDB();
+  const tx = db.transaction("data", "readwrite");
+  const store = tx.objectStore("data");
+  await store.delete(key);
+}
+
+async function clearAllData() {
+  const db = await initDB();
+  const tx = db.transaction("data", "readwrite");
+  const store = tx.objectStore("data");
+  await store.clear();
+}
+
+async function getDataByKey(key: any) {
+  const db = await initDB();
+  const tx = db.transaction("data", "readonly");
+  const store = tx.objectStore("data");
+  return await store.get(key);
+}
+
+async function addCustomData(key: any, data: any) {
+  const db = await initDB();
+  const tx = db.transaction("data", "readwrite");
+  const store = tx.objectStore("data");
+  await store.add(data, key);
+}
+
+async function updateData(key: any, newData: any) {
+  const db = await initDB();
+  const tx = db.transaction("data", "readwrite");
+  const store = tx.objectStore("data");
+  await store.put(newData, key);
+}
+
 async function getData() {
-  const res = await fetch("/api/user");
-  return res.json();
+  const cachedResponse = await getDataByKey(1);
+  if (cachedResponse) {
+    return cachedResponse.user;
+  } else {
+    const res = await fetch("/api/user");
+    const data = await res.json();
+    addCustomData(1, data);
+    return data.user;
+  }
 }
 
 const page = () => {
@@ -41,7 +123,10 @@ const page = () => {
   const editInput = useRef<number>(0);
 
   useEffect(() => {
-    getData().then((val) => setUser(val.user));
+    async function awaitPromise() {
+      setUser(await getData())
+    }
+    awaitPromise()
   }, []);
 
   function showModal(modal: Number) {
@@ -137,6 +222,7 @@ const page = () => {
         });
         const currentUser = JSON.parse(JSON.stringify(user));
         currentUser.tasks = tasks;
+        updateData(1, currentUser);
         setUser(currentUser);
       }
     }
@@ -171,6 +257,7 @@ const page = () => {
       if (tasks) {
         const currentUser = JSON.parse(JSON.stringify(user));
         currentUser.tasks = tasks;
+        updateData(1, currentUser);
         setUser(currentUser);
       }
       hideModal(1);
@@ -196,11 +283,11 @@ const page = () => {
       method: "PATCH",
       body: JSON.stringify({ tasks: tasks }),
     });
-
     const currentUser = JSON.parse(JSON.stringify(user));
     currentUser.tasks = tasks;
+    updateData(1, currentUser);
     setUser(currentUser);
-    hideModal(2)
+    hideModal(2);
   }
 
   return (
@@ -307,7 +394,8 @@ const page = () => {
                 user.tasks?.map(
                   (task, index) =>
                     task.type === "to-do" && (
-                      <div key={index}
+                      <div
+                        key={index}
                         onClick={() => startEditTask(index)}
                         className={styles.task}
                       >
@@ -341,7 +429,8 @@ const page = () => {
                 user.tasks?.map(
                   (task, index) =>
                     task.type === "in-progress" && (
-                      <div key={index}
+                      <div
+                        key={index}
                         onClick={() => startEditTask(index)}
                         className={styles.task}
                       >
@@ -375,7 +464,8 @@ const page = () => {
                 user.tasks?.map(
                   (task, index) =>
                     task.type === "done" && (
-                      <div key={index}
+                      <div
+                        key={index}
                         onClick={() => startEditTask(index)}
                         className={styles.task}
                       >
@@ -406,5 +496,15 @@ const page = () => {
     </>
   );
 };
+
+page.getInitialProps = async () => {
+  // Fetch data from an API or any other source
+  const initialData = 'Hello from Initial Props!';
+
+  return {
+    initialData,
+  };
+};
+
 
 export default page;

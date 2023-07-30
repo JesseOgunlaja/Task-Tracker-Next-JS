@@ -5,7 +5,7 @@ import SignedInNavbar from './SignedInNavbar'
 import Navbar from './Navbar'
 import { usePathname } from 'next/navigation'
 
-const notSignedInPaths: String[] = ["/","/why-taskmaster","/features","/signUp","/logIn"]
+const notSignedInPaths: String[] = ["/","/why-taskmaster","/features","/signUp","/logIn","/reset-password"]
 
 const OverallNav = () => {
   return (

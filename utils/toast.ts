@@ -52,7 +52,7 @@ export async function promiseToast(
       }
     });
   });
-  toast.promise(fetchRequest, {
+  await toast.promise(fetchRequest, {
     pending: "Loading",
     success: message.success,
     error: message.error || "Error. Please try again",

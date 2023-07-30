@@ -30,20 +30,27 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
 }
 
 .form > * {
+  margin-bottom: 20px;
   width: 350px;
   border-radius: 5px;
   padding: 15px;
   font-size: 20px;
 }
+.form > p {
+  margin: 0px;
+  color: blue;
+  font-style: italic;
+  font-size: 17.5px;
+  margin: 0px;
+  padding: 0px;
+  cursor: pointer;
+}
 
-@media (max-width: 400px) {
-  .container {
-    width: 100vw;
-  }
+.form > #password {
+  margin-bottom: 15px;
 }
 
 .form > [type="submit"] {
@@ -68,3 +75,9 @@
   color: #00a82d;
   text-decoration: none;
 }
+
+  @media (max-width: 400px) {
+    .container {
+      width: 100vw;
+    }
+  }

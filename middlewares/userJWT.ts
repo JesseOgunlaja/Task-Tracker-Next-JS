@@ -22,7 +22,7 @@ export async function userJWT(request: NextRequest) {
 
       if (!success) {
         return NextResponse.json(
-          { message: "Rate limit" },
+          { message: "Too many requests from this IP" },
           { status: 429 }
         );
       }

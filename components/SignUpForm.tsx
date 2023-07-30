@@ -3,10 +3,11 @@ import VerificationCodeForm from "@/components/VerificationCodeForm";
 import Link from "next/link";
 import { FormEvent, useRef, useState } from "react";
 import { errorToast } from "@/utils/toast";
-
-const validEmails = ["com", "org", "co.uk", "net", "io", "online", "dev", "co"];
+import Password from "./Password";
+import { emailSchema, passwordSchema, usernameSchema } from "@/utils/zod";
 
 const SignUpForm = () => {
+  const password = useRef("");
   const [nameError, setNameError] = useState<String>("");
   const [emailError, setEmailError] = useState<String>("");
   const [passwordError, setPasswordError] = useState<String>("");
@@ -18,112 +19,42 @@ const SignUpForm = () => {
 
   function checkEmail() {
     const email = emailInput.current?.value;
+    const result = emailSchema.safeParse(email);
 
-    if (
-      typeof email !== "string" ||
-      email === "" ||
-      email == undefined ||
-      email == null ||
-      email.split("@")[0] === ""
-    ) {
-      setEmailError("Email required");
-      return { error: true };
-    } else if (email.includes("@") === false) {
-      setEmailError("Invalid email");
-      return { error: true };
-    } else if (
-      email.split("@")[1] == null ||
-      email.split("@")[1] == undefined ||
-      email.split("@")[1] === ""
-    ) {
-      setEmailError("Invalid email");
-      return { error: true };
-    } else if (email.split("@")[1].includes(".") === false) {
-      setEmailError("Invalid email");
-      return { error: true };
-    } else if (
-      email
-        .split("@")[1]
-        .split(".", 2)
-        .filter(
-          (val) =>
-            val !== "" &&
-            val != null &&
-            val != undefined &&
-            typeof val === "string"
-        ).length !== 2
-    ) {
-      setEmailError("Invaid email");
-      return { error: true };
-    } else if (
-      validEmails.includes(
-        email
-          .split("@")[1]
-          .split(".", 2)
-          .filter(
-            (val) =>
-              val !== "" &&
-              val != null &&
-              val != undefined &&
-              typeof val === "string"
-          )[1]
-      ) === false
-    ) {
-      setEmailError("Invaid email");
-      return { error: true };
-    } else {
+    if (result.success) {
       setEmailError("");
       return { error: false };
+    } else {
+      setEmailError(result.error.format()._errors[0]);
+      return { error: true };
     }
   }
 
   function checkPassword() {
-    const password = passwordInput.current?.value;
+    const element = passwordInput.current?.firstChild as HTMLDivElement;
+    let innerElement = element.firstChild as HTMLInputElement;
+    const password = innerElement.value;
+    const result = passwordSchema.safeParse(password);
 
-    if (
-      password === "" ||
-      password == null ||
-      password == undefined ||
-      typeof password !== "string"
-    ) {
-      setPasswordError("Password required");
-      return { error: true };
-    } else if (password.includes(" ")) {
-      setPasswordError("Spaces not allowed");
-      return { error: true };
-    } else if (password.length < 8 || password.length > 64) {
-      setPasswordError("Password must be between 8 and 64 characters");
-      return { error: true };
-    } else {
+    if (result.success) {
       setPasswordError("");
       return { error: false };
+    } else {
+      setPasswordError(result.error.format()._errors[0]);
+      return { error: true };
     }
   }
 
   function checkName() {
-    let symbols = /[^a-zA-Z0-9\s]/;
-    let name = nameInput.current?.value;
+    const name = nameInput.current?.value;
+    const result = usernameSchema.safeParse(name);
 
-    if (
-      name === "" ||
-      name == null ||
-      name == undefined ||
-      typeof name !== "string"
-    ) {
-      setNameError("Username required");
-      return { error: true };
-    } else if (name.length < 5 || name.length > 25) {
-      setNameError("Username must be between 5 and 25 characters");
-      return { error: true };
-    } else if (name.includes(" ")) {
-      setNameError("Spaces not allowed");
-      return { error: true };
-    } else if (symbols.test(name)) {
-      setNameError("No symbols allowed");
-      return { error: true };
-    } else {
+    if (result.success) {
       setNameError("");
       return { error: false };
+    } else {
+      setNameError(result.error.format()._errors[0]);
+      return { error: true };
     }
   }
 
@@ -138,20 +69,18 @@ const SignUpForm = () => {
         email: email,
       }),
     });
-    const data = await res.json()
-    if(data.nameDuplicate) {
-      errorToast(`Username ${name} is already in use`)
-      if(data.emailDuplicate) {
-        errorToast(`Email ${email} is already in use`)
+    const data = await res.json();
+    if (data.nameDuplicate) {
+      errorToast(`Username ${name} is already in use`);
+      if (data.emailDuplicate) {
+        errorToast(`Email ${email} is already in use`);
       }
-      return false
-    }
-    else if(data.emailDuplicate) {
-      errorToast(`Email ${email} is already in use`)
-      return false
-    }
-    else {
-      return true
+      return false;
+    } else if (data.emailDuplicate) {
+      errorToast(`Email ${email} is already in use`);
+      return false;
+    } else {
+      return true;
     }
   }
 
@@ -165,7 +94,15 @@ const SignUpForm = () => {
       !checkPassword()?.error &&
       !checkName()?.error
     ) {
-      if(await checkDuplicate(nameInput.current?.value || "", emailInput.current?.value || "")) {
+      if (
+        await checkDuplicate(
+          nameInput.current?.value || "",
+          emailInput.current?.value || ""
+        )
+      ) {
+        const element = passwordInput.current?.firstChild as HTMLDivElement;
+        let innerElement = element.firstChild as HTMLInputElement;
+        password.current = innerElement.value;
         setSubmitted(true);
       }
     } else {
@@ -202,12 +139,9 @@ const SignUpForm = () => {
             {emailError !== "" && (
               <div className={styles.error}>{emailError}</div>
             )}
-            <input
-              onChange={() => checkPassword()}
-              ref={passwordInput}
-              type="password"
-              placeholder="Password"
-            />
+            <div onChange={() => checkPassword()} ref={passwordInput}>
+              <Password />
+            </div>
             {passwordError !== "" && (
               <div className={styles.error}>{passwordError}</div>
             )}
@@ -228,7 +162,7 @@ const SignUpForm = () => {
           <VerificationCodeForm
             ready={submitted}
             name={nameInput.current?.value}
-            password={passwordInput.current?.value}
+            password={password.current}
             email={emailInput.current?.value}
           />
           <button

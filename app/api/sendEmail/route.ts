@@ -6,15 +6,16 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
 
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.hostinger.com",
+    secure: true,
     auth: {
-      user: "noreply4313@gmail.com",
+      user: "admin@taskmasterapp.com",
       pass: process.env.GMAIL_PASSWORD
     },
   });
 
   const mailOptions = {
-    from: "noreply4313@gmail.com",
+    from: "admin@taskmasterapp.com",
     to: body.email,
     subject: "TaskMaster: Verification Code",
     text: `Verification Code: ${decryptString(body.code, true)}`,
