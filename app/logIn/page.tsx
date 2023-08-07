@@ -92,26 +92,35 @@ const Page = () => {
               ></Image>
               <h1 className={styles.title}>TaskMaster</h1>
             </div>
-                <GoogleLogin
-                  onSuccess={(credentialResponse) => {
-                    signUpWithGoogle(credentialResponse);
-                  }}
-                  onError={() => {
-                    console.log("Login Failed");
-                  }}
-                  text="signup_with"
-                  type="standard"
-                  width={350}
-                />
-            <form style={{marginTop: '30px'}} className={styles.form} onSubmit={submit}>
-              <input autoComplete="off" name="Username" type="text" placeholder="Username/Email" />
+            <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                signUpWithGoogle(credentialResponse);
+              }}
+              onError={() => {
+                console.log("Login Failed");
+              }}
+              text="signup_with"
+              type="standard"
+              width={350}
+            />
+            <form
+              style={{ marginTop: "30px" }}
+              className={styles.form}
+              onSubmit={submit}
+            >
+              <input
+                autoComplete="off"
+                name="Username"
+                type="text"
+                placeholder="Username/Email"
+              />
               <FormPassword style={style} />
               <p onClick={redirect}>Forgot password?</p>
               <label className={styles.terms}>
-              By clicking Log In, you agree to our{" "}
-              <Link href="/privacy-policy">Privacy policy</Link> and{" "}
-              <Link href="/terms-and-conditons">Terms of service</Link>
-            </label>
+                By clicking Log In, you agree to our{" "}
+                <Link href="/privacy-policy">Privacy policy</Link> and{" "}
+                <Link href="/terms-and-conditons">Terms of service</Link>
+              </label>
               <input type="Submit" />
             </form>
             <div className={styles.account}>

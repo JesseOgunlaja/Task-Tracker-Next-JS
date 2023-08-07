@@ -20,7 +20,7 @@ const UserSchema = new mongoose.Schema({
       priority: { type: String, required: true },
     },
   ],
-  twoFactorAuth: { type: Boolean, required: true }
+  twoFactorAuth: { type: Boolean, required: true },
 });
 
 let isConnected = false;

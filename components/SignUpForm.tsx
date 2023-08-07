@@ -86,18 +86,19 @@ const SignUpForm = () => {
     }
   }
   async function submit(e: FormEvent<HTMLFormElement>) {
-    
-      function checkCheckBox() {
-        console.log("hi")
-        if(termsCheckbox.current?.checked) {
-          return { error: false }
-        }
-        else {
-          errorToast("To proceed, please review and agree to our Terms of Service and Privacy Policy by checking the box below", 10000)
-          return { error: true }
-        }
+    function checkCheckBox() {
+      console.log("hi");
+      if (termsCheckbox.current?.checked) {
+        return { error: false };
+      } else {
+        errorToast(
+          "To proceed, please review and agree to our Terms of Service and Privacy Policy by checking the box below",
+          10000,
+        );
+        return { error: true };
       }
-    
+    }
+
     e.preventDefault();
     if (
       !checkCheckBox().error &&
@@ -111,7 +112,7 @@ const SignUpForm = () => {
       if (
         await checkDuplicate(
           nameInput.current?.value || "",
-          emailInput.current?.value || ""
+          emailInput.current?.value || "",
         )
       ) {
         const element = passwordInput.current?.firstChild as HTMLDivElement;
@@ -140,7 +141,7 @@ const SignUpForm = () => {
     if (data.message === "Success") {
       window.location.href = window.location.href.replace(
         window.location.pathname,
-        "/dashboard"
+        "/dashboard",
       );
     }
     if (data.message === "Email in use") {
@@ -198,7 +199,13 @@ const SignUpForm = () => {
               Do you agree with our{" "}
               <Link href="/privacy-policy">Privacy policy</Link> and{" "}
               <Link href="/terms-and-conditons">Terms of service</Link>
-              <input type="checkbox" name="terms" id="terms" ref={termsCheckbox} className={styles.checkbox} />
+              <input
+                type="checkbox"
+                name="terms"
+                id="terms"
+                ref={termsCheckbox}
+                className={styles.checkbox}
+              />
             </label>
             <input type="submit" />
           </form>

@@ -36,9 +36,9 @@ const ProfileSettings = () => {
           name: username,
         }),
       });
-      const data = await res.json()
-      if(data.message === "Success") {
-        successToast("Success")
+      const data = await res.json();
+      if (data.message === "Success") {
+        successToast("Success");
       }
     }
   }
@@ -67,12 +67,12 @@ const ProfileSettings = () => {
             newPassword: newPassword1,
           }),
         });
-        const data = await res.json()
-        if(data.message === "Invalid credentials") {
-          errorToast("Invalid credentials")
+        const data = await res.json();
+        if (data.message === "Invalid credentials") {
+          errorToast("Invalid credentials");
         }
-        if(data.message === "Success") {
-          successToast("Success")
+        if (data.message === "Success") {
+          successToast("Success");
         }
       }
     }
@@ -82,24 +82,23 @@ const ProfileSettings = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
-    const email = formValues.newEmail
-    const result = emailSchema.safeParse(email)
-    if(!result.success) {
-      errorToast(result.error.format()._errors[0])
-    }
-    else {
+    const email = formValues.newEmail;
+    const result = emailSchema.safeParse(email);
+    if (!result.success) {
+      errorToast(result.error.format()._errors[0]);
+    } else {
       const res = await fetch("/api/settingsChange", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email
+          email,
         }),
       });
-      const data = await res.json()
-      if(data.message === "Success") {
-        successToast("Success")
+      const data = await res.json();
+      if (data.message === "Success") {
+        successToast("Success");
       }
     }
   }
@@ -118,9 +117,9 @@ const ProfileSettings = () => {
           twoFactorAuth: input.checked,
         }),
       });
-      const data = await res.json()
-      if(data.message === "Success") {
-        successToast("Success")
+      const data = await res.json();
+      if (data.message === "Success") {
+        successToast("Success");
       }
     }
   }
