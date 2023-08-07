@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     const newUser = await user.save();
     const uuid = uuidv4();
     await fetch(
-      `https://desired-orca-41910.upstash.io/set/${newUser._id}/${uuid}`,
+      `${process.env.REDIS_URL}/set/${newUser._id}/${uuid}`,
       {
         headers: {
           Authorization:
