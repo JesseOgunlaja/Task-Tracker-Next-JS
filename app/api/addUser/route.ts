@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       {
         headers: {
           Authorization:
-            `Bearer ${process.env.REDIS_URL}`,
+            `Bearer ${process.env.REDIS_TOKEN}`,
         },
       },
     );
