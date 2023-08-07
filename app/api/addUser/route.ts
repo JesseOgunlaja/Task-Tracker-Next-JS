@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     email: body.email.toLowerCase(),
     password: await bcrypt.hash(body.password, 10),
     tasks: [],
-    twoFactorAuth: false
+    twoFactorAuth: false,
   });
   try {
     const expirationDate = new Date(new Date().getTime() - 1000);
@@ -52,27 +52,23 @@ export async function POST(req: NextRequest) {
     });
     const newUser = await user.save();
     const uuid = uuidv4();
-    await fetch(
-      `${process.env.REDIS_URL}/set/${newUser._id}/${uuid}`,
-      {
-        headers: {
-          Authorization:
-            `Bearer ${process.env.REDIS_TOKEN}`,
-        },
+    await fetch(`${process.env.REDIS_URL}/set/${newUser._id}/${uuid}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
       },
-    );
+    });
     return NextResponse.json({ newUser, message: "Success" }, { status: 201 });
   } catch (error: any) {
     if (error.message.includes("duplicate")) {
       if (error.message.includes("email")) {
         return NextResponse.json(
           { message: `Duplicate email` },
-          { status: 400 },
+          { status: 400 }
         );
       } else if (error.message.includes("name")) {
         return NextResponse.json(
           { message: `Duplicate name` },
-          { status: 400 },
+          { status: 400 }
         );
       }
     } else {
