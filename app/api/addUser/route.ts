@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       {
         headers: {
           Authorization:
-            "Bearer AaO2ASQgOGQ1YzkxOWUtZmJhMS00ZjU0LWFhZmItMzJlZmI1ZDE3ODI0OWZjOWNlZDI5NGQzNDgzMGIxM2Y0ZmYxYTdkNDgwNzI=",
+            `Bearer ${process.env.REDIS_URL}`,
         },
       },
     );
