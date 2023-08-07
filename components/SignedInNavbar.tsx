@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import styles from "@/styles/nav.module.css";
+import styles from "@/styles/signedInNav.module.css";
 import Image from "next/image";
 
 const SignedInNavbar = () => {
@@ -10,10 +10,14 @@ const SignedInNavbar = () => {
 
   return (
     <div>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+      ></link>
       <nav className={styles.nav}>
         <ul>
           <li>
-            <Link href="/dashboard" className={styles.website}>
+            <Link href="/" className={styles.website}>
               <Image
                 className={styles.image}
                 priority
@@ -23,6 +27,19 @@ const SignedInNavbar = () => {
                 width={35}
               ></Image>{" "}
               TaskMaster
+            </Link>
+          </li>
+          <li>
+            <Link href="/dashboard">Dashboard</Link>
+          </li>
+          <li className={styles.logout}>
+            <Link href="/api/logout">Logout</Link>
+          </li>
+          <li>
+            <Link href="/settings">
+              <i id={styles.faIcon} className="fa">
+                &#xf013;
+              </i>
             </Link>
           </li>
           <li className={styles.bar}>

@@ -1,22 +1,21 @@
-"use client"
+"use client";
 
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import styles from "@/styles/page.module.css";
 import Link from "next/link";
 import Image from "next/image";
 import OverallNav from "@/components/OverallNav";
 
-
-const page = () => {
+const Page = () => {
   useEffect(() => {
     async function connect() {
-      await fetch("/api/connect")
+      await fetch("/api/connect");
     }
-    connect()
-  }, [])
+    connect();
+  }, []);
   return (
     <>
-    <OverallNav/>
+      <OverallNav />
       <div className={styles.container}>
         <h1 className={styles.title}>Organize yourself, and your life.</h1>
         <p className={styles.paragraph}>
@@ -63,4 +62,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

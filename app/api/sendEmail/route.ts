@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     secure: true,
     auth: {
       user: "admin@taskmasterapp.com",
-      pass: process.env.GMAIL_PASSWORD
+      pass: process.env.GMAIL_PASSWORD,
     },
   });
 
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     await transporter.sendMail(mailOptions);
     return NextResponse.json(
       { message: `Message sent succesfully` },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     return new Response(`${error}`, { status: 500 });

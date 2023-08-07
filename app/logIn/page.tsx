@@ -1,46 +1,15 @@
 "use client";
 
 import OverallNav from "@/components/OverallNav";
-import Password from "@/components/Password";
+import FormPassword from "@/components/FormPassword";
 import styles from "@/styles/logIn.module.css";
-import { errorToast, promiseToast, successToast } from "@/utils/toast";
+import { errorToast, promiseToast } from "@/utils/toast";
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useEffect } from "react";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
-const { openDB } = require("idb");
-
-// Function to initialize and open the IndexedDB database
-async function initDB() {
-  // Specify the database name and version
-  const dbName = "my-db";
-  const dbVersion = 1;
-
-  // Open the database
-  return await openDB(dbName, dbVersion, {
-    upgrade(db: any) {
-      // Create an object store called 'data' with an auto-incrementing key
-      if (!db.objectStoreNames.contains("data")) {
-        db.createObjectStore("data", { autoIncrement: true });
-      }
-    },
-  });
-}
-
-async function clearAllData() {
-  const db = await initDB();
-  const tx = db.transaction("data", "readwrite");
-  const store = tx.objectStore("data");
-  await store.clear();
-}
-
-const page = () => {
-  useEffect(() => {
-    async function deleteData() {
-      clearAllData()
-    }
-    deleteData()
-  })
+const Page = () => {
   useEffect(() => {
     async function connect() {
       await fetch("/api/connect");
@@ -70,51 +39,90 @@ const page = () => {
         error: "Invalid credentials",
       };
       promiseToast(fetchUrl, fetchOptions, message, () =>
-        window.location.reload()
+        window.location.reload(),
       );
     }
   }
 
   function redirect() {
-    window.location.href = window.location.href
-      .replace(window.location.pathname, "/reset-password")
+    window.location.href = window.location.href.replace(
+      window.location.pathname,
+      "/reset-password",
+    );
   }
 
   const style = {
     width: "350px",
-    "marginBottom": "0px"
+    marginBottom: "0px",
+  };
+
+  async function signUpWithGoogle(credentials: any) {
+    const res = await fetch("/api/googleLogin", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        credentials: credentials,
+      }),
+    });
+    const data = await res.json();
+    if (data.message === "Success") {
+      window.location.reload();
+    }
+    if (data.message === "Email in use") {
+      errorToast("Email isn't registered with google");
+    }
   }
 
   return (
     <>
-      <OverallNav />
-      <div className={styles.page}>
-        <title>Log in</title>
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <Image
-              className={styles.logo}
-              src="/favicon.ico"
-              alt="Website logo"
-              height={45}
-              width={45}
-            ></Image>
-            <h1 className={styles.title}>TaskMaster</h1>
-          </div>
-          <form className={styles.form} onSubmit={submit}>
-            <input name="Username" type="text" placeholder="Username/Email" />
-            <Password style={style}/>
-            <p onClick={redirect}>Forgot password?</p>
-            <input type="Submit" />
-          </form>
-          <div className={styles.account}>
-            <p>Don't have an account?</p>
-            <Link href="signUp">Sign up now</Link>
+      <GoogleOAuthProvider clientId="127574879175-5f5ath1lrnqnc83t4tntdv30i8s92amu.apps.googleusercontent.com">
+        <OverallNav />
+        <div className={styles.page}>
+          <title>Log in</title>
+          <div className={styles.container}>
+            <div className={styles.header}>
+              <Image
+                className={styles.logo}
+                src="/favicon.ico"
+                alt="Website logo"
+                height={45}
+                width={45}
+              ></Image>
+              <h1 className={styles.title}>TaskMaster</h1>
+            </div>
+                <GoogleLogin
+                  onSuccess={(credentialResponse) => {
+                    signUpWithGoogle(credentialResponse);
+                  }}
+                  onError={() => {
+                    console.log("Login Failed");
+                  }}
+                  text="signup_with"
+                  type="standard"
+                  width={350}
+                />
+            <form style={{marginTop: '30px'}} className={styles.form} onSubmit={submit}>
+              <input autoComplete="off" name="Username" type="text" placeholder="Username/Email" />
+              <FormPassword style={style} />
+              <p onClick={redirect}>Forgot password?</p>
+              <label className={styles.terms}>
+              By clicking Log In, you agree to our{" "}
+              <Link href="/privacy-policy">Privacy policy</Link> and{" "}
+              <Link href="/terms-and-conditons">Terms of service</Link>
+            </label>
+              <input type="Submit" />
+            </form>
+            <div className={styles.account}>
+              <p>Don&apos;t have an account?</p>
+              <Link href="signUp">Sign up now</Link>
+            </div>
           </div>
         </div>
-      </div>
+      </GoogleOAuthProvider>
     </>
   );
 };
 
-export default page;
+export default Page;

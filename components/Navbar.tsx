@@ -16,8 +16,8 @@ const Navbar = () => {
             <Link href="/" className={styles.website}>
               <Image
                 className={styles.image}
-          priority
-          src="/favicon.ico"
+                priority
+                src="/favicon.ico"
                 alt=""
                 height={35}
                 width={35}

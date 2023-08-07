@@ -1,0 +1,47 @@
+.container {
+  min-height: 100vh;
+  padding: 0px 20px 20px 20px;
+  width: 90vw;
+  transform: translateX(200px);
+}
+
+.container > h1 {
+  display: inline;
+}
+
+.container > p {
+  font-size: 30px;
+  display: inline;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 300px;
+}
+
+.form > input {
+  height: 25px;
+  width: 250px;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 17.5px;
+}
+
+.form > label {
+  font-size: 18px;
+}
+
+.form > [type="submit"] {
+  margin-top: 10px;
+  background: darkblue;
+  color: white;
+  margin-bottom: 10px;
+  cursor: pointer;
+  height: 50px;
+  width: 250px;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 17.5px;
+}

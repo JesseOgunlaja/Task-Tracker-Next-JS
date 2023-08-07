@@ -11,7 +11,12 @@
 }
 
 .logo {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  margin-right: 5px;
+}
+
+.form > div {
+  padding: 0px;
 }
 
 .container {
@@ -53,8 +58,13 @@
   margin-bottom: 15px;
 }
 
+.terms {
+  font-size: 15px;
+  text-align: center;
+}
+
 .form > [type="submit"] {
-  margin-top: 35px;
+  /* margin-top: 35px; */
   background: darkblue;
   color: white;
   margin-bottom: 40px;
@@ -76,8 +86,8 @@
   text-decoration: none;
 }
 
-  @media (max-width: 400px) {
-    .container {
-      width: 100vw;
-    }
+@media (max-width: 400px) {
+  .container {
+    width: 100vw;
   }
+}

@@ -27,7 +27,7 @@ const rgbDataURL = (r: number, g: number, b: number) =>
 const page = () => {
   return (
     <>
-    <OverallNav/>
+      <OverallNav />
       <main className={styles.container}>
         <h3 className={styles.title}>Why choose TaskMaster?</h3>
         <p className={styles.text}>
@@ -52,7 +52,7 @@ const page = () => {
             <p className={styles.factTitle}>Keep it together</p>
             <p className={styles.factText}>
               Store tasks relating to different things in different folders. So
-              it's right there when you need it
+              it&apos;s right there when you need it
             </p>
           </div>
           <div className={styles.fact}>
@@ -99,8 +99,8 @@ const page = () => {
             ></Image>
             <p className={styles.factTitle}>Be creative</p>
             <p className={styles.factText}>
-              There's so much more than just text you can add to your notes,
-              such as photos and more.
+              There&apos;s so much more than just text you can add to your
+              notes, such as photos and more.
             </p>
           </div>
         </div>

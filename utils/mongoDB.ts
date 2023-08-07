@@ -1,6 +1,4 @@
-import { useEffect } from "react";
-
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 const { Types } = mongoose.Schema;
 
 const UserSchema = new mongoose.Schema({
@@ -15,34 +13,32 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   tasks: [
     {
-      title: { type: String },
-      date: { type: String },
-      type: { type: String },
-      description: { type: String },
-      priority: { type: String },
+      title: { type: String, required: true },
+      date: { type: String, required: true },
+      type: { type: String, required: true },
+      description: { type: String, required: true },
+      priority: { type: String, required: true },
     },
   ],
+  twoFactorAuth: { type: Boolean, required: true }
 });
-
 
 let isConnected = false;
 let User: any;
 
 export const connectToDB = async () => {
-  
-  if(isConnected) {
+  if (isConnected) {
     return User;
-  }
-  else {
+  } else {
     User = mongoose.models.User || mongoose.model("User", UserSchema);
   }
 
   await mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  })
-  
+  });
+
   isConnected = true;
 
-  return User
-}
+  return User;
+};

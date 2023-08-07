@@ -18,11 +18,15 @@ export async function PATCH(request: NextRequest) {
     password: await bcrypt.hash(body.password, 10),
   };
   try {
-    const result = await User.updateOne(
-      { email: body.email },
-      { $set: updateFields }
-    );
-    return NextResponse.json({ message: "Success" }, { status: 200 });
+    if ((await User.findOne({ email: body.email })).password !== "GMAIL") {
+      await User.updateOne({ email: body.email }, { $set: updateFields });
+      return NextResponse.json({ message: "Success" }, { status: 200 });
+    } else {
+      return NextResponse.json(
+        { message: "Can't change password for GMAIL account" },
+        { status: 400 },
+      );
+    }
   } catch (err) {
     return NextResponse.json({ error: `${err}` }, { status: 400 });
   }

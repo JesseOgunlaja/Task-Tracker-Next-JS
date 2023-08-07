@@ -1,4 +1,4 @@
-import styles from "@/styles/signUp.module.css";
+import styles from "@/styles/signingUp.module.css";
 import { decryptString } from "@/utils/decryptString";
 import { encryptString } from "@/utils/encryptString";
 import { errorToast, promiseToast, successToast } from "@/utils/toast";
@@ -7,12 +7,11 @@ const jwt = require("jsrsasign");
 
 const SignUpForm = (props: any) => {
   const [code, setCode] = useState<String>(
-    encryptString(String(Math.floor(Math.random() * 1000000000)), true)
+    encryptString(String(Math.floor(Math.random() * 1000000000)), true),
   );
   const codeInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    console.log(props.password);
     async function sendEmail() {
       if (codeInput.current) {
         codeInput.current.value = "";
@@ -40,6 +39,7 @@ const SignUpForm = (props: any) => {
     if (props.ready) {
       sendEmail();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.ready]);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
@@ -69,8 +69,8 @@ const SignUpForm = (props: any) => {
         () =>
           (window.location.href = window.location.href.replace(
             window.location.pathname,
-            "/logIn"
-          ))
+            "/logIn",
+          )),
       );
     } else {
       errorToast("Incorrect code");

@@ -1,9 +1,9 @@
 import styles from "@/styles/reset-password.module.css";
-import Password from "./Password";
+import Password from "./FormPassword";
 import { errorToast } from "@/utils/toast";
 import { FormEvent, useRef, useState } from "react";
 const jwt = require("jsrsasign");
-import { z } from 'zod'
+import { z } from "zod";
 
 const passwordSchema = z
   .string()
@@ -14,8 +14,7 @@ const passwordSchema = z
     message: "Password must be less than 64 characters",
   })
   .regex(/^(?=.*[\W_])[a-zA-Z0-9\W_]+$/, {
-    message:
-      "String must contain at least one symbol",
+    message: "String must contain at least one symbol",
   });
 
 const ChangePassword = (props: any) => {
@@ -51,7 +50,7 @@ const ChangePassword = (props: any) => {
       });
       window.location.href = window.location.href.replace(
         window.location.pathname,
-        "/logIn"
+        "/logIn",
       );
     }
   }

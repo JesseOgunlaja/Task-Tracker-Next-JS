@@ -9,7 +9,7 @@
 
 .header {
   display: flex;
-  margin-bottom: 100px;
+  margin-bottom: 80px;
 }
 
 .logo {
@@ -41,7 +41,8 @@
 }
 
 @media (max-width: 400px) {
-  .container,.backButton {
+  .container,
+  .backButton {
     width: 100vw;
   }
 }
@@ -65,6 +66,8 @@
 .form {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 20px;
 }
 
@@ -107,4 +110,19 @@
   margin: 0px;
   color: red;
   font-size: 15px;
+}
+
+.google {
+  padding: 0px;
+  margin-bottom: 25px;
+}
+
+.terms {
+  font-size: 15px;
+  width: 95% !important;
+  text-align: center;
+}
+
+.checkbox {
+  transform: translate(5px,3px);
 }

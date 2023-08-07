@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import styles from "@/styles/password.module.css";
+import styles from "@/styles/formPassword.module.css";
 
-const Password = (props: any) => {
+const FormPassword = (props: any) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   function togglePasswordVisibility() {
@@ -18,11 +18,15 @@ const Password = (props: any) => {
         autoComplete="off"
         type={isPasswordVisible ? "text" : "password"}
       />
-      <button type="button" onClick={togglePasswordVisibility} className={styles.show}>
+      <button
+        type="button"
+        onClick={togglePasswordVisibility}
+        className={styles.show}
+      >
         {isPasswordVisible ? "Hide" : "Show"}
       </button>
     </div>
   );
 };
 
-export default Password;
+export default FormPassword;

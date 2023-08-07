@@ -14,7 +14,9 @@
   gap: 30px;
 }
 
-.tasks > * {
+.tasks > *,
+.tasks > * > * {
+  margin-bottom: 30px;
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -52,14 +54,34 @@
   justify-content: space-between;
   align-items: center;
 }
-
 .todo,
 .ongoing,
 .done {
-  min-width: 25vw;
+  width: 27.5vw;
   padding: 20px;
   background: #272938;
-  margin-bottom: 25px;
+  margin-bottom: 0px;
+  height: 80vh;
+  max-height: 80vh;
+  overflow-y: scroll;
+}
+
+.date {
+  padding: 15px;
+  font-size: 20px;
+  border-radius: 5px;
+  width: 350px;
+}
+
+#icon {
+  color: #222;
+  font-size: 40px;
+}
+
+.todo::-webkit-scrollbar,
+.ongoing::-webkit-scrollbar,
+.done::-webkit-scrollbar {
+  display: none;
 }
 
 #low {
@@ -139,7 +161,7 @@
 
 .back {
   border-radius: 0px 0px 0px 10px;
-  background: white
+  background: white;
 }
 
 .form > input,
@@ -154,11 +176,11 @@
 .form > textarea {
   width: 350px;
   border-radius: 5px;
-  padding: 15px;
-  font-size: 20px;
+  font-size: 17.5px;
   margin-bottom: 20px;
-  height: 100px;
-  resize: vertical
+  height: 55px;
+  resize: vertical;
+  padding: 5px;
 }
 
 .form > label {
@@ -203,7 +225,7 @@
 @media (min-height: 100vw) {
   .dialog > :nth-child(1) {
     min-height: 750px;
-    transform: translateY(30px)
+    transform: translateY(30px);
   }
   .dialog {
     overflow-y: scroll;
@@ -215,7 +237,7 @@
   .bottomButton > * {
     width: 50vw;
     border-radius: 0px;
-    transform: translateY(20px)
+    transform: translateY(20px);
   }
   .todo,
   .ongoing,

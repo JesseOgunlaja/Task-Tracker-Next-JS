@@ -14,18 +14,18 @@ export async function POST(request: NextRequest) {
   const name = body.name;
   let response: ObjectResponse = {};
 
-    let user = await User.findOne({ name: name.toUpperCase() })
-    if (user == null) {
-      response.nameDuplicate = false;
-    } else {
-      response.nameDuplicate = true;
-    }
-    user = await User.findOne({ email: email.toLowerCase() })
-    if (user == null) {
-      response.emailDuplicate = false;
-    } else {
-      response.emailDuplicate = true;
-    }
-  
-    return NextResponse.json(response, { status: 200 });
+  let user = await User.findOne({ name: name.toUpperCase() });
+  if (user == null) {
+    response.nameDuplicate = false;
+  } else {
+    response.nameDuplicate = true;
+  }
+  user = await User.findOne({ email: email.toLowerCase() });
+  if (user == null) {
+    response.emailDuplicate = false;
+  } else {
+    response.emailDuplicate = true;
+  }
+
+  return NextResponse.json(response, { status: 200 });
 }

@@ -1,13 +1,15 @@
-import styles from "@/styles/signUp.module.css";
+import styles from "@/styles/signingUp.module.css";
 import VerificationCodeForm from "@/components/VerificationCodeForm";
 import Link from "next/link";
 import { FormEvent, useRef, useState } from "react";
 import { errorToast } from "@/utils/toast";
-import Password from "./Password";
+import FormPassword from "./FormPassword";
 import { emailSchema, passwordSchema, usernameSchema } from "@/utils/zod";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 const SignUpForm = () => {
   const password = useRef("");
+  const termsCheckbox = useRef<HTMLInputElement>(null);
   const [nameError, setNameError] = useState<String>("");
   const [emailError, setEmailError] = useState<String>("");
   const [passwordError, setPasswordError] = useState<String>("");
@@ -83,10 +85,22 @@ const SignUpForm = () => {
       return true;
     }
   }
-
   async function submit(e: FormEvent<HTMLFormElement>) {
+    
+      function checkCheckBox() {
+        console.log("hi")
+        if(termsCheckbox.current?.checked) {
+          return { error: false }
+        }
+        else {
+          errorToast("To proceed, please review and agree to our Terms of Service and Privacy Policy by checking the box below", 10000)
+          return { error: true }
+        }
+      }
+    
     e.preventDefault();
     if (
+      !checkCheckBox().error &&
       emailError === "" &&
       nameError === "" &&
       passwordError === "" &&
@@ -112,10 +126,45 @@ const SignUpForm = () => {
     }
   }
 
+  async function signUpWithGoogle(credentials: any) {
+    const res = await fetch("/api/googleLogin", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        credentials: credentials,
+      }),
+    });
+    const data = await res.json();
+    if (data.message === "Success") {
+      window.location.href = window.location.href.replace(
+        window.location.pathname,
+        "/dashboard"
+      );
+    }
+    if (data.message === "Email in use") {
+      errorToast("Email isn't registered with Google");
+    }
+  }
+
   return (
     <>
-      <>
+      <GoogleOAuthProvider clientId="127574879175-5f5ath1lrnqnc83t4tntdv30i8s92amu.apps.googleusercontent.com">
         <>
+          <div className={styles.google}>
+            <GoogleLogin
+              onSuccess={(credentialResponse) => {
+                signUpWithGoogle(credentialResponse);
+              }}
+              onError={() => {
+                console.log("Login Failed");
+              }}
+              text="signup_with"
+              type="standard"
+              width={350}
+            />
+          </div>
           <form
             className={styles.form}
             style={!submitted ? { display: "flex" } : { display: "none" }}
@@ -140,11 +189,17 @@ const SignUpForm = () => {
               <div className={styles.error}>{emailError}</div>
             )}
             <div onChange={() => checkPassword()} ref={passwordInput}>
-              <Password />
+              <FormPassword />
             </div>
             {passwordError !== "" && (
               <div className={styles.error}>{passwordError}</div>
             )}
+            <label className={styles.terms}>
+              Do you agree with our{" "}
+              <Link href="/privacy-policy">Privacy policy</Link> and{" "}
+              <Link href="/terms-and-conditons">Terms of service</Link>
+              <input type="checkbox" name="terms" id="terms" ref={termsCheckbox} className={styles.checkbox} />
+            </label>
             <input type="submit" />
           </form>
           <div
@@ -172,7 +227,7 @@ const SignUpForm = () => {
             Back
           </button>
         </div>
-      </>
+      </GoogleOAuthProvider>
     </>
   );
 };

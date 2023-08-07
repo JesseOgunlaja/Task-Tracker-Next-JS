@@ -1,8 +1,23 @@
 import { connectToDB } from "@/utils/mongoDB";
-import { emailSchema, passwordSchema, tasksSchema, usernameSchema } from "@/utils/zod";
+import {
+  emailSchema,
+  passwordSchema,
+  tasksSchema,
+  usernameSchema,
+} from "@/utils/zod";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-const bcrypt = require("bcrypt"); 
+const bcrypt = require("bcrypt");
+
+function switchDateFormat(dateString: string) {
+  const parts = dateString.split("/");
+
+  const day = parts[1];
+  const month = parts[0];
+  const year = parts[2];
+
+  return `${day}/${month}/${year}`;
+}
 
 export async function GET() {
   const User = await connectToDB();
@@ -29,40 +44,74 @@ export async function PATCH(req: NextRequest) {
 
     const updateFields: any = {};
 
+    const gmailUser = (await User.findById(id)).password === "GMAIL";
+
     if (name) {
-      const result = usernameSchema.safeParse(name);
-      if (result.success === false) {
-        const error = result.error.format()._errors[0];
-        return NextResponse.json({ error: error }, { status: 400 });
+      if (gmailUser) {
+        return NextResponse.json(
+          { message: "Can't change name for Gmail account" },
+          { status: 400 },
+        );
       } else {
-        updateFields.name = name.toUpperCase();
+        const result = usernameSchema.safeParse(name);
+        if (result.success === false) {
+          const error = result.error.format()._errors[0];
+          return NextResponse.json({ error: error }, { status: 400 });
+        } else {
+          updateFields.name = name.toUpperCase();
+        }
       }
     }
     if (email) {
-      const result = emailSchema.safeParse(email);
-      if (result.success === false) {
-        const error = result.error.format()._errors[0];
-        return NextResponse.json({ error: error }, { status: 400 });
+      if (gmailUser) {
+        return NextResponse.json(
+          { message: "Can't change email for Gmail account" },
+          { status: 400 },
+        );
       } else {
-        updateFields.email = email;
+        const result = emailSchema.safeParse(email);
+
+        if (result.success === false) {
+          const error = result.error.format()._errors[0];
+          return NextResponse.json({ error: error }, { status: 400 });
+        } else {
+          updateFields.email = email;
+        }
       }
     }
     if (password) {
-      const result = passwordSchema.safeParse(password);
-      if (result.success === false) {
-        const error = result.error.format()._errors[0];
-        return NextResponse.json({ error: error }, { status: 400 });
+      if (gmailUser) {
+        return NextResponse.json(
+          { message: "Can't change password for Gmail account" },
+          { status: 400 },
+        );
       } else {
-        updateFields.password = await bcrypt.hash(password, 10);
+        const result = passwordSchema.safeParse(password);
+        if (result.success === false) {
+          const error = result.error.format()._errors[0];
+          return NextResponse.json({ error: error }, { status: 400 });
+        } else {
+          updateFields.password = await bcrypt.hash(password, 10);
+        }
       }
     }
     if (tasks) {
-      const result = tasksSchema.safeParse(tasks)
+      const newTasks = tasks.map((task: any) => {
+        task.date = switchDateFormat(task.date);
+        delete task._id;
+        return task;
+      });
+      const result = tasksSchema.safeParse(newTasks);
       if (result.success === false) {
-        const error = result.error.issues.map(issue => {return {error: issue.message}});
+        const error = result.error.issues.map((issue) => {
+          return { error: issue.message };
+        });
         return NextResponse.json({ errors: error }, { status: 400 });
       } else {
-        updateFields.tasks = tasks;
+        updateFields.tasks = newTasks.map((task: any) => {
+          task.date = switchDateFormat(task.date);
+          return task;
+        });
       }
     }
 

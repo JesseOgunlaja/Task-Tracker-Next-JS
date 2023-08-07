@@ -6,7 +6,7 @@ import styles from "@/styles/reset-password.module.css";
 import { errorToast } from "@/utils/toast";
 import { FormEvent, useRef, useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [validName, setValidName] = useState<boolean>(false);
   const email = useRef("");
   const name = useRef("");
@@ -53,7 +53,13 @@ const page = () => {
             <>
               <form onSubmit={submit} className={styles.form}>
                 <label htmlFor="username">Username</label>
-                <input autoFocus autoComplete="off" type="text" name="username" id="username" />
+                <input
+                  autoFocus
+                  autoComplete="off"
+                  type="text"
+                  name="username"
+                  id="username"
+                />
                 <input type="submit" />
               </form>
               <button onClick={redirect} className={styles.backButton}>
@@ -63,7 +69,12 @@ const page = () => {
           ) : (
             <>
               <CheckCode name={name.current} email={email.current} />
-              <button onClick={() => {setValidName(false)}} className={styles.backButton}>
+              <button
+                onClick={() => {
+                  setValidName(false);
+                }}
+                className={styles.backButton}
+              >
                 Back
               </button>
             </>
@@ -74,4 +85,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
