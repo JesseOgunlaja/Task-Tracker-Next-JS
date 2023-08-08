@@ -95,10 +95,6 @@ const ProfileSettings = () => {
     }
   }
 
-  window.onbeforeunload = () => {
-    window.scrollTo(0, 0);
-  };
-
   async function submitEmail(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
