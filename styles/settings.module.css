@@ -45,3 +45,9 @@
 .sideNav > :nth-child(1) {
   border-top: 2px solid white;
 }
+
+@media (min-height: 100vw) {
+  .sideNav {
+    display: none;
+  }
+}

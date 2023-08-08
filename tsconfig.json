@@ -29,7 +29,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "utils/decryptString.ts",
-    "utils/encryptString.ts"
-, "next-sitemap.config.js"  ],
+    "utils/encryptString.ts",
+    "next-sitemap.config.js"
+  ],
   "exclude": ["node_modules"]
 }

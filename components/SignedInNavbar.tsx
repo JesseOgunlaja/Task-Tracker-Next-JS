@@ -64,17 +64,14 @@ const SignedInNavbar = () => {
         }
       >
         <div className={navShowing != null ? styles.phoneLinks : undefined}>
-          <Link onClick={() => setNavShowing(false)} href="/why-taskmaster">
-            Why TaskMaster?
+          <Link onClick={() => setNavShowing(false)} href="/dashboard">
+            Dashboard
           </Link>
-          <Link onClick={() => setNavShowing(false)} href="/features">
-            Features
+          <Link onClick={() => setNavShowing(false)} href="/api/logout">
+            Log out
           </Link>
-          <Link onClick={() => setNavShowing(false)} href="/signUp">
-            Sign up
-          </Link>
-          <Link onClick={() => setNavShowing(false)} href="/logIn">
-            Log In
+          <Link onClick={() => setNavShowing(false)} href="/settings">
+            Settings
           </Link>
         </div>
       </div>

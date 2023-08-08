@@ -8,11 +8,13 @@ import { emailSchema, passwordSchema, usernameSchema } from "@/utils/zod";
 import { errorToast, successToast } from "@/utils/toast";
 
 const ProfileSettings = () => {
-  let [user, setUser] = useState<any>(null);
-  let authForm = useRef<HTMLFormElement>(null);
-  let passwordForm = useRef<HTMLFormElement>(null);
-  let usernameForm = useRef<HTMLFormElement>(null);
-  let emailForm = useRef<HTMLFormElement>(null);
+  const [user, setUser] = useState<any>(null);
+  const authForm = useRef<HTMLFormElement>(null);
+  const passwordForm = useRef<HTMLFormElement>(null);
+  const usernameForm = useRef<HTMLFormElement>(null);
+  const emailForm = useRef<HTMLFormElement>(null);
+  const formSessions = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     async function getUser() {
       const res = await fetch("/api/user");
@@ -75,6 +77,7 @@ const ProfileSettings = () => {
           body: JSON.stringify({
             oldPassword: oldPassword,
             newPassword: newPassword1,
+            keepSessions: formSessions.current?.checked,
           }),
         });
         const data = await res.json();
@@ -85,12 +88,16 @@ const ProfileSettings = () => {
           passwordForm.current?.reset();
           successToast("Success");
         }
-        if(data.message === "Same") {
-          errorToast("This is already your password")
+        if (data.message === "Same") {
+          errorToast("This is already your password");
         }
       }
     }
   }
+
+  window.onbeforeunload = () => {
+    window.scrollTo(0, 0);
+  };
 
   async function submitEmail(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -173,6 +180,15 @@ const ProfileSettings = () => {
             <SettingsPassword name="newPassword1" />
             <label htmlFor="newPassword2">Confirm new password</label>
             <SettingsPassword name="newPassword2" />
+            <div>
+              <label htmlFor="sessions">Log out all sessions</label>
+              <input
+                type="checkbox"
+                ref={formSessions}
+                id="sessions"
+                name="sessions"
+              />
+            </div>
             <input type="submit" />
           </form>
           <p>Change email</p>
@@ -186,10 +202,8 @@ const ProfileSettings = () => {
             />
             <input type="submit" />
           </form>
+          <p>Two Factor authentication</p>
           <form ref={authForm} onSubmit={submitAuth} className={styles.form}>
-            <label style={{ display: "inline" }}>
-              Two Factor authentication
-            </label>
             <Checkbox checked={user.twoFactorAuth} />
             <input type="submit" />
           </form>

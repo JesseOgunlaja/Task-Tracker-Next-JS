@@ -1,5 +1,4 @@
 const CryptoJS = require("crypto-js");
-require("dotenv").config();
 
 const ENCRYPTION_CLIENT = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
 const ENCRYPTION_SERVER = process.env.ENCRYPTION_KEY;
@@ -9,6 +8,8 @@ export function decryptString(nameGiven: String, client: boolean) {
     nameGiven,
     client ? ENCRYPTION_CLIENT : ENCRYPTION_SERVER,
   ).toString(CryptoJS.enc.Utf8);
+  console.log(decrypted)
   const parsed = JSON.parse(decrypted);
+  console.log(parsed)
   return parsed.nameGiven;
 }

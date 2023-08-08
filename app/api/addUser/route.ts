@@ -63,12 +63,12 @@ export async function POST(req: NextRequest) {
       if (error.message.includes("email")) {
         return NextResponse.json(
           { message: `Duplicate email` },
-          { status: 400 }
+          { status: 400 },
         );
       } else if (error.message.includes("name")) {
         return NextResponse.json(
           { message: `Duplicate name` },
-          { status: 400 }
+          { status: 400 },
         );
       }
     } else {

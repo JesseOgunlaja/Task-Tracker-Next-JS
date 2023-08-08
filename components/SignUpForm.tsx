@@ -207,7 +207,7 @@ const SignUpForm = () => {
                 className={styles.checkbox}
               />
             </label>
-            <input type="submit" />
+            <input type="submit" value="Sign up" />
           </form>
           <div
             style={!submitted ? { display: "block" } : { display: "none" }}

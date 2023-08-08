@@ -29,6 +29,19 @@
   font-size: 17.5px;
 }
 
+.form > * > [for="sessions"] {
+  width: 175px;
+  display: inline;
+  font-size: 17.5px;
+}
+
+.form > * > [type="checkbox"] {
+  display: inline;
+  height: 15px;
+  width: 15px;
+  margin-left: 10px;
+}
+
 .form > label {
   font-size: 18px;
 }
@@ -44,4 +57,10 @@
   padding: 15px;
   border-radius: 5px;
   font-size: 17.5px;
+}
+
+@media (min-height: 100vw) {
+  .container {
+    transform: translateX(0px);
+  }
 }

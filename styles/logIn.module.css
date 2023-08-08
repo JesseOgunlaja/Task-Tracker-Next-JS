@@ -63,8 +63,26 @@
   text-align: center;
 }
 
+.form > * > p {
+  margin: 0px;
+  color: blue;
+  font-style: italic;
+  font-size: 17.5px;
+  margin: 0px;
+  padding: 0px;
+  cursor: pointer;
+  display: inline;
+}
+
+.form > * > [type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  margin-left: 6.5px;
+  margin-right: 6.5px;
+  transform: translateY(1.5px);
+}
+
 .form > [type="submit"] {
-  /* margin-top: 35px; */
   background: darkblue;
   color: white;
   margin-bottom: 40px;

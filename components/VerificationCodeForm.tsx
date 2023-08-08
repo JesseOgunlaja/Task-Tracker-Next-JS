@@ -1,14 +1,17 @@
 import styles from "@/styles/signingUp.module.css";
 import { decryptString } from "@/utils/decryptString";
 import { encryptString } from "@/utils/encryptString";
-import { errorToast, promiseToast, successToast } from "@/utils/toast";
+import { errorToast, promiseToast } from "@/utils/toast";
 import { FormEvent, useEffect, useRef, useState } from "react";
-const jwt = require("jsrsasign");
+import { disableReactDevTools } from "@fvilers/disable-react-devtools";
+import * as jose from "jose";
 
 const SignUpForm = (props: any) => {
-  const [code, setCode] = useState<String>(
-    encryptString(String(Math.floor(Math.random() * 1000000000)), true),
+  const code = encryptString(
+    String(Math.floor(Math.random() * 1000000000)),
+    true
   );
+
   const codeInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -16,19 +19,25 @@ const SignUpForm = (props: any) => {
       if (codeInput.current) {
         codeInput.current.value = "";
       }
-      const SECRET: String = process.env.NEXT_PUBLIC_SECRET_KEY || "";
+      const SECRET = new TextEncoder().encode(
+        process.env.NEXT_PUBLIC_SECRET_KEY
+      );
       const payload = {
         KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
         exp: Math.floor(Date.now() / 1000) + 5,
       };
+
       const header = { alg: "HS256", typ: "JWT" };
-      const sHeader = JSON.stringify(header);
-      const sPayload = JSON.stringify(payload);
-      const globalToken = jwt.jws.JWS.sign("HS256", sHeader, sPayload, SECRET);
+      const jwt = await new jose.SignJWT(payload)
+        .setProtectedHeader(header)
+        .setIssuedAt()
+        .setExpirationTime("5s")
+        .sign(SECRET);
+
       await fetch("/api/sendEmail", {
         method: "POST",
         headers: {
-          authorization: globalToken,
+          authorization: jwt,
         },
         body: JSON.stringify({
           email: props.email,
@@ -69,8 +78,8 @@ const SignUpForm = (props: any) => {
         () =>
           (window.location.href = window.location.href.replace(
             window.location.pathname,
-            "/logIn",
-          )),
+            "/logIn"
+          ))
       );
     } else {
       errorToast("Incorrect code");

@@ -242,7 +242,10 @@
   .todo,
   .ongoing,
   .done {
-    min-width: 90vw;
+    width: 90vw;
+    display: flex;
+    align-items: center;
+    overflow-x: hidden;
   }
   .container {
     transform: translateY(70px);
@@ -252,12 +255,17 @@
     flex-direction: column;
   }
   .task {
-    width: 90vw;
+    width: 85vw;
   }
   .page {
     margin: 0px;
   }
   @media (min-width: 600px) {
+    .todo,
+    .ongoing,
+    .done {
+      width: 55vw;
+    }
     .bottomButton > * {
       width: 250px;
     }

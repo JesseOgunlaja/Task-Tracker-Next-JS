@@ -1,4 +1,4 @@
 module.exports = {
-    siteUrl: 'https://taskmasterapp.com',
-    generateRobotsTxt: true,
-  }
+  siteUrl: "https://taskmasterapp.com",
+  generateRobotsTxt: true,
+};
