@@ -75,15 +75,19 @@
   .facts {
     flex-direction: column;
   }
+
   .fact {
     width: 90vw;
   }
+
   .factText {
     margin-bottom: 25px;
   }
+
   .container {
     padding: 10px;
   }
+  
   .text,
   .title {
     width: 95vw;
