@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next-sitemap",
+    "sitemap": "next-sitemap",
     "start": "next start -p 8000",
     "lint": "next lint",
     "format": "prettier --write \"./**/*.{js,ts,tsx,json,css}\""
@@ -37,6 +38,7 @@
     "mongoose": "^7.3.4",
     "next": "13.4.9",
     "next-auth": "^4.22.1",
+    "next-sitemap": "^4.1.8",
     "nodemailer": "^6.9.3",
     "react": "18.2.0",
     "react-datepicker": "^4.16.0",

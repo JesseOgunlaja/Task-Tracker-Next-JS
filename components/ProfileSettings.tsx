@@ -10,6 +10,9 @@ import { errorToast, successToast } from "@/utils/toast";
 const ProfileSettings = () => {
   let [user, setUser] = useState<any>(null);
   let authForm = useRef<HTMLFormElement>(null);
+  let passwordForm = useRef<HTMLFormElement>(null);
+  let usernameForm = useRef<HTMLFormElement>(null);
+  let emailForm = useRef<HTMLFormElement>(null);
   useEffect(() => {
     async function getUser() {
       const res = await fetch("/api/user");
@@ -38,7 +41,14 @@ const ProfileSettings = () => {
       });
       const data = await res.json();
       if (data.message === "Success") {
+        usernameForm.current?.reset();
         successToast("Success");
+      }
+      if (data.message === "Duplicate") {
+        errorToast("Username in use");
+      }
+      if (data.message === "Same") {
+        errorToast("This is already your username");
       }
     }
   }
@@ -72,7 +82,11 @@ const ProfileSettings = () => {
           errorToast("Invalid credentials");
         }
         if (data.message === "Success") {
+          passwordForm.current?.reset();
           successToast("Success");
+        }
+        if(data.message === "Same") {
+          errorToast("This is already your password")
         }
       }
     }
@@ -98,7 +112,14 @@ const ProfileSettings = () => {
       });
       const data = await res.json();
       if (data.message === "Success") {
+        emailForm.current?.reset();
         successToast("Success");
+      }
+      if (data.message === "Duplicate") {
+        errorToast("Email in use");
+      }
+      if (data.message === "Same") {
+        errorToast("This is already your email");
       }
     }
   }
@@ -131,13 +152,21 @@ const ProfileSettings = () => {
           <h1>Account</h1>
           <br />
           <p>Change username</p>
-          <form onSubmit={submitUsername} className={styles.form}>
+          <form
+            ref={usernameForm}
+            onSubmit={submitUsername}
+            className={styles.form}
+          >
             <label htmlFor="newName">New username</label>
             <input autoComplete="off" type="text" id="newName" name="newName" />
             <input type="submit" />
           </form>
           <p>Reset password</p>
-          <form onSubmit={submitNewPassword} className={styles.form}>
+          <form
+            onSubmit={submitNewPassword}
+            ref={passwordForm}
+            className={styles.form}
+          >
             <label htmlFor="oldPassword">Old password</label>
             <SettingsPassword name="oldPassword" />
             <label htmlFor="newPassword1">New password</label>
@@ -147,7 +176,7 @@ const ProfileSettings = () => {
             <input type="submit" />
           </form>
           <p>Change email</p>
-          <form onSubmit={submitEmail} className={styles.form}>
+          <form ref={emailForm} onSubmit={submitEmail} className={styles.form}>
             <label htmlFor="newEmail">New email</label>
             <input
               autoComplete="off"

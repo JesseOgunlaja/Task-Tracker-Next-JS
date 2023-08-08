@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://taskmasterapp.com
+
+# Sitemaps
+Sitemap: https://taskmasterapp.com/sitemap.xml
