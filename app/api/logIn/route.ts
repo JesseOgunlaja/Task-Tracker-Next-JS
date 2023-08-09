@@ -24,39 +24,101 @@ export async function POST(req: NextRequest) {
       }
 
       if (await bcrypt.compare(password, user.password)) {
-        const res = await fetch(`${process.env.REDIS_URL}/get/${user._id}/`, {
-          headers: {
-            Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
+        if (!user.twoFactorAuth) {
+          const res = await fetch(`${process.env.REDIS_URL}/get/${user._id}/`, {
+            headers: {
+              Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
+            },
+          });
+          const data = await res.json();
+          const uuid = data.result;
+          const payload = {
+            iat: Date.now(),
+            exp: Math.floor(
+              (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000
+            ),
+            username: user.name,
+            email: user.email,
+            id: user._id,
+            uuid: uuid,
+          };
+          const token = jwt.sign(payload, process.env.SECRET_KEY);
+          const expirationDate = new Date();
+          expirationDate.setSeconds(expirationDate.getSeconds() + 2592000);
+          cookies().set({
+            name: "token",
+            value: token,
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            expires: expirationDate,
+          });
+          return NextResponse.json({ message: "Success" }, { status: 200 });
+        }
+        if (body.code) {
+          const res = await fetch(
+            `${process.env.REDIS_URL}/get/${user.email}`,
+            {
+              headers: {
+                Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
+              },
+            }
+          );
+          const data = await res.json();
+          const CODE = data.result;
+          if (body.code === CODE) {
+            const res = await fetch(
+              `${process.env.REDIS_URL}/get/${user._id}/`,
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
+                },
+              }
+            );
+            const data = await res.json();
+            const uuid = data.result;
+            const payload = {
+              iat: Date.now(),
+              exp: Math.floor(
+                (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000
+              ),
+              username: user.name,
+              email: user.email,
+              id: user._id,
+              uuid: uuid,
+            };
+            const token = jwt.sign(payload, process.env.SECRET_KEY);
+            const expirationDate = new Date();
+            expirationDate.setSeconds(expirationDate.getSeconds() + 2592000);
+            cookies().set({
+              name: "token",
+              value: token,
+              httpOnly: true,
+              secure: true,
+              sameSite: "strict",
+              expires: expirationDate,
+            });
+            return NextResponse.json({ message: "Success" }, { status: 200 });
+          } else {
+            return NextResponse.json(
+              { message: "Invalid code" },
+              { status: 400 }
+            );
+          }
+        }
+        return NextResponse.json(
+          {
+            message: "Success",
+            twoFactorAuth: user.twoFactorAuth,
+            email: user.email,
+            name: user.name,
           },
-        });
-        const data = await res.json();
-        const uuid = data.result;
-        const payload = {
-          iat: Date.now(),
-          exp: Math.floor(
-            (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000,
-          ),
-          username: user.name,
-          email: user.email,
-          id: user._id,
-          uuid: uuid,
-        };
-        const token = jwt.sign(payload, process.env.SECRET_KEY);
-        const expirationDate = new Date();
-        expirationDate.setSeconds(expirationDate.getSeconds() + 2592000);
-        cookies().set({
-          name: "token",
-          value: token,
-          httpOnly: true,
-          secure: true,
-          sameSite: "strict",
-          expires: expirationDate,
-        });
-        return NextResponse.json({ message: "Success" }, { status: 200 });
+          { status: 200 }
+        );
       } else {
         return NextResponse.json(
           { message: "Invalid credentials" },
-          { status: 400 },
+          { status: 400 }
         );
       }
     } catch (err) {

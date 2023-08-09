@@ -1,11 +1,10 @@
 import styles from "@/styles/signingUp.module.css";
-import { decryptString } from "@/utils/decryptString";
 import { encryptString } from "@/utils/encryptString";
-import { errorToast, promiseToast } from "@/utils/toast";
 import { FormEvent, useEffect, useRef } from "react";
 import * as jose from "jose";
+import { errorToast, successToast } from "@/utils/toast";
 
-const VerificationCodeForm = (props: any) => {
+const TwoFactorAuth = (props: {password: string, name: string, email: string}) => {
   const CODE = encryptString(
     String(Math.floor(Math.random() * 1000000000)),
     true
@@ -44,55 +43,41 @@ const VerificationCodeForm = (props: any) => {
         }),
       });
     }
-    if (props.ready) {
-      sendEmail();
-    }
+    sendEmail();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.ready]);
+  }, []);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
-      const fetchUrl = "/api/addUser";
-      const fetchOptions = {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          name: props.name,
-          email: props.email,
-          password: props.password,
-          code: formValues.code
-        }),
-      };
-      const message = {
-        success: "User registered",
-        error: "Incorrect code"
-      };
-      promiseToast(
-        fetchUrl,
-        fetchOptions,
-        message,
-        () =>
-          (window.location.href = window.location.href.replace(
-            window.location.pathname,
-            "/logIn"
-          ))
-      );
+    const res = await fetch("/api/logIn", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        code: formValues.code,
+        username: props.name,
+        password: props.password
+      }),
+    });
+    const data = await res.json()
+    if(data.message === "Success") {
+      await new Promise(resolve => {
+        successToast("Successful login")
+        resolve("Success")
+      })
+      window.location.reload();
+    }
+    else {
+      errorToast("Invalid code")
+    }
   }
 
   return (
     <>
-      {props.email ? (
-        <p className={styles.email}> Just sent an email to: {props.email}</p>
-      ) : (
-        <p className={styles.email}>
-          Just send a verification code to the email registered with your
-          account
-        </p>
-      )}
+      <p className={styles.email}> Just sent an email to: {props.email}</p>
       <form className={styles.form} onSubmit={submit}>
         <input
           ref={codeInput}
@@ -106,4 +91,4 @@ const VerificationCodeForm = (props: any) => {
   );
 };
 
-export default VerificationCodeForm;
+export default TwoFactorAuth;

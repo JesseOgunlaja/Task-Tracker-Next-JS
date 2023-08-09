@@ -42,8 +42,10 @@ export async function promiseToast(
   successFunction?: Function,
 ) {
   let success: Boolean = true;
+  let data: any
   const fetchRequest = new Promise((resolve, reject) => {
     fetch(fetchUrl, fetchOptions).then(async (response: Response) => {
+      data = await response.json()
       if (response.ok) {
         resolve("Success");
       } else {
@@ -58,6 +60,6 @@ export async function promiseToast(
     error: message.error || "Error. Please try again",
   });
   if (success === true && successFunction) {
-    successFunction();
+    successFunction(data);
   }
 }

@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const body = await req.json();
 
+  
   const transporter = nodemailer.createTransport({
     host: "smtp.hostinger.com",
     secure: true,
@@ -23,6 +24,11 @@ export async function POST(req: NextRequest) {
 
   try {
     await transporter.sendMail(mailOptions);
+    await fetch(`${process.env.REDIS_URL}/set/${body.email}/${decryptString(body.code, true)}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
+      },
+    });
     return NextResponse.json(
       { message: `Message sent succesfully` },
       { status: 200 },

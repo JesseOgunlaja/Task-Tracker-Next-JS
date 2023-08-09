@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const inter = Inter({ subsets: ["latin"] });
+import { Analytics } from '@vercel/analytics/react';
 
 export const metadata: Metadata = {
   title: "TaskMaster",
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <main>
           {children}
+          <Analytics />
           <ToastContainer
             position="top-right"
             autoClose={2500}

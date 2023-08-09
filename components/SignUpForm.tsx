@@ -153,7 +153,7 @@ const SignUpForm = () => {
     <>
       <GoogleOAuthProvider clientId="127574879175-5f5ath1lrnqnc83t4tntdv30i8s92amu.apps.googleusercontent.com">
         <>
-          <div className={styles.google}>
+          <div style={!submitted ? { display: "block" } : { display: "none" }} className={styles.google}>
             <GoogleLogin
               onSuccess={(credentialResponse) => {
                 signUpWithGoogle(credentialResponse);
@@ -166,7 +166,7 @@ const SignUpForm = () => {
               width={350}
             />
           </div>
-          <p className={styles.continue}>Or continue with</p>
+          <p style={!submitted ? { display: "block" } : { display: "none" }} className={styles.continue}>Or continue with</p>
           <form
             className={styles.form}
             style={!submitted ? { display: "flex" } : { display: "none" }}
@@ -208,7 +208,7 @@ const SignUpForm = () => {
                 className={styles.checkbox}
               />
             </label>
-            <input type="submit" value="Sign up" />
+            <input type="submit" value="Sign up" readOnly/>
           </form>
           <div
             style={!submitted ? { display: "block" } : { display: "none" }}

@@ -5,17 +5,22 @@ import FormPassword from "@/components/FormPassword";
 import styles from "@/styles/logIn.module.css";
 import { errorToast, promiseToast } from "@/utils/toast";
 import Link from "next/link";
-import { FormEvent, useEffect, useRef } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { encryptString } from "@/utils/encryptString";
 import { decryptString } from "@/utils/decryptString";
 import * as jose from "jose";
+import TwoFactorAuth from "@/components/TwoFactorAuth";
 
 const Page = () => {
   const usernameRef = useRef<HTMLInputElement>(null);
   const credentialsRef = useRef<HTMLInputElement>(null);
   const passwordInput = useRef<HTMLDivElement>(null);
   const SECRET = new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_KEY);
+  const [showTwoFactorAuth, setShowTwoFactorAuth] = useState<boolean>(false);
+  const [email, setEmail] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
   useEffect(() => {
     async function connect() {
@@ -25,7 +30,7 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
-    async function getCookie() {
+    async function getCredentials() {
       async function decodeJWT(jwt: any) {
         return await jose.jwtVerify(jwt, SECRET);
       }
@@ -44,14 +49,13 @@ const Page = () => {
       if (!payload.name || !payload.password) {
         return;
       }
-      console.log(decryptString(String(payload.name), true));
       usernameRef.current!.value = decryptString(String(payload.name), true);
       credentialsRef.current!.checked = true;
       const outerPassword = passwordInput.current?.firstChild as HTMLDivElement;
       const passwordRef = outerPassword.firstChild as HTMLInputElement;
       passwordRef.value = decryptString(String(payload.password), true);
     }
-    getCookie();
+    getCredentials();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -74,34 +78,42 @@ const Page = () => {
         }),
       };
       const message = {
-        success: "Successful login",
+        success: "Valid credentials",
         error: "Invalid credentials",
       };
-      promiseToast(fetchUrl, fetchOptions, message, async () => {
-        if (formValues.rememberCredentials === "on") {
-          const header = { alg: "HS256", typ: "JWT" };
-
-          const payload = {
-            name: encryptString(String(formValues.Username), true),
-            password: encryptString(String(formValues.password), true),
-          };
-          const userCredentials = await new jose.SignJWT(payload)
-            .setProtectedHeader(header)
-            .setIssuedAt()
-            .setExpirationTime("30d")
-            .sign(SECRET);
-
-          const setCookie = (name: any, value: any, daysToExpire: number) => {
-            const date = new Date();
-            date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000);
-            const expires = "expires=" + date.toUTCString();
-            document.cookie = name + "=" + value + ";" + expires + ";path=/";
-          };
-
-          setCookie("credentials", userCredentials, 30);
+      await promiseToast(fetchUrl, fetchOptions, message, async (data: any) => {
+        if(data.name && data.email && data.twoFactorAuth === true) {
+          console.log(data)
+          setPassword(String(formValues.password))
+          setName(data.name)
+          setEmail(data.email)
+          setShowTwoFactorAuth(true);
         }
-
-        window.location.reload();
+        else {
+          if (formValues.rememberCredentials === "on") {
+            const header = { alg: "HS256", typ: "JWT" };
+  
+            const payload = {
+              name: encryptString(String(formValues.Username), true),
+              password: encryptString(String(formValues.password), true),
+            };
+            const userCredentials = await new jose.SignJWT(payload)
+              .setProtectedHeader(header)
+              .setIssuedAt()
+              .setExpirationTime("30d")
+              .sign(SECRET);
+  
+            const setCookie = (name: any, value: any, daysToExpire: number) => {
+              const date = new Date();
+              date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000);
+              const expires = "expires=" + date.toUTCString();
+              document.cookie = name + "=" + value + ";" + expires + ";path=/";
+            };
+  
+            setCookie("credentials", userCredentials, 30);
+            window.location.reload();
+          }
+        }
       });
     }
   }
@@ -144,56 +156,68 @@ const Page = () => {
         <OverallNav />
         <div className={styles.page}>
           <div className={styles.container}>
-            <h1>Log in</h1>
-            <br></br>
-            <GoogleLogin
-              onSuccess={(credentialResponse) => {
-                signUpWithGoogle(credentialResponse);
-              }}
-              onError={() => {
-                console.log("Login Failed");
-              }}
-              text="signin_with"
-              type="standard"
-              width={350}
-            />
-            <p className={styles.continue}>Or continue with</p>
-            <form
-              style={{ marginTop: "30px" }}
-              className={styles.form}
-              onSubmit={submit}
-            >
-              <input
-                ref={usernameRef}
-                autoComplete="off"
-                name="Username"
-                type="text"
-                placeholder="Username/Email"
-              />
-              <div ref={passwordInput}>
-                <FormPassword style={style} />
-              </div>
-              <div>
-                <label htmlFor="rememberCredentials">Remember me</label>
-                <input
-                  ref={credentialsRef}
-                  type="checkbox"
-                  id="rememberCredentials"
-                  name="rememberCredentials"
+            {!showTwoFactorAuth ? (
+              <>
+                <h1>Log in</h1>
+                <br></br>
+                <GoogleLogin
+                  onSuccess={(credentialResponse) => {
+                    signUpWithGoogle(credentialResponse);
+                  }}
+                  onError={() => {
+                    console.log("Login Failed");
+                  }}
+                  text="signin_with"
+                  type="standard"
+                  width={350}
                 />
-                <p onClick={redirect}>Forgot password?</p>
-              </div>
-              <label className={styles.terms}>
-                By clicking Log In, you agree to our{" "}
-                <Link href="/privacy-policy">Privacy policy</Link> and{" "}
-                <Link href="/terms-and-conditons">Terms of service</Link>
-              </label>
-              <input type="Submit" value="Log in" />
-            </form>
-            <div className={styles.account}>
-              <p>Don&apos;t have an account?</p>
-              <Link href="signUp">Sign up now</Link>
-            </div>
+                <p className={styles.continue}>Or continue with</p>
+                <form
+                  style={{ marginTop: "30px" }}
+                  className={styles.form}
+                  onSubmit={submit}
+                >
+                  <input
+                    ref={usernameRef}
+                    autoComplete="off"
+                    name="Username"
+                    type="text"
+                    placeholder="Username/Email"
+                  />
+                  <div ref={passwordInput}>
+                    <FormPassword style={style} />
+                  </div>
+                  <div>
+                    <label htmlFor="rememberCredentials">Remember me</label>
+                    <input
+                      ref={credentialsRef}
+                      type="checkbox"
+                      id="rememberCredentials"
+                      name="rememberCredentials"
+                    />
+                    <p onClick={redirect}>Forgot password?</p>
+                  </div>
+                  <label className={styles.terms}>
+                    By clicking Log In, you agree to our{" "}
+                    <Link href="/privacy-policy">Privacy policy</Link> and{" "}
+                    <Link href="/terms-and-conditons">Terms of service</Link>
+                  </label>
+                  <input type="Submit" value="Log in" readOnly />
+                </form>
+                <div className={styles.account}>
+                  <p>Don&apos;t have an account?</p>
+                  <Link href="signUp">Sign up now</Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <TwoFactorAuth
+                  email={email}
+                  name={name}
+                  password={password}
+                />
+              </>
+            )}
           </div>
         </div>
       </GoogleOAuthProvider>

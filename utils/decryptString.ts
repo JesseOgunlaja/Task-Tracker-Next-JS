@@ -8,8 +8,6 @@ export function decryptString(nameGiven: String, client: boolean) {
     nameGiven,
     client ? ENCRYPTION_CLIENT : ENCRYPTION_SERVER,
   ).toString(CryptoJS.enc.Utf8);
-  console.log(decrypted)
   const parsed = JSON.parse(decrypted);
-  console.log(parsed)
   return parsed.nameGiven;
 }

@@ -129,7 +129,7 @@ const ProfileSettings = () => {
 
   async function submitAuth(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const checkbox = authForm.current?.children[1] as HTMLLabelElement;
+    const checkbox = authForm.current?.firstChild as HTMLLabelElement;
     const input = checkbox.firstChild as HTMLInputElement;
     if (input.checked !== user.twoFactorAuth) {
       const res = await fetch("/api/settingsChange", {
