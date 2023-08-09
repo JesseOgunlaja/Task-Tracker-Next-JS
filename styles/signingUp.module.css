@@ -9,11 +9,11 @@
 
 .header {
   display: flex;
-  margin-bottom: 80px;
+  margin-bottom: 30px;
 }
 
 .logo {
-  transform: translateY(-1px);
+  transform: translate(-5px,1px);
 }
 
 .container {
@@ -27,6 +27,11 @@
   flex-direction: column;
   margin-bottom: 100px;
   width: 550px;
+}
+
+.continue {
+  margin-bottom: 25px;
+  font-size: 22.5px;
 }
 
 .backButton {

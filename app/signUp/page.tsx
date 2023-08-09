@@ -3,7 +3,6 @@
 import OverallNav from "@/components/OverallNav";
 import SignUpForm from "@/components/SignUpForm";
 import styles from "@/styles/signingUp.module.css";
-import Image from "next/image";
 import { useEffect } from "react";
 
 const Page = () => {
@@ -15,20 +14,12 @@ const Page = () => {
   }, []);
   return (
     <>
+      <title>Sign up</title>
       <OverallNav />
       <div className={styles.page}>
-        <title>Sign up</title>
         <div className={styles.container}>
-          <div className={styles.header}>
-            <Image
-              className={styles.logo}
-              src="/favicon.ico"
-              alt="Website logo"
-              height={45}
-              width={45}
-            ></Image>
-            <h1 className={styles.title}>TaskMaster</h1>
-          </div>
+          <h1>Sign up</h1>
+          <br />
           <SignUpForm />
         </div>
       </div>

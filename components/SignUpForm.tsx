@@ -166,6 +166,7 @@ const SignUpForm = () => {
               width={350}
             />
           </div>
+          <p className={styles.continue}>Or continue with</p>
           <form
             className={styles.form}
             style={!submitted ? { display: "flex" } : { display: "none" }}

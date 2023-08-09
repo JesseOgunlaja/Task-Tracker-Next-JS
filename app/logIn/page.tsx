@@ -4,7 +4,6 @@ import OverallNav from "@/components/OverallNav";
 import FormPassword from "@/components/FormPassword";
 import styles from "@/styles/logIn.module.css";
 import { errorToast, promiseToast } from "@/utils/toast";
-import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useEffect, useRef } from "react";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
@@ -15,7 +14,7 @@ import * as jose from "jose";
 const Page = () => {
   const usernameRef = useRef<HTMLInputElement>(null);
   const credentialsRef = useRef<HTMLInputElement>(null);
-  const passwordInput = useRef<HTMLDivElement>(null)
+  const passwordInput = useRef<HTMLDivElement>(null);
   const SECRET = new TextEncoder().encode(process.env.NEXT_PUBLIC_SECRET_KEY);
 
   useEffect(() => {
@@ -45,12 +44,12 @@ const Page = () => {
       if (!payload.name || !payload.password) {
         return;
       }
-      console.log(decryptString(String(payload.name) , true));
+      console.log(decryptString(String(payload.name), true));
       usernameRef.current!.value = decryptString(String(payload.name), true);
       credentialsRef.current!.checked = true;
-      const outerPassword = passwordInput.current?.firstChild as HTMLDivElement
-      const passwordRef = outerPassword.firstChild as HTMLInputElement
-      passwordRef.value = decryptString(String(payload.password), true)
+      const outerPassword = passwordInput.current?.firstChild as HTMLDivElement;
+      const passwordRef = outerPassword.firstChild as HTMLInputElement;
+      passwordRef.value = decryptString(String(payload.password), true);
     }
     getCookie();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -140,21 +139,13 @@ const Page = () => {
 
   return (
     <>
+      <title>Log in</title>
       <GoogleOAuthProvider clientId="127574879175-5f5ath1lrnqnc83t4tntdv30i8s92amu.apps.googleusercontent.com">
         <OverallNav />
         <div className={styles.page}>
-          <title>Log in</title>
           <div className={styles.container}>
-            <div className={styles.header}>
-              <Image
-                className={styles.logo}
-                src="/favicon.ico"
-                alt="Website logo"
-                height={45}
-                width={45}
-              ></Image>
-              <h1 className={styles.title}>TaskMaster</h1>
-            </div>
+            <h1>Log in</h1>
+            <br></br>
             <GoogleLogin
               onSuccess={(credentialResponse) => {
                 signUpWithGoogle(credentialResponse);
@@ -166,6 +157,7 @@ const Page = () => {
               type="standard"
               width={350}
             />
+            <p className={styles.continue}>Or continue with</p>
             <form
               style={{ marginTop: "30px" }}
               className={styles.form}
