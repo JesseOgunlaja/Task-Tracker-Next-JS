@@ -9,9 +9,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import DragComponent from "@/components/DragComponent";
 import DropComponent from "@/components/DropComponent";
 import { z } from "zod";
-import DatePicker, { registerLocale } from "react-datepicker";
-import enGB from "date-fns/locale/en-GB";
-registerLocale("en-GB", enGB);
+import DatePicker from "react-datepicker";
 
 type Task = {
   title: string;
@@ -422,7 +420,7 @@ const Page = () => {
               <label htmlFor="date">Date</label>
               <DatePicker
                 autoComplete="off"
-                locale="en-GB"
+                dateFormat="yyyy/MM/dd"
                 selected={startDate}
                 onChange={(date: Date) => setStartDate(date)}
                 minDate={new Date()}
@@ -463,6 +461,7 @@ const Page = () => {
               />
               <label htmlFor="date2">Date</label>
               <DatePicker
+                dateFormat="dd/MM/yyyy"
                 autoComplete="off"
                 selected={startDate2}
                 onChange={(date: Date) => setStartDate2(date)}
