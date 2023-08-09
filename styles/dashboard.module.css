@@ -16,7 +16,6 @@
 
 .tasks > *,
 .tasks > * > * {
-  margin-bottom: 30px;
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -54,15 +53,13 @@
   justify-content: space-between;
   align-items: center;
 }
-.todo,
-.ongoing,
-.done {
+.tasks > * {
   width: 27.5vw;
   padding: 20px;
   background: #272938;
   margin-bottom: 0px;
   height: 80vh;
-  max-height: 80vh;
+  max-height: 75vh;
   overflow-y: scroll;
 }
 
@@ -78,10 +75,15 @@
   font-size: 40px;
 }
 
-.todo::-webkit-scrollbar,
-.ongoing::-webkit-scrollbar,
-.done::-webkit-scrollbar {
-  display: none;
+.tasks > *::-webkit-scrollbar {
+  background: transparent;
+  width: 3px;
+}
+
+.tasks > *::-webkit-scrollbar-thumb {
+  background-color: #888;
+
+  /* border-top: 160px solid #888; */
 }
 
 #low {
@@ -210,6 +212,29 @@
   width: 100px;
   border-radius: 7.5px;
   cursor: pointer;
+}
+
+.search {
+  transform: translateY(75px);
+  text-align: center;
+  width: 50vw;
+  background: transparent;
+  border: darkblue solid 2px;
+  padding: 15px;
+  border-radius: 10px;
+  color: white;
+  font-size: 20px;
+}
+
+.search::placeholder {
+  color: rgba(255,255,255,0.5)
+}
+
+.searchContainer {
+  margin-bottom: 40px;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
 }
 
 .priority {

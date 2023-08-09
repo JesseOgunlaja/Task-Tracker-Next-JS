@@ -39,7 +39,7 @@ async function getData() {
   if (data.user == null) {
     window.location.href = window.location.href.replace(
       window.location.pathname,
-      "/api/logout",
+      "/api/logout"
     );
   } else {
     data.user.tasks = data.user.tasks.map((task) => {
@@ -53,6 +53,7 @@ async function getData() {
 const Page = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [startDate2, setStartDate2] = useState(new Date());
+  const [searchField, setSearchField] = useState<string>("");
   const [user, setUser] = useState<User>();
   const dialog = useRef<HTMLDialogElement>(null);
   const dialog2 = useRef<HTMLDialogElement>(null);
@@ -167,7 +168,7 @@ const Page = () => {
           priority: String(
             String(String(formValues.priority2)[0])
               .toUpperCase()
-              .concat(String(formValues.priority2.slice(1))),
+              .concat(String(formValues.priority2.slice(1)))
           ),
           type: String(formValues.type2),
         };
@@ -257,13 +258,13 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number,
+    index: number
   ) {
     const results: boolean[] = [];
     if (index === 1) {
       results.push(
         checkLengths(String(formValues.title), String(formValues.description))
-          .error,
+          .error
       );
       results.push(checkValue("Title", 1).error);
       results.push(checkValue("Date", 1).error);
@@ -271,7 +272,7 @@ const Page = () => {
     } else {
       results.push(
         checkLengths(String(formValues.title2), String(formValues.description2))
-          .error,
+          .error
       );
       results.push(checkValue("Title", 2).error);
       results.push(checkValue("Date", 2).error);
@@ -301,7 +302,7 @@ const Page = () => {
         priority: String(
           String(String(formValues.priority)[0])
             .toUpperCase()
-            .concat(String(formValues.priority.slice(1))),
+            .concat(String(formValues.priority.slice(1)))
         ),
         description: String(formValues.description),
         type: addType.current,
@@ -376,10 +377,36 @@ const Page = () => {
     showModal(1);
   }
 
+  useEffect(() => {
+    if (searchField !== "") {
+      const currentTasks = user?.tasks;
+      if (currentTasks) {
+        const updatedTasks = currentTasks.filter((task: Task) => {
+          if (task.title.toUpperCase().includes(searchField.toUpperCase())) {
+            return task;
+          }
+        });
+        console.log(updatedTasks)
+      }
+    }
+    // else {
+
+    // }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchField]);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <>
         <OverallNav />
+        <div className={styles.searchContainer}>
+          <input
+            value={searchField}
+            onChange={(e) => setSearchField(e.target.value)}
+            className={styles.search}
+            placeholder="Search"
+          />
+        </div>
         <div className={styles.page}>
           <dialog className={styles.dialog} ref={dialog}>
             <form onSubmit={addTask} className={styles.form}>
@@ -493,14 +520,14 @@ const Page = () => {
                     </div>
                   </div>
                   {user &&
-                    user.tasks?.filter((val) => val.type === "to-do").length ===
+                    user.tasks?.filter((val) => val.type === "to-do" && (val.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "")).length ===
                       0 && <div>No tasks</div>}
                   {user &&
-                    // Assuming the user.tasks array is stored in a state variable, e.g., tasks
                     user.tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
-                        task.priority === "High" && (
+                        task.priority === "High" &&
+                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -519,14 +546,15 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     // Assuming the user.tasks array is stored in a state variable, e.g., tasks
                     user.tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
-                        task.priority === "Medium" && (
+                        task.priority === "Medium" &&
+                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -548,14 +576,15 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     // Assuming the user.tasks array is stored in a state variable, e.g., tasks
                     user.tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
-                        task.priority === "Low" && (
+                        task.priority === "Low" && 
+                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -574,7 +603,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
@@ -591,13 +620,14 @@ const Page = () => {
                     </div>
                   </div>
                   {user &&
-                    user.tasks?.filter((val) => val.type === "in-progress")
+                    user.tasks?.filter((val) => val.type === "in-progress" && (val.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === ""))
                       .length === 0 && <div>No tasks</div>}
                   {user &&
                     user.tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
-                        task.priority === "High" && (
+                        task.priority === "High" &&
+                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -616,13 +646,14 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
-                        task.priority === "Medium" && (
+                        task.priority === "Medium" &&
+                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -644,13 +675,14 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
-                        task.priority === "Low" && (
+                        task.priority === "Low" && 
+                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -669,7 +701,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
@@ -685,13 +717,14 @@ const Page = () => {
                     </div>
                   </div>
                   {user &&
-                    user.tasks?.filter((val) => val.type === "done").length ===
+                    user.tasks?.filter((val) => val.type === "done" &&  (val.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "")).length ===
                       0 && <div>No tasks</div>}
                   {user &&
                     user.tasks.map(
                       (task, index) =>
                         task.type === "done" &&
-                        task.priority === "High" && (
+                        task.priority === "High" &&
+                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -710,13 +743,14 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.tasks.map(
                       (task, index) =>
                         task.type === "done" &&
-                        task.priority === "Medium" && (
+                        task.priority === "Medium" &&
+                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -738,13 +772,14 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.tasks.map(
                       (task, index) =>
                         task.type === "done" &&
-                        task.priority === "Low" && (
+                        task.priority === "Low" &&
+                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -763,7 +798,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
