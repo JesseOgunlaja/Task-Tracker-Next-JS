@@ -46,7 +46,11 @@ export async function POST(req: NextRequest) {
       email: body.email.toLowerCase(),
       password: await bcrypt.hash(body.password, 10),
       tasks: [],
-      twoFactorAuth: false,
+      settings: {
+        twoFactorAuth: false,
+        dateFormat: "dd/MM/yyyy",
+        timeFormat: 12
+      }
     });
     try {
       const expirationDate = new Date(new Date().getTime() - 1000);

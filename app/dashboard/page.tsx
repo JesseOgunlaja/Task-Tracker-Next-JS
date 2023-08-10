@@ -24,6 +24,9 @@ type User = {
   tasks: Task[];
   email: String;
   name: String;
+  settings: {
+    timeFormat: 12 | 24;
+  };
 };
 
 const titleSchema = z.string().max(40, { message: "Title too long" });
@@ -192,29 +195,64 @@ const Page = () => {
     hideModal(2);
   }
   function formatDate(dateString: string) {
-    const parts = dateString.split("/"); // Split the date string into day, month, and year parts
-    const day = parseInt(parts[0], 10); // Convert the day part to an integer
-    const month = parseInt(parts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
-    const year = parseInt(parts[2], 10); // Convert the year part to an integer
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
+    if (user?.settings.timeFormat === 24) {
+      const parts = dateString.split(" ")[0].split("/"); // Split the date string into day, month, and year parts
+      const day = parseInt(parts[0], 10); // Convert the day part to an integer
+      const month = parseInt(parts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
+      const year = parseInt(parts[2], 10); // Convert the year part to an integer
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
 
-    const dateObject = new Date(year, month, day); // Create a new Date object with the components
+      const dateObject = new Date(year, month, day); // Create a new Date object with the components
 
-    const formattedDate = `${months[dateObject.getMonth()]} ${day}, ${year}`;
-    return formattedDate;
+      const formattedDate = `${months[dateObject.getMonth()]} ${day}, ${year}`;
+      return formattedDate.concat(" " + dateString.split(" ")[1]);
+    } else {
+      const parts = dateString.split("/"); // Split the date string into day, month, and year parts
+      const day = parseInt(parts[0], 10); // Convert the day part to an integer
+      const month = parseInt(parts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
+      const year = parseInt(parts[2], 10); // Convert the year part to an integer
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+
+      const dateObject = new Date(year, month, day); // Create a new Date object with the components
+
+      const hours = Number(dateString.split(" ")[1].split(":")[0])
+      const minutes = dateString.split(" ")[1].split(":")[1];
+      const ampm = hours >= 12 ? "PM" : "AM";
+      const twelveHourFormat = hours % 12 || 12;
+
+      const formattedDate = `${
+        months[dateObject.getMonth()]
+      } ${day}, ${year} ${twelveHourFormat}:${minutes
+        .toString()
+        .padStart(2, "0")} ${ampm}`;
+      return formattedDate;
+    }
   }
 
   function checkLengths(title: string, description: string) {
@@ -402,7 +440,10 @@ const Page = () => {
                 showTimeSelect
                 timeFormat="HH:mm"
                 timeIntervals={30}
-                dateFormat="MMMM d, yyyy h:mm aa"
+                dateFormat={
+                  "MMMM d, yyyy " +
+                  (user?.settings.timeFormat === 24 ? "HH:mm" : "h:mm aa")
+                }
                 selected={startDate}
                 onChange={(date: Date) => setStartDate(date)}
                 minDate={new Date()}
@@ -532,11 +573,7 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>
-                                  {formatDate(task.date.split(" ")[0]).concat(
-                                    " " + task.date.split(" ")[1]
-                                  )}
-                                </p>
+                                <p>{formatDate(task.date)}</p>
                                 <p id={styles.high} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -566,11 +603,7 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>
-                                  {formatDate(task.date.split(" ")[0]).concat(
-                                    " " + task.date.split(" ")[1]
-                                  )}
-                                </p>
+                                <p>{formatDate(task.date)}</p>
                                 <p
                                   id={styles.medium}
                                   className={styles.priority}
@@ -603,11 +636,7 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>
-                                  {formatDate(task.date.split(" ")[0]).concat(
-                                    " " + task.date.split(" ")[1]
-                                  )}
-                                </p>
+                                <p>{formatDate(task.date)}</p>
                                 <p id={styles.low} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -659,11 +688,7 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>
-                                  {formatDate(task.date.split(" ")[0]).concat(
-                                    " " + task.date.split(" ")[1]
-                                  )}
-                                </p>
+                                <p>{formatDate(task.date)}</p>
                                 <p id={styles.high} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -692,11 +717,7 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>
-                                  {formatDate(task.date.split(" ")[0]).concat(
-                                    " " + task.date.split(" ")[1]
-                                  )}
-                                </p>
+                                <p>{formatDate(task.date)}</p>
                                 <p
                                   id={styles.medium}
                                   className={styles.priority}
@@ -728,11 +749,7 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>
-                                  {formatDate(task.date.split(" ")[0]).concat(
-                                    " " + task.date.split(" ")[1]
-                                  )}
-                                </p>
+                                <p>{formatDate(task.date)}</p>
                                 <p id={styles.low} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -783,11 +800,7 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>
-                                  {formatDate(task.date.split(" ")[0]).concat(
-                                    " " + task.date.split(" ")[1]
-                                  )}
-                                </p>
+                                <p>{formatDate(task.date)}</p>
                                 <p id={styles.high} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -816,11 +829,7 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>
-                                  {formatDate(task.date.split(" ")[0]).concat(
-                                    " " + task.date.split(" ")[1]
-                                  )}
-                                </p>
+                                <p>{formatDate(task.date)}</p>
                                 <p
                                   id={styles.medium}
                                   className={styles.priority}
@@ -852,11 +861,7 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>
-                                  {formatDate(task.date.split(" ")[0]).concat(
-                                    " " + task.date.split(" ")[1]
-                                  )}
-                                </p>
+                                <p>{formatDate(task.date)}</p>
                                 <p id={styles.low} className={styles.priority}>
                                   {task.priority}
                                 </p>

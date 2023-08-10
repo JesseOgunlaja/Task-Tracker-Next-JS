@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const { Types } = mongoose.Schema;
 
+const settingsSchema = new mongoose.Schema({
+  twoFactorAuth: { type: Boolean, required: true },
+  timeFormat: { type: Number, required: true}
+})
+
 const UserSchema = new mongoose.Schema({
   _id: { type: Types.ObjectId, auto: true },
   name: {
@@ -20,7 +25,7 @@ const UserSchema = new mongoose.Schema({
       priority: { type: String, required: true },
     },
   ],
-  twoFactorAuth: { type: Boolean, required: true },
+  settings: settingsSchema
 });
 
 let isConnected = false;

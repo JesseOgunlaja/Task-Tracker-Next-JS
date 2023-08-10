@@ -1,8 +1,19 @@
 import ProfileSettings from "@/components/ProfileSettings";
+import TaskSettings from "@/components/TaskSettings";
 import styles from "@/styles/settings.module.css";
+import { headers } from "next/headers";
 import Link from "next/link";
 
-const Page = () => {
+const Page = async () => {
+  const headerList = headers();
+  const url = headerList.get("url");
+  const res = await fetch(`${url}/api/user`, {
+    headers: {
+      cookie: `token=${headerList.get("cookie")}`,
+    },
+  });
+  const data = await res.json();
+  const user = data.user;
   return (
     <div className={styles.page}>
       <title>Settings</title>
@@ -19,7 +30,10 @@ const Page = () => {
           <Link href="/dashboard">Back</Link>
         </button>
       </ul>
-      <ProfileSettings />
+      <div className={styles.container}>
+        <ProfileSettings user={user} />
+        <TaskSettings user={user} />
+      </div>
     </div>
   );
 };

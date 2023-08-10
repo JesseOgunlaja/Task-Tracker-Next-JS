@@ -1,0 +1,35 @@
+.container > h1 {
+  display: inline;
+}
+
+.container > p {
+  font-size: 30px;
+  display: inline;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 300px;
+}
+
+.form > select {
+  width: 200px;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 17.5px;
+}
+
+.form > [type="submit"] {
+  margin-top: 10px;
+  background: darkblue;
+  color: white;
+  margin-bottom: 10px;
+  cursor: pointer;
+  height: 50px;
+  width: 250px;
+  padding: 15px;
+  border-radius: 5px;
+  font-size: 17.5px;
+}

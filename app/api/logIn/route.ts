@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       }
 
       if (await bcrypt.compare(password, user.password)) {
-        if (!user.twoFactorAuth) {
+        if (!user.settings.twoFactorAuth) {
           const res = await fetch(`${process.env.REDIS_URL}/get/${user._id}/`, {
             headers: {
               Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(
           {
             message: "Success",
-            twoFactorAuth: user.twoFactorAuth,
+            twoFactorAuth: true,
             email: user.email,
             name: user.name,
           },

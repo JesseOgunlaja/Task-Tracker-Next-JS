@@ -5,6 +5,21 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
   if (
+    String(request.nextUrl.pathname) === "/settings" &&
+    (await checkSignedIn(request))
+  ) {
+    const response = NextResponse.next();
+    let cookie = request.cookies.get("token")?.value;
+    response.headers.set(
+      "url",
+      request.url.replace(request.nextUrl.pathname, "")
+    );
+    if (cookie) {
+      response.headers.set("cookie", cookie);
+    }
+    return response;
+  }
+  if (
     String(request.nextUrl.pathname) === "/logIn" &&
     (await checkSignedIn(request))
   ) {

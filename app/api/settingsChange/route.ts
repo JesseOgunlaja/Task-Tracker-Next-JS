@@ -8,11 +8,6 @@ const { v4: uuidv4 } = require("uuid");
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-type ObjectResponse = {
-  nameDuplicate?: Boolean;
-  emailDuplicate?: Boolean;
-};
-
 export async function POST(request: NextRequest) {
   try {
     const User = await connectToDB();
@@ -28,7 +23,7 @@ export async function POST(request: NextRequest) {
     } else if (user.password === "GMAIL") {
       return NextResponse.json(
         { message: "Can't change data for Gmail account" },
-        { status: 400 },
+        { status: 400 }
       );
     } else {
       const updateFields: any = {};
@@ -37,7 +32,7 @@ export async function POST(request: NextRequest) {
         if (!result.success) {
           return NextResponse.json(
             { message: result.error.format()._errors },
-            { status: 400 },
+            { status: 400 }
           );
         } else {
           const name = body.name;
@@ -52,7 +47,7 @@ export async function POST(request: NextRequest) {
             } else {
               return NextResponse.json(
                 { message: "Duplicate" },
-                { status: 400 },
+                { status: 400 }
               );
             }
           }
@@ -63,7 +58,7 @@ export async function POST(request: NextRequest) {
         if (!result.success) {
           return NextResponse.json(
             { message: result.error.format()._errors },
-            { status: 400 },
+            { status: 400 }
           );
         } else {
           const email = body.email;
@@ -78,7 +73,7 @@ export async function POST(request: NextRequest) {
             } else {
               return NextResponse.json(
                 { message: "Duplicate" },
-                { status: 400 },
+                { status: 400 }
               );
             }
           }
@@ -94,7 +89,7 @@ export async function POST(request: NextRequest) {
           if (!result.success) {
             return NextResponse.json(
               { message: result.error.format()._errors },
-              { status: 400 },
+              { status: 400 }
             );
           } else {
             if (body.newPassword === body.oldPassword) {
@@ -108,7 +103,7 @@ export async function POST(request: NextRequest) {
                     headers: {
                       Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
                     },
-                  },
+                  }
                 );
               }
               updateFields.password = await bcrypt.hash(body.newPassword, 10);
@@ -117,7 +112,7 @@ export async function POST(request: NextRequest) {
         } else {
           return NextResponse.json(
             { message: "Invalid credentials" },
-            { status: 400 },
+            { status: 400 }
           );
         }
       }
@@ -127,10 +122,30 @@ export async function POST(request: NextRequest) {
         if (!result.success) {
           return NextResponse.json(
             { message: result.error.format()._errors },
-            { status: 400 },
+            { status: 400 }
           );
         } else {
-          updateFields.twoFactorAuth = body.twoFactorAuth;
+          if (body.twoFactorAuth === user.settings.twoFactorAuth) {
+            return NextResponse.json({ message: "Same" }, { status: 400 });
+          } else {
+            updateFields["settings.twoFactorAuth"] = body.twoFactorAuth;
+          }
+      }
+      }
+      if (body.timeFormat) {
+        const timeFormatSchema = z.union([z.literal(12), z.literal(24)]);
+        const result = timeFormatSchema.safeParse(body.timeFormat);
+        if (!result.success) {
+          return NextResponse.json(
+            { message: result.error.format()._errors },
+            { status: 400 }
+          );
+        } else {
+          if (body.timeFormat === user.settings.timeFormat) {
+            return NextResponse.json({ message: "Same" }, { status: 400 });
+          } else {
+            updateFields["settings.timeFormat"] = body.timeFormat;
+          }
         }
       }
 
@@ -147,7 +162,7 @@ export async function POST(request: NextRequest) {
       const payload = {
         iat: Date.now(),
         exp: Math.floor(
-          (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000,
+          (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000
         ),
         username: updateFields.name || user.name,
         email: updateFields.email || user.email,
@@ -168,13 +183,13 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json(
         { user: updateFields, message: "Success" },
-        { status: 200 },
+        { status: 200 }
       );
     }
   } catch (err) {
     return NextResponse.json(
       { message: "Error", error: `${err}` },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

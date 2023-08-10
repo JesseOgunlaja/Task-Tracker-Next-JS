@@ -18,6 +18,13 @@
   flex-direction: column;
 }
 
+.container {
+  min-height: 200vh;
+  padding: 0px 20px 20px 20px;
+  width: 90vw;
+  transform: translateX(200px);
+}
+
 .sideNav > * {
   cursor: pointer;
   width: 200px;

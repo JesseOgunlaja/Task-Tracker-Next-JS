@@ -1,28 +1,19 @@
 "use client";
 
 import styles from "@/styles/profileSettings.module.css";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useRef } from "react";
 import SettingsPassword from "./SettingsPassword";
 import Checkbox from "./Checkbox";
 import { emailSchema, passwordSchema, usernameSchema } from "@/utils/zod";
 import { errorToast, successToast } from "@/utils/toast";
 
-const ProfileSettings = () => {
-  const [user, setUser] = useState<any>(null);
+const ProfileSettings = ({ user }: any) => {
   const authForm = useRef<HTMLFormElement>(null);
   const passwordForm = useRef<HTMLFormElement>(null);
   const usernameForm = useRef<HTMLFormElement>(null);
   const emailForm = useRef<HTMLFormElement>(null);
   const formSessions = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    async function getUser() {
-      const res = await fetch("/api/user");
-      const data = await res.json();
-      setUser(data.user);
-    }
-    getUser();
-  }, []);
   async function submitUsername(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -131,7 +122,6 @@ const ProfileSettings = () => {
     e.preventDefault();
     const checkbox = authForm.current?.firstChild as HTMLLabelElement;
     const input = checkbox.firstChild as HTMLInputElement;
-    if (input.checked !== user.twoFactorAuth) {
       const res = await fetch("/api/settingsChange", {
         method: "POST",
         headers: {
@@ -145,7 +135,9 @@ const ProfileSettings = () => {
       if (data.message === "Success") {
         successToast("Success");
       }
-    }
+      if (data.message === "Same") {
+        errorToast("Value has not changed");
+      }
   }
 
   return (
@@ -200,7 +192,7 @@ const ProfileSettings = () => {
           </form>
           <p>Two Factor authentication</p>
           <form ref={authForm} onSubmit={submitAuth} className={styles.form}>
-            <Checkbox checked={user.twoFactorAuth} />
+            <Checkbox checked={user.settings.twoFactorAuth} />
             <input type="submit" />
           </form>
         </>
