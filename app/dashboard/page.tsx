@@ -158,10 +158,18 @@ const Page = () => {
         if (dd < 10) dd = "0" + dd;
         if (mm < 10) mm = "0" + mm;
 
-        const formatedDate = dd + "/" + mm + "/" + yyyy;
+        const hh: number | string = startDate2.getHours();
+        const mins: number | string = startDate2.getMinutes();
+
+        const formattedDate = `${dd}/${mm}/${yyyy} ${hh
+          .toString()
+          .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+
+        console.log(formattedDate);
+
         tasks[editInput.current] = {
           title: String(formValues.title2),
-          date: formatedDate,
+          date: formattedDate,
           description: String(formValues.description2),
           priority: String(
             String(String(formValues.priority2)[0])
@@ -188,16 +196,6 @@ const Page = () => {
     const day = parseInt(parts[0], 10); // Convert the day part to an integer
     const month = parseInt(parts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
     const year = parseInt(parts[2], 10); // Convert the year part to an integer
-
-    const weekdays = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
     const months = [
       "January",
       "February",
@@ -215,26 +213,8 @@ const Page = () => {
 
     const dateObject = new Date(year, month, day); // Create a new Date object with the components
 
-    const formattedDate = `${
-      weekdays[dateObject.getDay()]
-    } the ${day}${getOrdinalSuffix(day)} of ${months[dateObject.getMonth()]}`;
+    const formattedDate = `${months[dateObject.getMonth()]} ${day}, ${year}`;
     return formattedDate;
-  }
-
-  function getOrdinalSuffix(day: number) {
-    if (day >= 11 && day <= 13) {
-      return "th";
-    }
-    switch (day % 10) {
-      case 1:
-        return "st";
-      case 2:
-        return "nd";
-      case 3:
-        return "rd";
-      default:
-        return "th";
-    }
   }
 
   function checkLengths(title: string, description: string) {
@@ -293,7 +273,15 @@ const Page = () => {
       if (dd < 10) dd = "0" + dd;
       if (mm < 10) mm = "0" + mm;
 
-      const formattedDate = dd + "/" + mm + "/" + yyyy;
+      const hh: number | string = startDate.getHours();
+      const mins: number | string = startDate.getMinutes();
+      console.log(hh);
+      console.log(mins);
+
+      const formattedDate = `${dd}/${mm}/${yyyy} ${hh
+        .toString()
+        .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+
       const newTask: Task = {
         title: String(formValues.title),
         date: formattedDate,
@@ -327,13 +315,22 @@ const Page = () => {
       titleInput2.current!.value = user.tasks[index].title || "";
       descriptionInput2.current!.value = user.tasks[index].description || "";
       typeInput.current!.value = user.tasks[index].type || "";
-      const parts = user.tasks[index].date.split("/"); // Split the date string into day, month, and year parts
-      const day = parseInt(parts[0], 10); // Convert the day part to an integer
-      const month = parseInt(parts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
-      const year = parseInt(parts[2], 10); // Convert the year part to an integer and add 2000 (for YY format)
+      const parts = user.tasks[index].date.split(" "); // Split the date string into date and time parts
+      const datePart = parts[0]; // Extract the date part "10/08/2023"
+      const timePart = parts[1]; // Extract the time part "14:29"
 
-      const formattedDate = new Date(year, month, day);
+      const dateParts = datePart.split("/"); // Split the date part into day, month, and year parts
+      const day = parseInt(dateParts[0], 10); // Convert the day part to an integer
+      const month = parseInt(dateParts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
+      const year = parseInt(dateParts[2], 10); // Convert the year part to an integer
+
+      const timeParts = timePart.split(":"); // Split the time part into hours and minutes
+      const hours = parseInt(timeParts[0], 10); // Convert the hours part to an integer
+      const minutes = parseInt(timeParts[1], 10); // Convert the minutes part to an integer
+
+      const formattedDate = new Date(year, month, day, hours, minutes); // Create a new Date object with the components
       setStartDate2(formattedDate);
+
       editInput.current = index;
     }
     showModal(2);
@@ -375,24 +372,6 @@ const Page = () => {
     showModal(1);
   }
 
-  useEffect(() => {
-    if (searchField !== "") {
-      const currentTasks = user?.tasks;
-      if (currentTasks) {
-        const updatedTasks = currentTasks.filter((task: Task) => {
-          if (task.title.toUpperCase().includes(searchField.toUpperCase())) {
-            return task;
-          }
-        });
-        console.log(updatedTasks)
-      }
-    }
-    // else {
-
-    // }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchField]);
-
   return (
     <DndProvider backend={HTML5Backend}>
       <>
@@ -420,7 +399,10 @@ const Page = () => {
               <label htmlFor="date">Date</label>
               <DatePicker
                 autoComplete="off"
-                dateFormat="yyyy/MM/dd"
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={30}
+                dateFormat="MMMM d, yyyy h:mm aa"
                 selected={startDate}
                 onChange={(date: Date) => setStartDate(date)}
                 minDate={new Date()}
@@ -461,8 +443,11 @@ const Page = () => {
               />
               <label htmlFor="date2">Date</label>
               <DatePicker
-                dateFormat="dd/MM/yyyy"
                 autoComplete="off"
+                showTimeSelect
+                timeFormat="HH:mm"
+                timeIntervals={30}
+                dateFormat="MMMM d, yyyy h:mm aa"
                 selected={startDate2}
                 onChange={(date: Date) => setStartDate2(date)}
                 minDate={new Date()}
@@ -519,14 +504,23 @@ const Page = () => {
                     </div>
                   </div>
                   {user &&
-                    user.tasks?.filter((val) => val.type === "to-do" && (val.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "")).length ===
-                      0 && <div>No tasks</div>}
+                    user.tasks?.filter(
+                      (val) =>
+                        val.type === "to-do" &&
+                        (val.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "")
+                    ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
                         task.priority === "High" &&
-                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
+                        (task.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -538,7 +532,11 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>{formatDate(task.date)}</p>
+                                <p>
+                                  {formatDate(task.date.split(" ")[0]).concat(
+                                    " " + task.date.split(" ")[1]
+                                  )}
+                                </p>
                                 <p id={styles.high} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -553,7 +551,10 @@ const Page = () => {
                       (task, index) =>
                         task.type === "to-do" &&
                         task.priority === "Medium" &&
-                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
+                        (task.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -565,7 +566,11 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>{formatDate(task.date)}</p>
+                                <p>
+                                  {formatDate(task.date.split(" ")[0]).concat(
+                                    " " + task.date.split(" ")[1]
+                                  )}
+                                </p>
                                 <p
                                   id={styles.medium}
                                   className={styles.priority}
@@ -582,8 +587,11 @@ const Page = () => {
                     user.tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
-                        task.priority === "Low" && 
-                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
+                        task.priority === "Low" &&
+                        (task.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -595,7 +603,11 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>{formatDate(task.date)}</p>
+                                <p>
+                                  {formatDate(task.date.split(" ")[0]).concat(
+                                    " " + task.date.split(" ")[1]
+                                  )}
+                                </p>
                                 <p id={styles.low} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -619,14 +631,23 @@ const Page = () => {
                     </div>
                   </div>
                   {user &&
-                    user.tasks?.filter((val) => val.type === "in-progress" && (val.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === ""))
-                      .length === 0 && <div>No tasks</div>}
+                    user.tasks?.filter(
+                      (val) =>
+                        val.type === "in-progress" &&
+                        (val.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "")
+                    ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
                         task.priority === "High" &&
-                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
+                        (task.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -638,7 +659,11 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>{formatDate(task.date)}</p>
+                                <p>
+                                  {formatDate(task.date.split(" ")[0]).concat(
+                                    " " + task.date.split(" ")[1]
+                                  )}
+                                </p>
                                 <p id={styles.high} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -652,7 +677,10 @@ const Page = () => {
                       (task, index) =>
                         task.type === "in-progress" &&
                         task.priority === "Medium" &&
-                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
+                        (task.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -664,7 +692,11 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>{formatDate(task.date)}</p>
+                                <p>
+                                  {formatDate(task.date.split(" ")[0]).concat(
+                                    " " + task.date.split(" ")[1]
+                                  )}
+                                </p>
                                 <p
                                   id={styles.medium}
                                   className={styles.priority}
@@ -680,8 +712,11 @@ const Page = () => {
                     user.tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
-                        task.priority === "Low" && 
-                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
+                        task.priority === "Low" &&
+                        (task.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -693,7 +728,11 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>{formatDate(task.date)}</p>
+                                <p>
+                                  {formatDate(task.date.split(" ")[0]).concat(
+                                    " " + task.date.split(" ")[1]
+                                  )}
+                                </p>
                                 <p id={styles.low} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -716,14 +755,23 @@ const Page = () => {
                     </div>
                   </div>
                   {user &&
-                    user.tasks?.filter((val) => val.type === "done" &&  (val.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "")).length ===
-                      0 && <div>No tasks</div>}
+                    user.tasks?.filter(
+                      (val) =>
+                        val.type === "done" &&
+                        (val.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "")
+                    ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.tasks.map(
                       (task, index) =>
                         task.type === "done" &&
                         task.priority === "High" &&
-                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
+                        (task.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -735,7 +783,11 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>{formatDate(task.date)}</p>
+                                <p>
+                                  {formatDate(task.date.split(" ")[0]).concat(
+                                    " " + task.date.split(" ")[1]
+                                  )}
+                                </p>
                                 <p id={styles.high} className={styles.priority}>
                                   {task.priority}
                                 </p>
@@ -749,7 +801,10 @@ const Page = () => {
                       (task, index) =>
                         task.type === "done" &&
                         task.priority === "Medium" &&
-                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
+                        (task.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -761,7 +816,11 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>{formatDate(task.date)}</p>
+                                <p>
+                                  {formatDate(task.date.split(" ")[0]).concat(
+                                    " " + task.date.split(" ")[1]
+                                  )}
+                                </p>
                                 <p
                                   id={styles.medium}
                                   className={styles.priority}
@@ -778,7 +837,10 @@ const Page = () => {
                       (task, index) =>
                         task.type === "done" &&
                         task.priority === "Low" &&
-                        (task.title.toUpperCase().includes(searchField.toUpperCase()) || searchField === "") && (
+                        (task.title
+                          .toUpperCase()
+                          .includes(searchField.toUpperCase()) ||
+                          searchField === "") && (
                           <DragComponent
                             id={index}
                             userParam={user}
@@ -790,7 +852,11 @@ const Page = () => {
                             >
                               <p className={styles.taskTitle}>{task.title}</p>
                               <div className={styles.info}>
-                                <p>{formatDate(task.date)}</p>
+                                <p>
+                                  {formatDate(task.date.split(" ")[0]).concat(
+                                    " " + task.date.split(" ")[1]
+                                  )}
+                                </p>
                                 <p id={styles.low} className={styles.priority}>
                                   {task.priority}
                                 </p>
