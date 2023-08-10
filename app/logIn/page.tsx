@@ -111,8 +111,8 @@ const Page = () => {
             };
   
             setCookie("credentials", userCredentials, 30);
-            window.location.reload();
           }
+          window.location.reload();
         }
       });
     }
