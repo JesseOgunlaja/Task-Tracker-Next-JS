@@ -31,6 +31,7 @@ const TaskSettings = ({ user }: any) => {
 
   return (
     <div className={styles.container}>
+        <h1>App settings</h1>
       <form onSubmit={submit} className={styles.form}>
         <label htmlFor="timeFormat">Time format</label>
         <select
