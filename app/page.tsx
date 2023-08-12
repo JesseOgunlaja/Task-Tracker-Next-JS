@@ -15,7 +15,7 @@ const Page = () => {
   }, []);
   return (
     <>
-    <OverallNav navStatus="yes" pathname="/"/>
+    <OverallNav/>
       <div className={styles.container}>
         <h1 className={styles.title}>Organize yourself, and your life.</h1>
         <p className={styles.paragraph}>
