@@ -4,7 +4,7 @@ const Page = () => {
   return (
     <div className={styles.page}>
       <h1>Privacy Policy</h1>
-      <p>Last updated: August 02, 2023</p>
+      <p>Last updated: August 12, 2023</p>
       <p>
         This Privacy Policy describes Our policies and procedures on the
         collection, use and disclosure of Your information when You use the
@@ -75,6 +75,15 @@ const Page = () => {
           </p>
         </li>
         <li>
+          <strong>Google Data</strong> When you choose to sign in using Google
+          OAuth on our platform, we utilize Google&apos;s secure authentication
+          service to streamline the login process. During this sign-in process,
+          we collect certain information from your Google account to enhance
+          your user experience and provide our services. This information,
+          collectively referred to as &quot;Google Data,&quot; includes your
+          Google email address.
+        </li>
+        <li>
           <p>
             <strong>Service</strong> refers to the Website.
           </p>
@@ -133,6 +142,30 @@ const Page = () => {
           <p>Usage Data</p>
         </li>
       </ul>
+      <h3>Google data</h3>
+      <h4>Usage of Google Data</h4>
+      <p>
+        Your Google email address is stored securely within our database. We
+        utilize this information solely for the purpose of user identification,
+        authentication, and communication. It enables you to access our platform
+        seamlessly without the need for a separate account creation process.
+        Rest assured that we do not share, sell, or otherwise disclose your
+        Google email address to any third parties unless required by law or as
+        outlined in this Privacy Policy.
+      </p>
+      <h4>Types of Google Data collected</h4>
+      <p>
+        We exclusively collect and store your Google email address when you use
+        Google OAuth to sign in to our platform. We do not request or access any
+        additional information from your Google account, such as personal
+        contacts, calendars, or any other data.
+      </p>
+      <h4>Your control</h4>
+      <p>
+        At any time, you retain full control over your Google Data and can
+        choose to revoke our access to your Google account. You can manage your
+        app permissions via your Google account settings.
+      </p>
       <h3>Usage Data</h3>
       <p>Usage Data is collected automatically when using the Service.</p>
       <p>
@@ -471,18 +504,14 @@ const Page = () => {
       </p>
       <h1>Changes to this Privacy Policy</h1>
       <p>
-        We may update Our Privacy Policy from time to time. We will notify You
-        of any changes by posting the new Privacy Policy on this page.
+        TaskMaster reserves the right to modify or update these terms and
+        conditions at any time without prior notice. Changes will be effective
+        immediately upon posting on the website.
       </p>
       <p>
-        We will let You know via email and/or a prominent notice on Our Service,
-        prior to the change becoming effective and update the &quot;Last
-        updated&quot; date at the top of this Privacy Policy.
-      </p>
-      <p>
-        You are advised to review this Privacy Policy periodically for any
-        changes. Changes to this Privacy Policy are effective when they are
-        posted on this page.
+        It is your responsibility to review these terms periodically for any
+        updates or changes. Your continued use of TaskMaster after the changes
+        will constitute your acceptance of the revised terms.
       </p>
       <h1>Contact Us</h1>
       <p>
