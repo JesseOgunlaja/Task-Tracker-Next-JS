@@ -61,6 +61,29 @@
   margin-bottom: 2.5px;
 }
 
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100px;
+}
+
+.footer > :nth-child(1) {
+  padding-right: 10px;
+  border-right: 2px solid white;
+}
+.footer > :nth-child(2) {
+  padding-left: 10px;
+}
+
+.footer > * {
+  z-index: 10000;
+  text-decoration: none;
+  color: white;
+  font-style: italic;
+}
+
 @media (min-height: 100vw) {
   .title,
   .paragraph {
