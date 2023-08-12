@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import styles from "@/styles/page.module.css";
 import Link from "next/link";
 import Image from "next/image";
-import OverallNav from "@/components/OverallNav";
 
 const Page = () => {
   useEffect(() => {
@@ -15,7 +14,6 @@ const Page = () => {
   }, []);
   return (
     <>
-      <OverallNav />
       <div className={styles.container}>
         <h1 className={styles.title}>Organize yourself, and your life.</h1>
         <p className={styles.paragraph}>
@@ -58,6 +56,11 @@ const Page = () => {
           </div>
         </div>
       </div>
+      <br />
+      <footer className={styles.footer}>
+        <Link href="/terms-and-conditions">Terms</Link>
+        <Link href="/privacy-policy">Privacy</Link>
+      </footer>
     </>
   );
 };
