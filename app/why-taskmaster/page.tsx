@@ -2,7 +2,6 @@ import styles from "@/styles/why-taskmaster.module.css";
 import Link from "next/link";
 import type { Metadata } from "next";
 import Image from "next/image";
-import OverallNav from "@/components/OverallNav";
 
 export const metadata: Metadata = {
   title: "Why TaskMaster",
@@ -27,7 +26,6 @@ const rgbDataURL = (r: number, g: number, b: number) =>
 const page = () => {
   return (
     <>
-      <OverallNav />
       <main className={styles.container}>
         <h3 className={styles.title}>Why choose TaskMaster?</h3>
         <p className={styles.text}>

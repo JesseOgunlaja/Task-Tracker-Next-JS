@@ -53,6 +53,7 @@
   justify-content: space-between;
   align-items: center;
 }
+
 .tasks > * {
   padding: 20px;
   background: #272938;

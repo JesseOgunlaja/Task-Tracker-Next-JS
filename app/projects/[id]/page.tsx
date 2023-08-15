@@ -1,8 +1,7 @@
 "use client";
 
-import { FormEvent, Suspense, useEffect, useRef, useState } from "react";
-import styles from "@/styles/dashboard.module.css";
-import OverallNav from "@/components/OverallNav";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import styles from "@/styles/projectPage.module.css";
 import { errorToast } from "@/utils/toast";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -10,6 +9,8 @@ import DragComponent from "@/components/DragComponent";
 import DropComponent from "@/components/DropComponent";
 import { z } from "zod";
 import DatePicker from "react-datepicker";
+import { useParams } from "next/navigation";
+import "react-datepicker/dist/react-datepicker.css";
 
 type Task = {
   title: string;
@@ -19,9 +20,16 @@ type Task = {
   priority: string;
 };
 
-type User = {
-  password: String;
+type Project = {
+  name: string;
+  type: string;
+  date: string;
   tasks: Task[];
+};
+
+type User = {
+  projects: Project[];
+  password: String;
   email: String;
   name: String;
   settings: {
@@ -34,7 +42,7 @@ const descriptionSchema = z
   .string()
   .max(250, { message: "Description too long" });
 
-async function getData() {
+async function getData(id: number) {
   const res = await fetch("/api/user");
   const data: { user: User } = await res.json();
   if (data.user == null) {
@@ -43,15 +51,20 @@ async function getData() {
       "/api/logout"
     );
   } else {
-    data.user.tasks = data.user.tasks.map((task) => {
-      task.date = task.date;
-      return task;
-    });
-    return data.user;
+    if (data.user.projects[id] == null) {
+      window.location.href = window.location.href.replace(
+        window.location.pathname,
+        "/pageNotFound"
+      );
+    } else {
+      return data.user;
+    }
   }
 }
 
 const Page = () => {
+  const id = Number(useParams().id);
+
   const [startDate, setStartDate] = useState(new Date());
   const [startDate2, setStartDate2] = useState(new Date());
   const [searchField, setSearchField] = useState<string>("");
@@ -66,14 +79,14 @@ const Page = () => {
   const priorityInput2 = useRef<HTMLSelectElement>(null);
   const typeInput = useRef<HTMLSelectElement>(null);
   const editInput = useRef<number>(0);
-  const addType = useRef<string>("");
 
   useEffect(() => {
     async function awaitPromise() {
-      const data = await getData();
+      const data = await getData(id);
       setUser(data);
     }
     awaitPromise();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function showModal(modal: Number) {
@@ -150,9 +163,11 @@ const Page = () => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
-    console.log(formValues);
     if (checkAllValues(formValues, 2).error === false) {
-      const tasks = user?.tasks;
+      let tasks;
+      if (user?.projects[id].tasks) {
+        tasks = [...user?.projects[id].tasks];
+      }
       if (tasks) {
         const yyyy: number | string = startDate2.getFullYear();
         let mm: number | string = startDate2.getMonth() + 1; // Months start at 0
@@ -168,8 +183,6 @@ const Page = () => {
           .toString()
           .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
 
-        console.log(formattedDate);
-
         tasks[editInput.current] = {
           title: String(formValues.title2),
           date: formattedDate,
@@ -181,18 +194,29 @@ const Page = () => {
           ),
           type: String(formValues.type2),
         };
-        await fetch("/api/user", {
+        const res = await fetch("/api/user", {
           method: "PATCH",
           body: JSON.stringify({
             tasks: tasks,
+            index: id,
           }),
         });
-        const currentUser = JSON.parse(JSON.stringify(user));
-        currentUser.tasks = tasks;
-        setUser(currentUser);
+        const data = await res.json();
+        console.log(data.user);
+        if (data.user != undefined && Object.keys(data.user).length !== 0) {
+          const currentUser = JSON.parse(JSON.stringify(user));
+          currentUser.projects[id].tasks = tasks;
+          setUser(currentUser);
+          hideModal(2);
+        } else {
+          if (data.message === "Date over max, set by project date") {
+            errorToast("Date exceedes, the date set in project");
+          } else {
+            errorToast("An error occurred. Please try again.");
+          }
+        }
       }
     }
-    hideModal(2);
   }
   function formatDate(dateString: string) {
     if (user?.settings.timeFormat === 24) {
@@ -241,7 +265,7 @@ const Page = () => {
 
       const dateObject = new Date(year, month, day); // Create a new Date object with the components
 
-      const hours = Number(dateString.split(" ")[1].split(":")[0])
+      const hours = Number(dateString.split(" ")[1].split(":")[0]);
       const minutes = dateString.split(" ")[1].split(":")[1];
       const ampm = hours >= 12 ? "PM" : "AM";
       const twelveHourFormat = hours % 12 || 12;
@@ -303,7 +327,10 @@ const Page = () => {
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
     if (checkAllValues(formValues, 1).error === false) {
-      const tasks = user?.tasks;
+      let tasks;
+      if (user?.projects[id].tasks) {
+        tasks = [...user?.projects[id].tasks];
+      }
       const yyyy: number | string = startDate.getFullYear();
       let mm: number | string = startDate.getMonth() + 1; // Months start at 0
       let dd: number | string = startDate.getDate();
@@ -313,8 +340,6 @@ const Page = () => {
 
       const hh: number | string = startDate.getHours();
       const mins: number | string = startDate.getMinutes();
-      console.log(hh);
-      console.log(mins);
 
       const formattedDate = `${dd}/${mm}/${yyyy} ${hh
         .toString()
@@ -329,31 +354,40 @@ const Page = () => {
             .concat(String(formValues.priority.slice(1)))
         ),
         description: String(formValues.description),
-        type: addType.current,
+        type: "to-do",
       };
-      tasks?.push(newTask);
-      await fetch("/api/user", {
-        method: "PATCH",
-        body: JSON.stringify({ tasks: tasks }),
-      });
       if (tasks) {
-        const currentUser = JSON.parse(JSON.stringify(user));
-        currentUser.tasks = tasks;
-        setUser(currentUser);
+        tasks?.push(newTask);
       }
-      hideModal(1);
+      const res = await fetch("/api/user", {
+        method: "PATCH",
+        body: JSON.stringify({ tasks: tasks, index: id }),
+      });
+      const data = await res.json();
+      if (data.user != undefined && Object.keys(data.user).length !== 0) {
+        const currentUser = JSON.parse(JSON.stringify(user));
+        currentUser.projects[id].tasks = tasks;
+        setUser(currentUser);
+        hideModal(1);
+      } else {
+        if (data.message === "Date over max, set by project date") {
+          errorToast("Date exceedes, the date set in project");
+        } else {
+          errorToast("An error occurred. Please try again.");
+        }
+      }
     }
   }
 
-  async function startEditTask(id: number) {
-    const index = id;
-    if (user) {
+  async function startEditTask(index: number) {
+    const taskBeingEdited = user?.projects[id].tasks[index];
+    if (taskBeingEdited) {
       priorityInput2.current!.value =
-        user.tasks[index].priority.toLowerCase() || "";
-      titleInput2.current!.value = user.tasks[index].title || "";
-      descriptionInput2.current!.value = user.tasks[index].description || "";
-      typeInput.current!.value = user.tasks[index].type || "";
-      const parts = user.tasks[index].date.split(" "); // Split the date string into date and time parts
+        taskBeingEdited.priority.toLowerCase() || "";
+      titleInput2.current!.value = taskBeingEdited.title || "";
+      descriptionInput2.current!.value = taskBeingEdited.description || "";
+      typeInput.current!.value = taskBeingEdited.type || "";
+      const parts = taskBeingEdited.date.split(" "); // Split the date string into date and time parts
       const datePart = parts[0]; // Extract the date part "10/08/2023"
       const timePart = parts[1]; // Extract the time part "14:29"
 
@@ -375,45 +409,49 @@ const Page = () => {
   }
 
   async function deleteTask() {
-    let tasks = user?.tasks;
+    let tasks = user?.projects[id].tasks;
     tasks?.splice(editInput.current, 1);
 
-    await fetch("/api/user", {
+    const res = await fetch("/api/user", {
       method: "PATCH",
-      body: JSON.stringify({ tasks: tasks }),
+      body: JSON.stringify({ tasks: tasks, index: id }),
     });
-    const currentUser = JSON.parse(JSON.stringify(user));
-    currentUser.tasks = tasks;
-    setUser(currentUser);
-    hideModal(2);
+    const data = await res.json();
+    if (data.user != undefined && Object.keys(data.user).length !== 0) {
+      const currentUser = JSON.parse(JSON.stringify(user));
+      currentUser.projects[id].tasks = tasks;
+      setUser(currentUser);
+      hideModal(2);
+    } else {
+      if (data.message === "Date over max, set by project date") {
+        errorToast("Date exceedes, the date set in project");
+      } else {
+        errorToast("An error occurred. Please try again.");
+      }
+    }
   }
 
   async function handleDrop(drag: { id: number; userParam: User }, drop: any) {
-    const tasks = drag.userParam.tasks;
+    const tasks = drag.userParam.projects[id].tasks;
     const index = drag.id;
     if (tasks[index].type !== drop) {
       tasks[index].type = drop;
       await fetch("/api/user", {
         method: "PATCH",
         body: JSON.stringify({
+          index: id,
           tasks: tasks,
         }),
       });
       const currentUser = JSON.parse(JSON.stringify(drag.userParam));
-      currentUser.tasks = tasks;
+      currentUser.projects[id].tasks = tasks;
       setUser(currentUser);
     }
-  }
-
-  function startAddUser(type: string) {
-    addType.current = type;
-    showModal(1);
   }
 
   return (
     <DndProvider backend={HTML5Backend}>
       <>
-        <OverallNav />
         <div className={styles.searchContainer}>
           <input
             value={searchField}
@@ -447,6 +485,15 @@ const Page = () => {
                 selected={startDate}
                 onChange={(date: Date) => setStartDate(date)}
                 minDate={new Date()}
+                maxDate={
+                  typeof user?.projects[id].date === "string"
+                    ? new Date(
+                        Number(user?.projects[id].date.split("/")[2]),
+                        Number(user?.projects[id].date.split("/")[1]) - 1,
+                        Number(user?.projects[id].date.split("/")[0])
+                      )
+                    : null
+                }
                 placeholderText="Select a date"
                 className={styles.date}
                 id="date"
@@ -488,7 +535,19 @@ const Page = () => {
                 showTimeSelect
                 timeFormat="HH:mm"
                 timeIntervals={30}
-                dateFormat="MMMM d, yyyy h:mm aa"
+                dateFormat={
+                  "MMMM d, yyyy " +
+                  (user?.settings.timeFormat === 24 ? "HH:mm" : "h:mm aa")
+                }
+                maxDate={
+                  typeof user?.projects[id].date === "string"
+                    ? new Date(
+                        Number(user?.projects[id].date.split("/")[2]),
+                        Number(user?.projects[id].date.split("/")[1]) - 1,
+                        Number(user?.projects[id].date.split("/")[0])
+                      )
+                    : null
+                }
                 selected={startDate2}
                 onChange={(date: Date) => setStartDate2(date)}
                 minDate={new Date()}
@@ -527,10 +586,6 @@ const Page = () => {
             </div>
           </dialog>
           <title>Dashboard</title>
-          <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/react-datepicker/2.14.1/react-datepicker.min.css"
-          />
           <div className={styles.container}>
             <div className={styles.tasks}>
               <DropComponent type={"to-do"} onDrop={handleDrop}>
@@ -539,13 +594,13 @@ const Page = () => {
                     To do
                     <div
                       className={styles.addUser}
-                      onClick={() => startAddUser("to-do")}
+                      onClick={() => showModal(1)}
                     >
                       Add
                     </div>
                   </div>
                   {user &&
-                    user.tasks?.filter(
+                    user.projects[id].tasks?.filter(
                       (val) =>
                         val.type === "to-do" &&
                         (val.title
@@ -554,7 +609,7 @@ const Page = () => {
                           searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
-                    user.tasks.map(
+                    user.projects[id].tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
                         task.priority === "High" &&
@@ -583,8 +638,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    // Assuming the user.tasks array is stored in a state variable, e.g., tasks
-                    user.tasks.map(
+                    user.projects[id].tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
                         task.priority === "Medium" &&
@@ -616,8 +670,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    // Assuming the user.tasks array is stored in a state variable, e.g., tasks
-                    user.tasks.map(
+                    user.projects[id].tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
                         task.priority === "Low" &&
@@ -650,17 +703,9 @@ const Page = () => {
 
               <DropComponent type={"in-progress"} onDrop={handleDrop}>
                 <div className={styles.ongoing}>
-                  <div className={styles.sectionText}>
-                    In progress
-                    <div
-                      className={styles.addUser}
-                      onClick={() => startAddUser("in-progress")}
-                    >
-                      Add
-                    </div>
-                  </div>
+                  <div className={styles.sectionText}>In progress</div>
                   {user &&
-                    user.tasks?.filter(
+                    user.projects[id].tasks?.filter(
                       (val) =>
                         val.type === "in-progress" &&
                         (val.title
@@ -669,7 +714,7 @@ const Page = () => {
                           searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
-                    user.tasks.map(
+                    user.projects[id].tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
                         task.priority === "High" &&
@@ -698,7 +743,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.tasks.map(
+                    user.projects[id].tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
                         task.priority === "Medium" &&
@@ -730,7 +775,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.tasks.map(
+                    user.projects[id].tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
                         task.priority === "Low" &&
@@ -762,17 +807,9 @@ const Page = () => {
               </DropComponent>
               <DropComponent type={"done"} onDrop={handleDrop}>
                 <div className={styles.done}>
-                  <div className={styles.sectionText}>
-                    Done
-                    <div
-                      className={styles.addUser}
-                      onClick={() => startAddUser("done")}
-                    >
-                      Add
-                    </div>
-                  </div>
+                  <div className={styles.sectionText}>Done</div>
                   {user &&
-                    user.tasks?.filter(
+                    user.projects[id].tasks?.filter(
                       (val) =>
                         val.type === "done" &&
                         (val.title
@@ -781,7 +818,7 @@ const Page = () => {
                           searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
-                    user.tasks.map(
+                    user.projects[id].tasks.map(
                       (task, index) =>
                         task.type === "done" &&
                         task.priority === "High" &&
@@ -810,7 +847,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.tasks.map(
+                    user.projects[id].tasks.map(
                       (task, index) =>
                         task.type === "done" &&
                         task.priority === "Medium" &&
@@ -842,7 +879,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.tasks.map(
+                    user.projects[id].tasks.map(
                       (task, index) =>
                         task.type === "done" &&
                         task.priority === "Low" &&

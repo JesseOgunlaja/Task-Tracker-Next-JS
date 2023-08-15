@@ -5,7 +5,7 @@ import { useState } from "react";
 import styles from "@/styles/signedInNav.module.css";
 import Image from "next/image";
 
-const SignedInNavbar = () => {
+const SignedInNavbar = ({ pathname }: any) => {
   const [navShowing, setNavShowing] = useState<boolean | null>(null);
 
   return (
@@ -30,13 +30,13 @@ const SignedInNavbar = () => {
             </Link>
           </li>
           <li>
-            <Link href="/dashboard">Dashboard</Link>
+            <Link href="/projects">Projects</Link>
           </li>
           <li className={styles.logout}>
             <Link href="/api/logout">Logout</Link>
           </li>
           <li>
-            <Link href="/settings">
+            <Link href={`/settings?back=${pathname}`}>
               <i id={styles.faIcon} className="fa">
                 &#xf013;
               </i>

@@ -199,7 +199,7 @@ const SignUpForm = () => {
             <label className={styles.terms}>
               Do you agree with our{" "}
               <Link href="/privacy-policy">Privacy policy</Link> and{" "}
-              <Link href="/terms-and-conditons">Terms of service</Link>
+              <Link href="/terms-and-conditions">Terms of service</Link>
               <input
                 type="checkbox"
                 name="terms"

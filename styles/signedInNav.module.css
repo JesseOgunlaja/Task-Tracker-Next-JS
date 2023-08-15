@@ -125,7 +125,10 @@
 
   .nav ul li:nth-child(2),
   .nav ul li:nth-child(3),
-  .nav ul li:nth-child(4) {
+  .nav ul li:nth-child(4),
+  .nav ul li:nth-child(2) a,
+  .nav ul li:nth-child(3) a,
+  .nav ul li:nth-child(4) a {
     display: none;
   }
 

@@ -31,6 +31,6 @@
     "utils/decryptString.ts",
     "utils/encryptString.ts",
     "next-sitemap.config.js"
-  ],
+, "app/not-found.tsx"  ],
   "exclude": ["node_modules"]
 }

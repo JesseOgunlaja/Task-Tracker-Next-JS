@@ -1,4 +1,3 @@
-import OverallNav from "@/components/OverallNav";
 import styles from "@/styles/features.module.css";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -25,7 +24,6 @@ const rgbDataURL = (r: number, g: number, b: number) =>
 const page = () => {
   return (
     <>
-      <OverallNav />
       <main className={styles.container}>
         <div className={styles.features}>
           <div className={styles.feature}>

@@ -1,6 +1,5 @@
 "use client";
 
-import OverallNav from "@/components/OverallNav";
 import SignUpForm from "@/components/SignUpForm";
 import styles from "@/styles/signingUp.module.css";
 import { useEffect } from "react";
@@ -15,7 +14,6 @@ const Page = () => {
   return (
     <>
       <title>Sign up</title>
-      <OverallNav />
       <div className={styles.page}>
         <div className={styles.container}>
           <h1>Sign up</h1>

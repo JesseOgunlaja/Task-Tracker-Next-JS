@@ -1,27 +1,26 @@
 "use client";
 
-import React from "react";
 import SignedInNavbar from "./SignedInNavbar";
 import Navbar from "./Navbar";
 import { usePathname } from "next/navigation";
 
-const notSignedInPaths: String[] = [
-  "/",
-  "/why-taskmaster",
-  "/features",
-  "/signUp",
-  "/logIn",
-  "/reset-password",
-];
-
-const OverallNav = () => {
+const OverallNav = ({ navStatus }: { navStatus: string }) => {
   const pathname = usePathname();
+  const showBar =
+    pathname.includes("/terms-and-conditions") ||
+    pathname.includes("/privacy-policy") ||
+    pathname.includes("/settings");
+    console.log(pathname)
   return (
     <div>
-      {notSignedInPaths.every((val) => val != pathname) ? (
-        <SignedInNavbar />
-      ) : (
-        <Navbar />
+      {!showBar && (
+        <>
+          {navStatus === "yes" ? (
+            <SignedInNavbar pathname={pathname} />
+          ) : (
+            <Navbar />
+          )}
+        </>
       )}
     </div>
   );

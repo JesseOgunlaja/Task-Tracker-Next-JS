@@ -1,5 +1,5 @@
 import { useDrop } from "react-dnd";
-import styles from "@/styles/dashboard.module.css";
+import styles from "@/styles/projectPage.module.css";
 
 const DropComponent = ({ children, onDrop, type }: any) => {
   const [{ isOver }, drop] = useDrop(() => ({

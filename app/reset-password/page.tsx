@@ -1,7 +1,6 @@
 "use client";
 
 import CheckCode from "@/components/CheckCode";
-import OverallNav from "@/components/OverallNav";
 import styles from "@/styles/reset-password.module.css";
 import { errorToast } from "@/utils/toast";
 import { FormEvent, useRef, useState } from "react";
@@ -46,7 +45,6 @@ const Page = () => {
 
   return (
     <>
-      <OverallNav />
       <div className={styles.page}>
         <div className={styles.container}>
           {validName === false ? (

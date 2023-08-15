@@ -1,6 +1,5 @@
 "use client";
 
-import OverallNav from "@/components/OverallNav";
 import FormPassword from "@/components/FormPassword";
 import styles from "@/styles/logIn.module.css";
 import { errorToast, promiseToast } from "@/utils/toast";
@@ -153,7 +152,6 @@ const Page = () => {
     <>
       <title>Log in</title>
       <GoogleOAuthProvider clientId="127574879175-5f5ath1lrnqnc83t4tntdv30i8s92amu.apps.googleusercontent.com">
-        <OverallNav />
         <div className={styles.page}>
           <div className={styles.container}>
             {!showTwoFactorAuth ? (
@@ -200,7 +198,7 @@ const Page = () => {
                   <label className={styles.terms}>
                     By clicking Log In, you agree to our{" "}
                     <Link href="/privacy-policy">Privacy policy</Link> and{" "}
-                    <Link href="/terms-and-conditons">Terms of service</Link>
+                    <Link href="/terms-and-conditions">Terms of service</Link>
                   </label>
                   <input type="Submit" value="Log in" readOnly />
                 </form>

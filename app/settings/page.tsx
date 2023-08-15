@@ -1,19 +1,25 @@
+"use client";
+
 import ProfileSettings from "@/components/ProfileSettings";
 import TaskSettings from "@/components/TaskSettings";
 import styles from "@/styles/settings.module.css";
-import { headers } from "next/headers";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-const Page = async () => {
-  const headerList = headers();
-  const url = headerList.get("url");
-  const res = await fetch(`${url}/api/user`, {
-    headers: {
-      cookie: `token=${headerList.get("cookie")}`,
-    },
-  });
-  const data = await res.json();
-  const user = data.user;
+const Page = () => {
+  const back = useSearchParams().get("back")
+  const [user, setUser] = useState<any>();
+
+  useEffect(() => {
+    async function getData() {
+      const res = await fetch("/api/user");
+      const data = await res.json();
+      setUser(data.user);
+    }
+    getData();
+  }, []);
+
   return (
     <div className={styles.page}>
       <title>Settings</title>
@@ -26,13 +32,20 @@ const Page = async () => {
         <li>Something</li>
         <li>Something</li>
         <li>Something</li>
-        <button>
-          <Link href="/dashboard">Back</Link>
-        </button>
+        <Link href={back ? String(back) : "/"}>
+          Back
+        </Link>
       </ul>
+
       <div className={styles.container}>
-        <ProfileSettings user={user} />
-        <TaskSettings user={user} />
+        {user ? (
+          <>
+            <ProfileSettings user={user} />
+            <TaskSettings user={user} />
+          </>
+        ) : (
+          <p style={{ fontSize: "20px" }}>Loading...</p>
+        )}
       </div>
     </div>
   );

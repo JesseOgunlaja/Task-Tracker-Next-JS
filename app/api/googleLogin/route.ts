@@ -34,6 +34,10 @@ export async function POST(req: NextRequest) {
           name: "GMAIL_".concat(ticket.email.split("@")[0]),
           email: ticket.email,
           password: "GMAIL",
+          settings: {
+            twoFactorAuth: false,
+            timeFormat: 12
+          }
         });
 
         const newUser = await user.save();

@@ -3,8 +3,25 @@ const { Types } = mongoose.Schema;
 
 const settingsSchema = new mongoose.Schema({
   twoFactorAuth: { type: Boolean, required: true },
-  timeFormat: { type: Number, required: true}
-})
+  timeFormat: { type: Number, required: true },
+});
+
+const projectsSchema = new mongoose.Schema({
+  section: { type: String, required: true },
+  date: { type: String, required: true },
+  priority: { type: String, required: true },
+  type: { type: String, required: true },
+  name: { type: String, required: true },
+  tasks: [
+    {
+      title: { type: String, required: true },
+      date: { type: String, required: true },
+      type: { type: String, required: true },
+      description: { type: String, required: true },
+      priority: { type: String, required: true },
+    },
+  ],
+});
 
 const UserSchema = new mongoose.Schema({
   _id: { type: Types.ObjectId, auto: true },
@@ -16,16 +33,8 @@ const UserSchema = new mongoose.Schema({
   },
   email: { type: String, required: true, unique: true, index: true },
   password: { type: String, required: true },
-  tasks: [
-    {
-      title: { type: String, required: true },
-      date: { type: String, required: true },
-      type: { type: String, required: true },
-      description: { type: String, required: true },
-      priority: { type: String, required: true },
-    },
-  ],
-  settings: settingsSchema
+  projects: [projectsSchema],
+  settings: settingsSchema,
 });
 
 let isConnected = false;

@@ -2,6 +2,7 @@ import { connectToDB } from "@/utils/mongoDB";
 import {
   emailSchema,
   passwordSchema,
+  projectsSchema,
   tasksSchema,
   usernameSchema,
 } from "@/utils/zod";
@@ -17,6 +18,24 @@ function switchDateFormat(dateString: string) {
   const year = parts[2];
 
   return `${day}/${month}/${year}`;
+}
+
+function isDateLowerThanMax(inputDate: string, index: number, user: any) {
+  // Parse the input date string into a Date object
+  const inputDateParts = inputDate.split("/");
+  const year = parseInt(inputDateParts[2], 10);
+  const month = parseInt(inputDateParts[1], 10) - 1; // Month is zero-based
+  const day = parseInt(inputDateParts[0], 10);
+  const parsedInputDate = new Date(year, month, day);
+
+  const projectDate = user.projects[index].date
+  const parts = projectDate.split("/")
+  const day2 = parts[0];
+  const month2 = parts[1] - 1;
+  const year2 = parts[2];
+  const maxDate = new Date(year2, month2, day2);
+
+  return parsedInputDate <= maxDate;
 }
 
 export async function GET() {
@@ -37,20 +56,32 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { name, email, password, tasks } = body;
+    const {
+      indexToDelete,
+      editIndex,
+      editedProject,
+      newProject,
+      index,
+      name,
+      email,
+      password,
+      tasks,
+    } = body;
 
     const requestHeaders = headers();
     const id = requestHeaders.get("id");
 
     const updateFields: any = {};
 
-    const gmailUser = (await User.findById(id)).password === "GMAIL";
+    const user = await User.findById(id);
+
+    const gmailUser = user.password === "GMAIL";
 
     if (name) {
       if (gmailUser) {
         return NextResponse.json(
           { message: "Can't change name for Gmail account" },
-          { status: 400 },
+          { status: 400 }
         );
       } else {
         const result = usernameSchema.safeParse(name);
@@ -66,7 +97,7 @@ export async function PATCH(req: NextRequest) {
       if (gmailUser) {
         return NextResponse.json(
           { message: "Can't change email for Gmail account" },
-          { status: 400 },
+          { status: 400 }
         );
       } else {
         const result = emailSchema.safeParse(email);
@@ -83,7 +114,7 @@ export async function PATCH(req: NextRequest) {
       if (gmailUser) {
         return NextResponse.json(
           { message: "Can't change password for Gmail account" },
-          { status: 400 },
+          { status: 400 }
         );
       } else {
         const result = passwordSchema.safeParse(password);
@@ -95,8 +126,11 @@ export async function PATCH(req: NextRequest) {
         }
       }
     }
-    if (tasks) {
-      const newTasks = tasks.map((task: any) => {
+    if (tasks != undefined && index != undefined) {
+      if (typeof index !== "number" || user.projects[index].tasks == null) {
+        return NextResponse.json({ message: "Invalid index" }, { status: 400 });
+      }
+      const newTasks: [] = tasks.map((task: any) => {
         task.date = switchDateFormat(task.date);
         delete task._id;
         return task;
@@ -108,11 +142,91 @@ export async function PATCH(req: NextRequest) {
         });
         return NextResponse.json({ errors: error }, { status: 400 });
       } else {
-        updateFields.tasks = newTasks.map((task: any) => {
+        const tasksCompleted = newTasks.filter(
+          (task: any) => task.type === "done"
+        ).length;
+        const tasksLength = newTasks.length;
+        const completionPercentage = (tasksCompleted / tasksLength) * 100;
+        if (completionPercentage === 100 && tasksLength !== 0) {
+          updateFields[`projects.${index}.section`] = "done";
+        } else if (completionPercentage >= 50) {
+          updateFields[`projects.${index}.section`] = "in-progress";
+        } else {
+          updateFields[`projects.${index}.section`] = "to-do";
+        }
+        const howManyOverMax = newTasks.filter((val: any) => !isDateLowerThanMax(switchDateFormat(val.date).split(" ")[0], index, user)).length
+        // console.log(howManyOverMax)
+        if(howManyOverMax === 0) {
+          updateFields[`projects.${index}.tasks`] = newTasks.map((task: any) => {
+            task.date = switchDateFormat(task.date);
+            return task;
+          });
+        }
+        else {
+          return NextResponse.json({message: "Date over max, set by project date"})
+        }
+      }
+    }
+    if (newProject) {
+      newProject.date = switchDateFormat(newProject.date);
+      newProject.tasks = newProject.tasks.map((task: any) => {
+        task.date = switchDateFormat(task.date);
+        delete task._id;
+        return task;
+      });
+
+      const result = projectsSchema.safeParse(newProject);
+      if (result.success === false) {
+        const error = result.error.issues.map((issue) => {
+          return { error: issue.message };
+        });
+        return NextResponse.json({ errors: error }, { status: 400 });
+      } else {
+        newProject.date = switchDateFormat(newProject.date);
+        const previousProjects = user.projects;
+        previousProjects.push(newProject);
+        updateFields.projects = previousProjects;
+      }
+    }
+    if (editedProject != undefined && editIndex != undefined) {
+      if (user.projects[editIndex] == null) {
+        return NextResponse.json(
+          { message: "Incorrect index" },
+          { status: 400 }
+        );
+      } else {
+        editedProject.date = switchDateFormat(editedProject.date);
+        editedProject.tasks = editedProject.tasks.map((task: any) => {
           task.date = switchDateFormat(task.date);
+          delete task._id;
           return task;
         });
+        const result = projectsSchema.safeParse(editedProject);
+        if (result.success === false) {
+          const error = result.error.issues.map((issue) => {
+            return { error: issue.message };
+          });
+          return NextResponse.json({ errors: error }, { status: 400 });
+        } else {
+          editedProject.date = switchDateFormat(editedProject.date);
+          editedProject.tasks = editedProject.tasks.map((task: any) => {
+            task.date = switchDateFormat(task.date);
+            return task;
+          });
+          updateFields[`projects.${editIndex}`] = editedProject;
+        }
       }
+    }
+    if (typeof indexToDelete === "number") {
+      if (user.projects[indexToDelete] == null) {
+        return NextResponse.json(
+          { message: `Index ${indexToDelete} could not be found` },
+          { status: 400 }
+        );
+      }
+      const currentProjects: [any] = user.projects;
+      currentProjects.splice(indexToDelete, 1);
+      updateFields[`projects`] = currentProjects;
     }
 
     const result = await User.updateOne({ _id: id }, { $set: updateFields });

@@ -1,0 +1,370 @@
+.container {
+  transform: translateY(50px);
+}
+
+.page {
+  margin-top: 25px;
+  width: 99vw;
+  display: flex;
+  justify-content: space-around;
+}
+
+
+.slidercontainer {
+  width: 25%;
+  height: 2px;
+  background-color: #ccc;
+  position: absolute;
+  transform: translate(-5px, 25px);
+}
+
+.sliderfill {
+  height: 100%;
+  background-color: #4caf50;
+  width: 0;
+}
+
+.projects {
+  display: flex;
+  gap: 30px;
+}
+
+.footer > * {
+  display: inline;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%
+}
+
+.footer > .type {
+  opacity: 0.5;
+}
+
+.priority {
+  min-width: 90%;
+  border-radius: 20px;
+  padding: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(20px);
+  font-size: 15px;
+}
+
+#low {
+  background: #00c27c;
+}
+
+#medium {
+  background: #ff9100;
+}
+
+#high {
+  background: #dc494c;
+}
+
+.project {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 25vw;
+  aspect-ratio: 2.5 / 1;
+  border-radius: 15px;
+  padding: 25px;
+  background: #404457;
+  cursor: pointer;
+  padding-bottom: 35px;
+}
+
+.addProject {
+  background: rgb(0, 140, 255);
+  font-size: 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  height: 50px;
+  width: 100px;
+  border-radius: 7.5px;
+  cursor: pointer;
+}
+
+.backButton {
+  width: 500px;
+  padding: 15px 30px;
+  font-size: 25px;
+  background: white;
+  color: black;
+  border-radius: 0px 0px 10px 10px;
+  cursor: pointer;
+}
+
+.bottomButton > * {
+  width: 250px;
+  padding: 15px 30px;
+  font-size: 25px;
+  color: black;
+  cursor: pointer;
+}
+
+.back {
+  border-radius: 0px 0px 0px 10px;
+  background: white;
+}
+
+
+.delete {
+  border-radius: 0px 0px 10px 0px;
+  background: red;
+}
+
+.taskTitle > p:nth-child(1) {
+  width:100%;
+  word-wrap: break-word;
+  margin-bottom: 5px;
+}
+
+
+.projects > *::-webkit-scrollbar {
+  background: transparent;
+  width: 3px;
+}
+
+.projects > *::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+.taskTitle > div {
+  display: flex;
+}
+
+.taskTitle > div:nth-child(1) {
+  justify-content: space-between;
+}
+
+.taskTitle {
+  display: flex;
+  flex-direction: column;
+  font-size: 17px;
+}
+
+.sectionText {
+  text-align: center;
+  font-size: 25px;
+}
+
+.sectionText:nth-child(1) {
+  min-width: 300px;
+  height: 50px;
+}
+
+.sectionText {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.projects > * {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  border-radius: 15px;
+  padding: 20px;
+  background: #272938;
+  margin-bottom: 0px;
+  min-height: 75vh;
+  max-height: 75vh;
+  overflow-y: scroll;
+  width: 374.5px;
+  overflow: hidden;
+}
+
+.sectionText {
+  text-align: center;
+  font-size: 25px;
+}
+
+.sectionText:nth-child(1) {
+  min-width: 300px;
+  height: 50px;
+}
+
+.sectionText {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dialog {
+  display: none;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.65);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.dialog > :nth-child(1) {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50px 50px 0px 50px;
+  background: black;
+  border-radius: 10px 10px 0px 0px;
+  min-height: 550px;
+  width: 500px;
+}
+
+.form > input,
+.form > select,
+.form > button {
+  width: 350px;
+  border-radius: 5px;
+  padding: 15px;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.form > textarea {
+  width: 350px;
+  border-radius: 5px;
+  font-size: 17.5px;
+  margin-bottom: 20px;
+  height: 55px;
+  resize: vertical;
+  padding: 5px;
+}
+
+.search {
+  transform: translateY(75px);
+  text-align: center;
+  width: 50vw;
+  background: transparent;
+  border: white solid 2px;
+  padding: 15px;
+  border-radius: 10px;
+  color: white;
+  font-size: 20px;
+}
+
+.search::placeholder {
+  color: rgba(255,255,255,0.5)
+}
+
+.searchContainer {
+  margin-bottom: 40px;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+}
+
+.textDate {
+  height: 30px;;
+  margin-right: 10px;
+}
+
+.date {
+  padding: 15px;
+  font-size: 20px;
+  border-radius: 5px;
+  width: 350px;
+}
+
+.form > label {
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: white;
+  display: block;
+}
+
+.form > [type="submit"] {
+  margin-top: 35px;
+  background: darkblue;
+  color: white;
+  margin-bottom: 40px;
+  cursor: pointer;
+}
+
+.backButton {
+  width: 500px;
+  padding: 15px 30px;
+  font-size: 25px;
+  background: white;
+  color: black;
+  border-radius: 0px 0px 10px 10px;
+  cursor: pointer;
+}
+
+@media (min-height: 100vw) {
+  .sectionText:nth-child(1) {
+    margin-left: 10px;
+  }
+  .dialog > :nth-child(1) {
+    min-height: 750px;
+    transform: translateY(30px);
+  }
+  .dialog {
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .form > textarea {
+    height: 75px;
+  }
+  .bottomButton > * {
+    width: 50vw;
+    border-radius: 0px;
+    transform: translateY(20px);
+  }
+  .projects > * {
+    width: 90vw;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    max-height: none;;
+  }
+
+  .projects:last-child {
+    margin-bottom: 100px;
+  }
+
+  .container {
+    transform: translateY(70px);
+  }
+  .projects {
+    display: flex;
+    flex-direction: column;
+  }
+  .project {
+    width: 85vw;
+  }
+  .page {
+    margin: 0px;
+  }
+  @media (min-width: 600px) {
+    .projects > *{
+      width: 55vw;
+    }
+    .bottomButton > * {
+      width: 250px;
+    }
+    .dialog > :nth-child(1) {
+      min-height: 550px !important;
+    }
+    .project {
+      width: 50vw;
+    }
+  }
+}
