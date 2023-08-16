@@ -64,14 +64,14 @@ const SignedInNavbar = ({ pathname }: any) => {
         }
       >
         <div className={navShowing != null ? styles.phoneLinks : undefined}>
-          <Link onClick={() => setNavShowing(false)} href="/dashboard">
-            Dashboard
+          <Link onClick={() => setNavShowing(false)} href="/projects">
+            Projects
+          </Link>
+          <Link onClick={() => setNavShowing(false)} href={`/settings?back=${pathname}`}>
+            Settings
           </Link>
           <Link onClick={() => setNavShowing(false)} href="/api/logout">
             Log out
-          </Link>
-          <Link onClick={() => setNavShowing(false)} href="/settings">
-            Settings
           </Link>
         </div>
       </div>

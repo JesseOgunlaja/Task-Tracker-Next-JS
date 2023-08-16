@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import styles from "@/styles/page.module.css";
 import Link from "next/link";
 import Image from "next/image";
-import OverallNav from "@/components/OverallNav";
 
 const Page = () => {
   useEffect(() => {

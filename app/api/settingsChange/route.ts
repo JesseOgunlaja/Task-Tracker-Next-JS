@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   try {
     const User = await connectToDB();
     const body = await request.json();

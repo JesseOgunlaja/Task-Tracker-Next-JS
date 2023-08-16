@@ -6,8 +6,9 @@ import SettingsPassword from "./SettingsPassword";
 import Checkbox from "./Checkbox";
 import { emailSchema, passwordSchema, usernameSchema } from "@/utils/zod";
 import { errorToast, successToast } from "@/utils/toast";
+import Link from "next/link";
 
-const ProfileSettings = ({ user }: any) => {
+const ProfileSettings = ({ user, back }: any) => {
   const authForm = useRef<HTMLFormElement>(null);
   const passwordForm = useRef<HTMLFormElement>(null);
   const usernameForm = useRef<HTMLFormElement>(null);
@@ -24,7 +25,7 @@ const ProfileSettings = ({ user }: any) => {
       errorToast(result.error.format()._errors[0]);
     } else {
       const res = await fetch("/api/settingsChange", {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -61,7 +62,7 @@ const ProfileSettings = ({ user }: any) => {
         errorToast(result.error.format()._errors[0]);
       } else {
         const res = await fetch("/api/settingsChange", {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
@@ -96,7 +97,7 @@ const ProfileSettings = ({ user }: any) => {
       errorToast(result.error.format()._errors[0]);
     } else {
       const res = await fetch("/api/settingsChange", {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -123,7 +124,7 @@ const ProfileSettings = ({ user }: any) => {
     const checkbox = authForm.current?.firstChild as HTMLLabelElement;
     const input = checkbox.firstChild as HTMLInputElement;
       const res = await fetch("/api/settingsChange", {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -144,7 +145,15 @@ const ProfileSettings = ({ user }: any) => {
     <div className={styles.container}>
       {user ? (
         <>
+        <script
+          async
+          src="https://kit.fontawesome.com/b9c7cb7078.js"
+          crossOrigin="anonymous"
+        ></script>
           <h1>Account</h1>
+          <Link href={back ? String(back) : "/"}>
+            <i style={{fontSize: '30px'}} className="fa-solid fa-arrow-left"></i>
+          </Link>
           <br />
           <p>Change username</p>
           <form

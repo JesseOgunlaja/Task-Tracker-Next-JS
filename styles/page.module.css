@@ -36,6 +36,7 @@
 
 .container2 {
   display: flex;
+  justify-content: center;
   transform: translateY(75px);
 }
 

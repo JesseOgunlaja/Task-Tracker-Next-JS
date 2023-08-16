@@ -23,8 +23,9 @@ const Page = () => {
   return (
     <div className={styles.page}>
       <title>Settings</title>
+      
       <ul className={styles.sideNav}>
-        <li>Account</li>
+        <li onClick={() => window.scrollTo(0,0,)}>Account</li>
         <li>App settings</li>
         <li>Something</li>
         <li>Something</li>
@@ -40,7 +41,8 @@ const Page = () => {
       <div className={styles.container}>
         {user ? (
           <>
-            <ProfileSettings user={user} />
+            <ProfileSettings back={back} user={user} />
+            
             <TaskSettings user={user} />
           </>
         ) : (

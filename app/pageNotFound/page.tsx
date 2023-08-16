@@ -37,7 +37,7 @@ const Page = () => {
 
   return (
     <div style={style}>
-      <p>This page couldn&apos;t be found</p>
+      <p>You don&apos; have a project with this index</p>
       <p>Redirecting you to home page in {seconds} seconds</p>
       <Link href="/">Go now</Link>
     </div>

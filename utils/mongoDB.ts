@@ -3,7 +3,7 @@ const { Types } = mongoose.Schema;
 
 const settingsSchema = new mongoose.Schema({
   twoFactorAuth: { type: Boolean, required: true },
-  timeFormat: { type: Number, required: true },
+  timeFormat: { type: Number, required: true }
 });
 
 const projectsSchema = new mongoose.Schema({

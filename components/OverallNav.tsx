@@ -15,7 +15,7 @@ const OverallNav = ({ navStatus }: { navStatus: string }) => {
     <div>
       {!showBar && (
         <>
-          {navStatus === "yes" ? (
+          {navStatus === "yes" || pathname.includes("/projects") ? (
             <SignedInNavbar pathname={pathname} />
           ) : (
             <Navbar />

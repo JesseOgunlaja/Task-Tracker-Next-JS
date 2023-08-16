@@ -48,8 +48,12 @@ export async function POST(req: NextRequest) {
       tasks: [],
       settings: {
         twoFactorAuth: false,
-        dateFormat: "dd/MM/yyyy",
-        timeFormat: 12
+        timeFormat: 12,
+        calendars: [
+          "Home",
+          "Work",
+          "Personal"
+        ]
       }
     });
     try {

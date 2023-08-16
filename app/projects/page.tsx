@@ -33,8 +33,13 @@ type Project = {
   tasks: Task[];
 };
 
+type Settings = {
+  calendars: [string];
+};
+
 type User = {
   projects: Project[];
+  settings: Settings;
 };
 
 const titleSchema = z.string().max(40, { message: "Title too long" });
@@ -50,7 +55,7 @@ const Page = () => {
   const titleInput2 = useRef<HTMLInputElement>(null);
   const priorityInput = useRef<HTMLSelectElement>(null);
   const priorityInput2 = useRef<HTMLSelectElement>(null);
-  const typeInput = useRef<HTMLSelectElement>(null);
+  const typeInput = useRef<HTMLInputElement>(null);
   const editInput = useRef<number>(0);
 
   useEffect(() => {
@@ -347,25 +352,7 @@ const Page = () => {
                   id="date"
                 />
                 <label htmlFor="section">Section</label>
-                <select name="section" id="section">
-                  {user?.projects.map((project, index) => {
-                    const isFirstOfType =
-                      user?.projects.findIndex(
-                        (p) => p.type === project.type
-                      ) === index;
-                    if (isFirstOfType) {
-                      return (
-                        <option key={index} value={project.type}>
-                          {project.type}
-                        </option>
-                      );
-                    }
-                    return null;
-                  })}
-                </select>
-                <button type="button" value="AddProject">
-                  Add section
-                </button>
+                <input name="section" id="section" />
                 <label htmlFor="priority">Priority</label>
                 <select name="priority" ref={priorityInput} id="priority">
                   <option value="Low">Low</option>
@@ -403,26 +390,7 @@ const Page = () => {
               id="date2"
             />
             <label htmlFor="section">Section</label>
-            <select
-              ref={typeInput}
-              defaultValue={user?.projects[editInput.current].type}
-              name="section"
-              id="section"
-            >
-              {user?.projects.map((project, index) => {
-                const isFirstOfType =
-                  user?.projects.findIndex((p) => p.type === project.type) ===
-                  index;
-                if (isFirstOfType) {
-                  return (
-                    <option key={index} value={project.type}>
-                      {project.type}
-                    </option>
-                  );
-                }
-                return null;
-              })}
-            </select>
+            <input ref={typeInput} name="section" id="section" />
             <label htmlFor="priority2">Priority</label>
             <select name="priority2" ref={priorityInput2} id="priority2">
               <option value="Low">Low</option>

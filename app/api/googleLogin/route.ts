@@ -36,7 +36,12 @@ export async function POST(req: NextRequest) {
           password: "GMAIL",
           settings: {
             twoFactorAuth: false,
-            timeFormat: 12
+            timeFormat: 12,
+            calendars: [
+              "Home",
+              "Work",
+              "Personal"
+            ]
           }
         });
 

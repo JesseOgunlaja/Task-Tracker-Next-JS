@@ -58,4 +58,7 @@
   .sideNav {
     display: none;
   }
+  .container {
+    transform: translateY(0px);
+  }
 }

@@ -26,7 +26,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 25vw;
+  width: 100%;
   aspect-ratio: 2.5 / 1;
   border-radius: 15px;
   padding: 20px;
@@ -61,7 +61,7 @@
   min-height:75vh;
   max-height: 75vh;
   overflow-y: scroll;
-  width: 374.5px
+  width: 27.5vw;
 }
 
 .date {
@@ -247,6 +247,10 @@
 }
 
 @media (min-height: 100vw) {
+  .search {
+    width: 90vw;
+    transform: translateY(100px);
+  }
   .sectionText:nth-child(1) {
     margin-left: 10px;
   }

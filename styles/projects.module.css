@@ -9,7 +9,6 @@
   justify-content: space-around;
 }
 
-
 .slidercontainer {
   width: 25%;
   height: 2px;
@@ -30,13 +29,14 @@
 }
 
 .footer > * {
+  /* width: 70%; */
   display: inline;
 }
 
 .footer {
   display: flex;
   justify-content: space-between;
-  width: 100%
+  width: 100%;
 }
 
 .footer > .type {
@@ -72,7 +72,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 25vw;
+  width: 100%;
   aspect-ratio: 2.5 / 1;
   border-radius: 15px;
   padding: 25px;
@@ -118,18 +118,16 @@
   background: white;
 }
 
-
 .delete {
   border-radius: 0px 0px 10px 0px;
   background: red;
 }
 
 .taskTitle > p:nth-child(1) {
-  width:100%;
+  width: 100%;
   word-wrap: break-word;
   margin-bottom: 5px;
 }
-
 
 .projects > *::-webkit-scrollbar {
   background: transparent;
@@ -180,7 +178,7 @@
   min-height: 75vh;
   max-height: 75vh;
   overflow-y: scroll;
-  width: 374.5px;
+  width: 27.5vw;
   overflow: hidden;
 }
 
@@ -261,7 +259,7 @@
 }
 
 .search::placeholder {
-  color: rgba(255,255,255,0.5)
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .searchContainer {
@@ -272,7 +270,7 @@
 }
 
 .textDate {
-  height: 30px;;
+  height: 30px;
   margin-right: 10px;
 }
 
@@ -309,6 +307,16 @@
 }
 
 @media (min-height: 100vw) {
+  .slidercontainer {
+    width: 82%;
+  }
+  .search {
+    width: 90vw;
+    transform: translateY(100px);
+  }
+  .container {
+    transform: translateY(75px);
+  }
   .sectionText:nth-child(1) {
     margin-left: 10px;
   }
@@ -333,7 +341,8 @@
     display: flex;
     align-items: center;
     overflow: hidden;
-    max-height: none;;
+    max-height: none;
+    min-height: 0px;
   }
 
   .projects:last-child {
@@ -354,8 +363,12 @@
     margin: 0px;
   }
   @media (min-width: 600px) {
-    .projects > *{
+    .search {
+    width: 55vw;
+    }
+    .projects > * {
       width: 55vw;
+      max-height: none;
     }
     .bottomButton > * {
       width: 250px;
