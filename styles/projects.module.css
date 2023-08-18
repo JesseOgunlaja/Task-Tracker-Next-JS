@@ -322,13 +322,10 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-  }
-  
-  .projects > *:nth-child(2) > * {
-    width: none;
+    width: 100%
   }
   .slidercontainer {
-    width: 82%;
+    width: 100%;
   }
   .search {
     width: 90vw;

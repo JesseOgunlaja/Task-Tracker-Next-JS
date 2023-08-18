@@ -130,7 +130,7 @@ const Page = () => {
     } else if (
       valueChecking === "Titles" &&
       user?.projects.filter(
-        (val) => val.name.toUpperCase() === value.toUpperCase()
+        (val) => val.name.toUpperCase() === value.toUpperCase(),
       ).length !== 0
     ) {
       errorToast("Duplicate title");
@@ -154,7 +154,7 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number
+    index: number,
   ) {
     const results: boolean[] = [];
     if (index === 1) {
@@ -234,7 +234,7 @@ const Page = () => {
 
       const formattedDate = createDateFromFormat(
         taskBeingEdited.date,
-        user.settings.dateFormat
+        user.settings.dateFormat,
       ); // Create a new Date object with the components
       setStartDate2(formattedDate);
       showModal(2);
@@ -280,8 +280,8 @@ const Page = () => {
       let mm: number | string = startDate2.getMonth() + 1; // Months start at 0
       let dd: number | string = startDate2.getDate();
 
-      if(dd < 10) dd = "0" + dd
-      if(mm < 10) mm = "0" + mm
+      if (dd < 10) dd = "0" + dd;
+      if (mm < 10) mm = "0" + mm;
 
       if (user?.settings.dateFormat === "dd/MM/yyyy") {
         var formattedDate = `${dd}/${mm}/${yyyy}`;
@@ -300,7 +300,7 @@ const Page = () => {
         priority: String(
           String(String(formValues.priority2)[0])
             .toUpperCase()
-            .concat(String(formValues.priority2.slice(1)))
+            .concat(String(formValues.priority2.slice(1))),
         ),
         section: user?.projects[editInput.current].section,
         type: String(formValues.section),
@@ -492,15 +492,19 @@ const Page = () => {
             {user == null ? (
               <p style={{ fontSize: "20px" }}>Loading ...</p>
             ) : (
-              <>{user.projects.filter(val => val.section !== "done").length === 0 && <p>No projects</p>}</>
+              <>
+                {user.projects.filter((val) => val.section !== "done")
+                  .length === 0 && <p>No projects</p>}
+              </>
             )}
             <div>
               {user?.projects.map(
                 (project, index: number) =>
-                  ((project.name
+                  (project.name
                     .toUpperCase()
                     .includes(searchField.toUpperCase()) ||
-                    searchField === "") && project.section !== "done") && (
+                    searchField === "") &&
+                  project.section !== "done" && (
                     <Link
                       passHref={false}
                       href={`/projects/${index}`}
@@ -525,26 +529,18 @@ const Page = () => {
                         <div>
                           <p className={styles.type}>{project.type}</p>
                           <p>
+                         
                             {
-                              project.tasks.filter(
-                                (task) => task.type === "done"
-                              ).length
-                            }
-                            &#47;
-                            {project.tasks.length +
-                              " completed " +
-                              "(" +
                               Math.round(
                                 project.tasks.length === 0
                                   ? 0
                                   : (project.tasks.filter(
-                                      (task) => task.type === "done"
+                                      (task) => task.type === "done",
                                     ).length /
                                       project.tasks.length) *
-                                      100
+                                      100,
                               ) +
-                              "%" +
-                              ")"}
+                              "%"}
                           </p>
                         </div>
                         <Slider
@@ -568,22 +564,24 @@ const Page = () => {
                         {project.priority}
                       </div>
                     </Link>
-                  )
+                  ),
               )}
-             <div className={styles.doneText}>
-              Done
-            </div>
-            {user == null ? (
-              <p style={{ fontSize: "20px" }}>Loading ...</p>
-            ) : (
-              <>{user.projects.filter(val => val.section !== "done").length === 0 && <p>No projects</p>}</>
-            )}
-               {user?.projects.map(
+              <div className={styles.doneText}>Done</div>
+              {user == null ? (
+                <p style={{ fontSize: "20px" }}>Loading ...</p>
+              ) : (
+                <>
+                  {user.projects.filter((val) => val.section !== "done")
+                    .length === 0 && <p>No projects</p>}
+                </>
+              )}
+              {user?.projects.map(
                 (project, index: number) =>
-                  ((project.name
+                  (project.name
                     .toUpperCase()
                     .includes(searchField.toUpperCase()) ||
-                    searchField === "") && project.section === "done") && (
+                    searchField === "") &&
+                  project.section === "done" && (
                     <Link
                       passHref={false}
                       href={`/projects/${index}`}
@@ -609,25 +607,16 @@ const Page = () => {
                           <p className={styles.type}>{project.type}</p>
                           <p>
                             {
-                              project.tasks.filter(
-                                (task) => task.type === "done"
-                              ).length
-                            }
-                            &#47;
-                            {project.tasks.length +
-                              " completed " +
-                              "(" +
                               Math.round(
                                 project.tasks.length === 0
                                   ? 0
                                   : (project.tasks.filter(
-                                      (task) => task.type === "done"
+                                      (task) => task.type === "done",
                                     ).length /
                                       project.tasks.length) *
-                                      100
+                                      100,
                               ) +
-                              "%" +
-                              ")"}
+                              "%"}
                           </p>
                         </div>
                         <Slider
@@ -651,7 +640,7 @@ const Page = () => {
                         {project.priority}
                       </div>
                     </Link>
-                  )
+                  ),
               )}
             </div>
           </div>

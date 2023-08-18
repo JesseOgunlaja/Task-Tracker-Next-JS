@@ -48,7 +48,7 @@ const TaskSettings = ({
     e.preventDefault();
 
     const amountOfEmptyStrings = user.settings.calendars.filter(
-      (val) => val === ""
+      (val) => val === "",
     ).length;
 
     if (amountOfEmptyStrings === 0) {
@@ -93,7 +93,7 @@ const TaskSettings = ({
     } else {
       errorToast(
         `Remove all projects with "${user.settings.calendars[index]}" tag before removing it`,
-        5000
+        5000,
       );
     }
   }

@@ -50,13 +50,13 @@ async function getData(id: number) {
   if (data.user == null) {
     window.location.href = window.location.href.replace(
       window.location.pathname,
-      "/api/logout"
+      "/api/logout",
     );
   } else {
     if (data.user.projects[id] == null) {
       window.location.href = window.location.href.replace(
         window.location.pathname,
-        "/pageNotFound"
+        "/pageNotFound",
       );
     } else {
       data.user.projects = data.user.projects.sort((a, b) => {
@@ -229,14 +229,13 @@ const Page = () => {
         } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
           var formattedDate = `${yyyy}-${mm}-${dd} ${hh
             .toString()
-            .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`
-            console.log(formattedDate)
+            .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+          console.log(formattedDate);
         } else {
           var formattedDate = `${dd}/${mm}/${yyyy} ${hh
             .toString()
             .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
         }
-
 
         tasks[editInput.current] = {
           title: String(formValues.title2),
@@ -245,7 +244,7 @@ const Page = () => {
           priority: String(
             String(String(formValues.priority2)[0])
               .toUpperCase()
-              .concat(String(formValues.priority2.slice(1)))
+              .concat(String(formValues.priority2.slice(1))),
           ),
           type: String(formValues.type2),
         };
@@ -334,7 +333,7 @@ const Page = () => {
         months[dateObject.getMonth()]
       } ${day}, ${year} ${twelveHourFormat}:${minutes.padStart(
         2,
-        "0"
+        "0",
       )} ${ampm}`;
     }
   }
@@ -358,13 +357,13 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number
+    index: number,
   ) {
     const results: boolean[] = [];
     if (index === 1) {
       results.push(
         checkLengths(String(formValues.title), String(formValues.description))
-          .error
+          .error,
       );
       results.push(checkValue("Title", 1).error);
       results.push(checkValue("Date", 1).error);
@@ -372,7 +371,7 @@ const Page = () => {
     } else {
       results.push(
         checkLengths(String(formValues.title2), String(formValues.description2))
-          .error
+          .error,
       );
       results.push(checkValue("Title", 2).error);
       results.push(checkValue("Date", 2).error);
@@ -425,7 +424,7 @@ const Page = () => {
         priority: String(
           String(String(formValues.priority)[0])
             .toUpperCase()
-            .concat(String(formValues.priority.slice(1)))
+            .concat(String(formValues.priority.slice(1))),
         ),
         description: String(formValues.description),
         type: "to-do",
@@ -455,7 +454,7 @@ const Page = () => {
 
   function createDateWithTimeFormat(
     dateTimeString: string,
-    dateFormat: string
+    dateFormat: string,
   ) {
     let dayIndex, monthIndex, yearIndex;
 
@@ -475,8 +474,10 @@ const Page = () => {
       throw new Error("Invalid date format");
     }
 
-    const dateTimeParts = dateTimeString.split(/[ /:-]/).filter(val => val !== "")
-    console.log(dateTimeParts)
+    const dateTimeParts = dateTimeString
+      .split(/[ /:-]/)
+      .filter((val) => val !== "");
+    console.log(dateTimeParts);
 
     const day = parseInt(dateTimeParts[dayIndex], 10);
     const month = parseInt(dateTimeParts[monthIndex], 10) - 1;
@@ -499,7 +500,7 @@ const Page = () => {
 
       const formattedDate = createDateWithTimeFormat(
         taskBeingEdited.date,
-        user.settings.dateFormat
+        user.settings.dateFormat,
       ); // Create a new Date object with the components
       setStartDate2(formattedDate);
 
@@ -592,7 +593,7 @@ const Page = () => {
                     typeof user?.projects[id].date === "string"
                       ? createDateFromFormat(
                           user?.projects[id].date,
-                          user?.settings.dateFormat
+                          user?.settings.dateFormat,
                         )
                       : null
                   }
@@ -623,65 +624,64 @@ const Page = () => {
 
           <dialog className={styles.dialog} ref={dialog2}>
             {!user ? (
-              <p style={{fontSize: "20px"}}>Loading...</p>
-            ): (
-
-            <form onSubmit={editTask} className={styles.form}>
-              <label htmlFor="title2">Title</label>
-              <input
-                autoComplete="off"
-                ref={titleInput2}
-                name="title2"
-                id="title2"
-                type="text"
-                placeholder="Work meeting"
-              />
-              <label htmlFor="date2">Date</label>
-              <DatePicker
-                autoComplete="off"
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={30}
-                dateFormat={
-                  `${user?.settings.dateFormat} ` +
-                  (user?.settings.timeFormat === 24 ? "HH:mm" : "h:mm aa")
-                }
-                maxDate={
-                  typeof user?.projects[id].date === "string"
-                    ? createDateFromFormat(
-                        user?.projects[id].date,
-                        user?.settings.dateFormat
-                      )
-                    : null
-                }
-                selected={startDate2}
-                onChange={(date: Date) => setStartDate2(date)}
-                minDate={new Date()}
-                placeholderText="Select a date"
-                className={styles.date}
-                id="date2"
-              />
-              <label htmlFor="description2">Description</label>
-              <textarea
-                ref={descriptionInput2}
-                id="description2"
-                name="description2"
-                placeholder="Schedule work meeting"
-              />
-              <label htmlFor="type2">Type</label>
-              <select name="type2" ref={typeInput} id="type2">
-                <option value="to-do">To do</option>
-                <option value="in-progress">In progress</option>
-                <option value="done">Done</option>
-              </select>
-              <label htmlFor="priority2">Priority</label>
-              <select name="priority2" ref={priorityInput2} id="priority2">
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-              <input type="submit" />
-            </form>
+              <p style={{ fontSize: "20px" }}>Loading...</p>
+            ) : (
+              <form onSubmit={editTask} className={styles.form}>
+                <label htmlFor="title2">Title</label>
+                <input
+                  autoComplete="off"
+                  ref={titleInput2}
+                  name="title2"
+                  id="title2"
+                  type="text"
+                  placeholder="Work meeting"
+                />
+                <label htmlFor="date2">Date</label>
+                <DatePicker
+                  autoComplete="off"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={30}
+                  dateFormat={
+                    `${user?.settings.dateFormat} ` +
+                    (user?.settings.timeFormat === 24 ? "HH:mm" : "h:mm aa")
+                  }
+                  maxDate={
+                    typeof user?.projects[id].date === "string"
+                      ? createDateFromFormat(
+                          user?.projects[id].date,
+                          user?.settings.dateFormat,
+                        )
+                      : null
+                  }
+                  selected={startDate2}
+                  onChange={(date: Date) => setStartDate2(date)}
+                  minDate={new Date()}
+                  placeholderText="Select a date"
+                  className={styles.date}
+                  id="date2"
+                />
+                <label htmlFor="description2">Description</label>
+                <textarea
+                  ref={descriptionInput2}
+                  id="description2"
+                  name="description2"
+                  placeholder="Schedule work meeting"
+                />
+                <label htmlFor="type2">Type</label>
+                <select name="type2" ref={typeInput} id="type2">
+                  <option value="to-do">To do</option>
+                  <option value="in-progress">In progress</option>
+                  <option value="done">Done</option>
+                </select>
+                <label htmlFor="priority2">Priority</label>
+                <select name="priority2" ref={priorityInput2} id="priority2">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+                <input type="submit" />
+              </form>
             )}
             <div className={styles.bottomButton}>
               <button className={styles.back} onClick={() => hideModal(2)}>
@@ -713,7 +713,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === "")
+                          searchField === ""),
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.projects[id].tasks.map(
@@ -742,7 +742,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -774,7 +774,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -803,7 +803,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                 </div>
               </DropComponent>
@@ -818,7 +818,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === "")
+                          searchField === ""),
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.projects[id].tasks.map(
@@ -847,7 +847,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -879,7 +879,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -908,7 +908,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                 </div>
               </DropComponent>
@@ -922,7 +922,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === "")
+                          searchField === ""),
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.projects[id].tasks.map(
@@ -951,7 +951,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -983,7 +983,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -1012,7 +1012,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                 </div>
               </DropComponent>

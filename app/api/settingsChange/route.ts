@@ -8,7 +8,12 @@ const { v4: uuidv4 } = require("uuid");
 import { cookies } from "next/headers";
 import { z } from "zod";
 
-function convertDateFormat(dateString: string, user: any, body: any, showTime: boolean) {
+function convertDateFormat(
+  dateString: string,
+  user: any,
+  body: any,
+  showTime: boolean,
+) {
   const currentFormat = user?.settings.dateFormat;
   const targetFormat = body?.dateFormat;
 
@@ -52,7 +57,6 @@ function convertDateFormat(dateString: string, user: any, body: any, showTime: b
 
   return formattedDate;
 }
-
 
 export async function PATCH(request: NextRequest) {
   try {
@@ -223,34 +227,48 @@ export async function PATCH(request: NextRequest) {
               });
               updateFields["projects"] = newProjects;
             }
-            if(user.projects.filter((val: any) => body.calendars.includes(val.type)).length !== user.projects.length) {
-              return NextResponse.json({ message: "Remove all projects with type before removing tag"}, {status: 400})
+            if (
+              user.projects.filter((val: any) =>
+                body.calendars.includes(val.type),
+              ).length !== user.projects.length
+            ) {
+              return NextResponse.json(
+                {
+                  message: "Remove all projects with type before removing tag",
+                },
+                { status: 400 },
+              );
             }
             updateFields["settings.calendars"] = body.calendars;
           }
         }
       }
-      if(body.dateFormat) {
-        const dateFormatSchema = z.union([z.literal("yyyy-MM-dd"), z.literal("MM/dd/yyyy"), z.literal("dd/MM/yyyy")]);
-        const result = dateFormatSchema.safeParse(body.dateFormat)
-        if(!result.success) {
-          return NextResponse.json({ message: "Invalid input"}, {status: 400})
-        }
-        else {
-          if(body.dateFormat === user.settings.dateFormat) {
-            return NextResponse.json({ message: "Same"}, {status: 400})
-          }
-          else {
+      if (body.dateFormat) {
+        const dateFormatSchema = z.union([
+          z.literal("yyyy-MM-dd"),
+          z.literal("MM/dd/yyyy"),
+          z.literal("dd/MM/yyyy"),
+        ]);
+        const result = dateFormatSchema.safeParse(body.dateFormat);
+        if (!result.success) {
+          return NextResponse.json(
+            { message: "Invalid input" },
+            { status: 400 },
+          );
+        } else {
+          if (body.dateFormat === user.settings.dateFormat) {
+            return NextResponse.json({ message: "Same" }, { status: 400 });
+          } else {
             const newProjects = user.projects.map((project: any) => {
-              project.date = convertDateFormat(project.date, user, body, false)
+              project.date = convertDateFormat(project.date, user, body, false);
               project.tasks = project.tasks.map((task: any) => {
-                task.date = convertDateFormat(task.date, user, body, true)
-                return task
-              })
-              return project
-            })
-            updateFields["projects"] = newProjects
-            updateFields["settings.dateFormat"] = body.dateFormat
+                task.date = convertDateFormat(task.date, user, body, true);
+                return task;
+              });
+              return project;
+            });
+            updateFields["projects"] = newProjects;
+            updateFields["settings.dateFormat"] = body.dateFormat;
           }
         }
       }
