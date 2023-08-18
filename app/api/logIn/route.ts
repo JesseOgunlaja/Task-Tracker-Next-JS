@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
           const payload = {
             iat: Date.now(),
             exp: Math.floor(
-              (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000
+              (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000,
             ),
             username: user.name,
             email: user.email,
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
               headers: {
                 Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
               },
-            }
+            },
           );
           const data = await res.json();
           const CODE = data.result;
@@ -73,14 +73,14 @@ export async function POST(req: NextRequest) {
                 headers: {
                   Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
                 },
-              }
+              },
             );
             const data = await res.json();
             const uuid = data.result;
             const payload = {
               iat: Date.now(),
               exp: Math.floor(
-                (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000
+                (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000,
               ),
               username: user.name,
               email: user.email,
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
           } else {
             return NextResponse.json(
               { message: "Invalid code" },
-              { status: 400 }
+              { status: 400 },
             );
           }
         }
@@ -113,12 +113,12 @@ export async function POST(req: NextRequest) {
             email: user.email,
             name: user.name,
           },
-          { status: 200 }
+          { status: 200 },
         );
       } else {
         return NextResponse.json(
           { message: "Invalid credentials" },
-          { status: 400 }
+          { status: 400 },
         );
       }
     } catch (err) {

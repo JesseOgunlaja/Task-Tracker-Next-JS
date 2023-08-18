@@ -54,35 +54,34 @@ export const tasksSchema = z.array(
           (val: string) => !priorities.every((priority) => val != priority),
           {
             message: "Invalid priority",
-          }
+          },
         ),
     })
-    .strict()
+    .strict(),
 );
 
-export const projectsSchema =
-  z
-    .object({
-      type: z.string().max(20, {
-        message: "Type too long",
+export const projectsSchema = z
+  .object({
+    type: z.string().max(20, {
+      message: "Type too long",
+    }),
+    name: z.string().max(40, {
+      message: "Type too long",
+    }),
+    date: z.coerce.date(),
+    section: z
+      .string()
+      .refine((val: string) => !types.every((type) => val != type), {
+        message: "Invalid type",
       }),
-      name: z.string().max(40, {
-        message: "Type too long",
-      }),
-      date: z.coerce.date(),
-      section: z
-        .string()
-        .refine((val: string) => !types.every((type) => val != type), {
-          message: "Invalid type",
-        }),
-      priority: z
-        .string()
-        .refine(
-          (val: string) => !priorities.every((priority) => val != priority),
-          {
-            message: "Invalid priority",
-          }
-        ),
-      tasks: tasksSchema,
-    })
-    .strict()
+    priority: z
+      .string()
+      .refine(
+        (val: string) => !priorities.every((priority) => val != priority),
+        {
+          message: "Invalid priority",
+        },
+      ),
+    tasks: tasksSchema,
+  })
+  .strict();

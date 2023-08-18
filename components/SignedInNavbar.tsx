@@ -67,7 +67,10 @@ const SignedInNavbar = ({ pathname }: any) => {
           <Link onClick={() => setNavShowing(false)} href="/projects">
             Projects
           </Link>
-          <Link onClick={() => setNavShowing(false)} href={`/settings?back=${pathname}`}>
+          <Link
+            onClick={() => setNavShowing(false)}
+            href={`/settings?back=${pathname}`}
+          >
             Settings
           </Link>
           <Link onClick={() => setNavShowing(false)} href="/api/logout">

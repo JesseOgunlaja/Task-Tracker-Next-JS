@@ -15,13 +15,14 @@
 }
 
 .form > select {
-  width: 200px;
+  width: 250px;
   padding: 10px;
   border-radius: 5px;
   font-size: 17.5px;
 }
 
-.form > input {
+.form > input,
+.calendarsForm > input {
   height: 25px;
   width: 250px;
   padding: 15px;
@@ -29,16 +30,8 @@
   font-size: 17.5px;
 }
 
-.form > button {
-  width: 250px;
-  padding: 10px 15px 10px 15px;
-  border-radius: 5px;
-  font-size: 17.5px;
-
-  cursor: pointer;
-}
-
-.form > [type="submit"] {
+.form > [type="submit"],
+.calendarsForm > [type="submit"] {
   margin-top: 10px;
   background: darkblue;
   color: white;
@@ -49,4 +42,31 @@
   padding: 15px;
   border-radius: 5px;
   font-size: 17.5px;
+}
+
+.form > button,
+.calendarsForm > button {
+  width: 250px;
+  padding: 10px 15px 10px 15px;
+  border-radius: 5px;
+  font-size: 17.5px;
+  cursor: pointer;
+}
+
+.calendarsForm {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+  width: 300px;
+}
+
+.calendarsForm > i {
+  font-size: 20px;
+  padding: 2.5px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: red;
+  cursor: pointer;
 }

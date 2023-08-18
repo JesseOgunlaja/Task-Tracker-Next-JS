@@ -123,36 +123,40 @@ const ProfileSettings = ({ user, back }: any) => {
     e.preventDefault();
     const checkbox = authForm.current?.firstChild as HTMLLabelElement;
     const input = checkbox.firstChild as HTMLInputElement;
-      const res = await fetch("/api/settingsChange", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          twoFactorAuth: input.checked,
-        }),
-      });
-      const data = await res.json();
-      if (data.message === "Success") {
-        successToast("Success");
-      }
-      if (data.message === "Same") {
-        errorToast("Value has not changed");
-      }
+    const res = await fetch("/api/settingsChange", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        twoFactorAuth: input.checked,
+      }),
+    });
+    const data = await res.json();
+    if (data.message === "Success") {
+      successToast("Success");
+    }
+    if (data.message === "Same") {
+      errorToast("Value has not changed");
+    }
   }
 
   return (
     <div className={styles.container}>
       {user ? (
         <>
-        <script
-          async
-          src="https://kit.fontawesome.com/b9c7cb7078.js"
-          crossOrigin="anonymous"
-        ></script>
+          <script
+            async
+            src="https://kit.fontawesome.com/b9c7cb7078.js"
+            crossOrigin="anonymous"
+          ></script>
           <h1>Account</h1>
           <Link href={back ? String(back) : "/"}>
-            <i style={{fontSize: '30px'}} className="fa-solid fa-arrow-left"></i>
+            <i
+              aria-hidden
+              style={{ fontSize: "30px" }}
+              className="fa-solid fa-arrow-left"
+            ></i>
           </Link>
           <br />
           <p>Change username</p>

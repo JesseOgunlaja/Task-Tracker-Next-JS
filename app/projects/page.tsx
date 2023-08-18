@@ -35,6 +35,7 @@ type Project = {
 
 type Settings = {
   calendars: [string];
+  dateFormat: string;
 };
 
 type User = {
@@ -55,7 +56,7 @@ const Page = () => {
   const titleInput2 = useRef<HTMLInputElement>(null);
   const priorityInput = useRef<HTMLSelectElement>(null);
   const priorityInput2 = useRef<HTMLSelectElement>(null);
-  const typeInput = useRef<HTMLInputElement>(null);
+  const typeInput = useRef<HTMLSelectElement>(null);
   const editInput = useRef<number>(0);
 
   useEffect(() => {
@@ -92,7 +93,7 @@ const Page = () => {
 
   function checkValue(valueChecking: String, dialog: Number) {
     let symbols = /[^a-zA-Z0-9\s]/;
-    let value;
+    let value: string | any;
 
     if (dialog === 1) {
       if (valueChecking === "Title") {
@@ -126,13 +127,21 @@ const Page = () => {
     } else if (symbols.test(value) && valueChecking === "Title") {
       errorToast(`No symbols allowed in the ${valueChecking.toLowerCase()}`);
       return { error: true };
+    } else if (
+      valueChecking === "Titles" &&
+      user?.projects.filter(
+        (val) => val.name.toUpperCase() === value.toUpperCase()
+      ).length !== 0
+    ) {
+      errorToast("Duplicate title");
+      return { error: true };
     } else {
       errorToast("");
       return { error: false };
     }
   }
 
-  function checkLengths(title: string, description: string) {
+  function checkLengths(title: string) {
     const titleResult = titleSchema.safeParse(title);
 
     if (!titleResult.success) {
@@ -149,17 +158,11 @@ const Page = () => {
   ) {
     const results: boolean[] = [];
     if (index === 1) {
-      results.push(
-        checkLengths(String(formValues.title), String(formValues.description))
-          .error
-      );
+      results.push(checkLengths(String(formValues.title)).error);
       results.push(checkValue("Title", 1).error);
       results.push(checkValue("Date", 1).error);
     } else {
-      results.push(
-        checkLengths(String(formValues.title2), String(formValues.description2))
-          .error
-      );
+      results.push(checkLengths(String(formValues.title2)).error);
       results.push(checkValue("Title", 2).error);
       results.push(checkValue("Date", 2).error);
     }
@@ -179,7 +182,16 @@ const Page = () => {
       if (dd < 10) dd = "0" + dd;
       if (mm < 10) mm = "0" + mm;
 
-      const formattedDate = `${dd}/${mm}/${yyyy}`;
+      if (user?.settings.dateFormat === "dd/MM/yyyy") {
+        var formattedDate = `${dd}/${mm}/${yyyy}`;
+      } else if (user?.settings.dateFormat === "MM/dd/yyyy") {
+        var formattedDate = `${mm}/${dd}/${yyyy}`;
+      } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
+        var formattedDate = `${yyyy}-${mm}-${dd}`;
+        console.log(formattedDate);
+      } else {
+        var formattedDate = `${dd}/${mm}/${yyyy}`;
+      }
 
       const newProject = {
         type: String(formValues.section),
@@ -220,18 +232,43 @@ const Page = () => {
       titleInput2.current!.value = taskBeingEdited.name;
       typeInput.current!.value = taskBeingEdited.type;
 
-      const parts = taskBeingEdited.date.split("/"); // Split the date string into date and time parts
-
-      const day = parseInt(parts[0], 10); // Convert the day part to an integer
-      const month = parseInt(parts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
-      const year = parseInt(parts[2], 10); // Convert the year part to an integer
-
-      const formattedDate = new Date(year, month, day); // Create a new Date object with the components
+      const formattedDate = createDateFromFormat(
+        taskBeingEdited.date,
+        user.settings.dateFormat
+      ); // Create a new Date object with the components
       setStartDate2(formattedDate);
       showModal(2);
 
       editInput.current = index;
     }
+  }
+
+  function createDateFromFormat(dateString: string, dateFormat: string) {
+    let dayIndex, monthIndex, yearIndex;
+
+    if (dateFormat === "dd/MM/yyyy") {
+      dayIndex = 0;
+      monthIndex = 1;
+      yearIndex = 2;
+    } else if (dateFormat === "MM/dd/yyyy") {
+      monthIndex = 0;
+      dayIndex = 1;
+      yearIndex = 2;
+    } else if (dateFormat === "yyyy-MM-dd") {
+      yearIndex = 0;
+      monthIndex = 1;
+      dayIndex = 2;
+    } else {
+      throw new Error("Invalid date format");
+    }
+
+    const parts = dateString.split(/[-/]/);
+
+    const day = parseInt(parts[dayIndex], 10);
+    const month = parseInt(parts[monthIndex], 10) - 1;
+    const year = parseInt(parts[yearIndex], 10);
+
+    return new Date(year, month, day);
   }
 
   async function editProject(e: FormEvent<HTMLFormElement>) {
@@ -243,7 +280,19 @@ const Page = () => {
       let mm: number | string = startDate2.getMonth() + 1; // Months start at 0
       let dd: number | string = startDate2.getDate();
 
-      const formattedDate = `${dd}/${mm}/${yyyy}`;
+      if(dd < 10) dd = "0" + dd
+      if(mm < 10) mm = "0" + mm
+
+      if (user?.settings.dateFormat === "dd/MM/yyyy") {
+        var formattedDate = `${dd}/${mm}/${yyyy}`;
+      } else if (user?.settings.dateFormat === "MM/dd/yyyy") {
+        var formattedDate = `${mm}/${dd}/${yyyy}`;
+      } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
+        var formattedDate = `${yyyy}-${mm}-${dd}`;
+        console.log(formattedDate);
+      } else {
+        var formattedDate = `${dd}/${mm}/${yyyy}`;
+      }
 
       const editedProject = {
         name: String(formValues.title2),
@@ -258,8 +307,6 @@ const Page = () => {
         tasks: user?.projects[editInput.current].tasks,
       };
 
-      console.log(editedProject);
-
       const res = await fetch("/api/user", {
         method: "PATCH",
         headers: {
@@ -271,7 +318,7 @@ const Page = () => {
         }),
       });
       const data = await res.json();
-      if (data.user != undefined || Object.keys(data.user).length !== 0) {
+      if (data.user != undefined && Object.keys(data.user).length !== 0) {
         const currentUser = JSON.parse(JSON.stringify(user));
         currentUser.projects[editInput.current] =
           data.user[`projects.${editInput.current}`];
@@ -296,9 +343,10 @@ const Page = () => {
     const data = await res.json();
     if (data.user != undefined && Object.keys(data.user).length !== 0) {
       const currentUser = JSON.parse(JSON.stringify(user));
-      currentUser.projects[editInput.current] = data.user[`projects`];
-      setUser(currentUser);
+      currentUser.projects = data.user.projects;
+      console.log(data.user.projects);
       hideModal(2);
+      setUser(currentUser);
     } else {
       errorToast("An error occurred. Please try again.");
     }
@@ -343,7 +391,7 @@ const Page = () => {
                 <label htmlFor="date">Date</label>
                 <DatePicker
                   autoComplete="off"
-                  dateFormat="MMMM d, yyyy"
+                  dateFormat={user.settings.dateFormat}
                   selected={startDate}
                   onChange={(date: Date) => setStartDate(date)}
                   minDate={new Date()}
@@ -352,7 +400,13 @@ const Page = () => {
                   id="date"
                 />
                 <label htmlFor="section">Section</label>
-                <input name="section" id="section" />
+                <select name="section" id="section">
+                  {user?.settings.calendars.map((val) => (
+                    <option key={val} value={val}>
+                      {val}
+                    </option>
+                  ))}
+                </select>
                 <label htmlFor="priority">Priority</label>
                 <select name="priority" ref={priorityInput} id="priority">
                   <option value="Low">Low</option>
@@ -381,7 +435,7 @@ const Page = () => {
             />
             <label htmlFor="date2">Date</label>
             <DatePicker
-              dateFormat="MMMM d, yyyy"
+              dateFormat={user?.settings.dateFormat}
               selected={startDate2}
               onChange={(date: Date) => setStartDate2(date)}
               minDate={new Date()}
@@ -390,7 +444,18 @@ const Page = () => {
               id="date2"
             />
             <label htmlFor="section">Section</label>
-            <input ref={typeInput} name="section" id="section" />
+            <select
+              ref={typeInput}
+              defaultValue={user?.projects[editInput.current].type}
+              name="section"
+              id="section"
+            >
+              {user?.settings.calendars.map((val) => (
+                <option key={val} value={val}>
+                  {val}
+                </option>
+              ))}
+            </select>
             <label htmlFor="priority2">Priority</label>
             <select name="priority2" ref={priorityInput2} id="priority2">
               <option value="Low">Low</option>
@@ -410,29 +475,32 @@ const Page = () => {
         </dialog>
         <div className={styles.container}>
           <div className={styles.projects}>
-            <div className={styles.section}>
-              <div className={styles.sectionText}>
-                To do
-                <div className={styles.addProject} onClick={() => showModal(1)}>
-                  Add
-                </div>
+            <div className={styles.sectionText}>
+              Projects
+              <div
+                className={styles.addProject}
+                onClick={() => {
+                  showModal(1);
+                  if (priorityInput.current) {
+                    priorityInput.current!.value = "Low";
+                  }
+                }}
+              >
+                Add
               </div>
-              {user == null ? (
-                <p style={{ fontSize: "20px" }}>Loading ...</p>
-              ) : (
-                <>
-                  {user.projects.filter(
-                    (project) => project.section === "to-do"
-                  ).length === 0 && <p>No projects</p>}
-                </>
-              )}
+            </div>
+            {user == null ? (
+              <p style={{ fontSize: "20px" }}>Loading ...</p>
+            ) : (
+              <>{user.projects.filter(val => val.section !== "done").length === 0 && <p>No projects</p>}</>
+            )}
+            <div>
               {user?.projects.map(
                 (project, index: number) =>
-                  project.section === "to-do" &&
-                  (project.name
+                  ((project.name
                     .toUpperCase()
                     .includes(searchField.toUpperCase()) ||
-                    searchField === "") && (
+                    searchField === "") && project.section !== "done") && (
                     <Link
                       passHref={false}
                       href={`/projects/${index}`}
@@ -443,6 +511,7 @@ const Page = () => {
                         <div className={styles.taskName}>
                           <p>{project.name}</p>{" "}
                           <i
+                            aria-hidden
                             onClick={(event) => startEditProject(index, event)}
                             className="far fa-edit"
                             style={faIconStyles}
@@ -453,28 +522,31 @@ const Page = () => {
                         </div>
                       </div>
                       <div className={styles.footer}>
-                        <p className={styles.type}>{project.type}</p>
-                        <p>
-                          {
-                            project.tasks.filter((task) => task.type === "done")
-                              .length
-                          }
-                          &#47;
-                          {project.tasks.length +
-                            " completed " +
-                            "(" +
-                            Math.round(
-                              project.tasks.length === 0
-                                ? 0
-                                : (project.tasks.filter(
-                                    (task) => task.type === "done"
-                                  ).length /
-                                    project.tasks.length) *
-                                    100
-                            ) +
-                            "%" +
-                            ")"}
-                        </p>
+                        <div>
+                          <p className={styles.type}>{project.type}</p>
+                          <p>
+                            {
+                              project.tasks.filter(
+                                (task) => task.type === "done"
+                              ).length
+                            }
+                            &#47;
+                            {project.tasks.length +
+                              " completed " +
+                              "(" +
+                              Math.round(
+                                project.tasks.length === 0
+                                  ? 0
+                                  : (project.tasks.filter(
+                                      (task) => task.type === "done"
+                                    ).length /
+                                      project.tasks.length) *
+                                      100
+                              ) +
+                              "%" +
+                              ")"}
+                          </p>
+                        </div>
                         <Slider
                           completedTasks={
                             project.tasks.filter((task) => task.type === "done")
@@ -498,26 +570,22 @@ const Page = () => {
                     </Link>
                   )
               )}
+             <div className={styles.doneText}>
+              Done
             </div>
-            <div className={styles.section}>
-              <div className={styles.sectionText}>In progress</div>
-              {user == null ? (
-                <p style={{ fontSize: "20px" }}>Loading ...</p>
-              ) : (
-                <>
-                  {user.projects.filter(
-                    (project) => project.section === "in-progress"
-                  ).length === 0 && <p>No projects</p>}
-                </>
-              )}
-              {user?.projects.map(
+            {user == null ? (
+              <p style={{ fontSize: "20px" }}>Loading ...</p>
+            ) : (
+              <>{user.projects.filter(val => val.section !== "done").length === 0 && <p>No projects</p>}</>
+            )}
+               {user?.projects.map(
                 (project, index: number) =>
-                  project.section === "in-progress" &&
-                  (project.name
+                  ((project.name
                     .toUpperCase()
                     .includes(searchField.toUpperCase()) ||
-                    searchField === "") && (
+                    searchField === "") && project.section === "done") && (
                     <Link
+                      passHref={false}
                       href={`/projects/${index}`}
                       className={styles.project}
                       key={index}
@@ -526,6 +594,7 @@ const Page = () => {
                         <div className={styles.taskName}>
                           <p>{project.name}</p>{" "}
                           <i
+                            aria-hidden
                             onClick={(event) => startEditProject(index, event)}
                             className="far fa-edit"
                             style={faIconStyles}
@@ -536,110 +605,31 @@ const Page = () => {
                         </div>
                       </div>
                       <div className={styles.footer}>
-                        <p className={styles.type}>{project.type}</p>
-                        <p>
-                          {
-                            project.tasks.filter((task) => task.type === "done")
-                              .length
-                          }
-                          &#47;
-                          {project.tasks.length +
-                            " completed " +
-                            "(" +
-                            Math.round(
-                              project.tasks.length === 0
-                                ? 0
-                                : (project.tasks.filter(
-                                    (task) => task.type === "done"
-                                  ).length /
-                                    project.tasks.length) *
-                                    100
-                            ) +
-                            "%" +
-                            ")"}
-                        </p>
-                        <Slider
-                          completedTasks={
-                            project.tasks.filter((task) => task.type === "done")
-                              .length
-                          }
-                          totalTasks={project.tasks.length}
-                        />
-                      </div>
-                      <div
-                        id={
-                          project.priority === "High"
-                            ? styles.high
-                            : project.priority === "Medium"
-                            ? styles.medium
-                            : styles.low
-                        }
-                        className={styles.priority}
-                      >
-                        {project.priority}
-                      </div>
-                    </Link>
-                  )
-              )}
-            </div>
-            <div className={styles.section}>
-              <div className={styles.sectionText}>Done</div>
-              {user == null ? (
-                <p style={{ fontSize: "20px" }}>Loading ...</p>
-              ) : (
-                <>
-                  {user.projects.filter((project) => project.section === "done")
-                    .length === 0 && <p>No projects</p>}
-                </>
-              )}
-              {user?.projects.map(
-                (project, index: number) =>
-                  project.section === "done" &&
-                  (project.name
-                    .toUpperCase()
-                    .includes(searchField.toUpperCase()) ||
-                    searchField === "") && (
-                    <Link
-                      href={`/projects/${index}`}
-                      className={styles.project}
-                      key={index}
-                    >
-                      <div className={styles.taskTitle}>
-                        <div className={styles.taskName}>
-                          <p>{project.name}</p>{" "}
-                          <i
-                            onClick={(event) => startEditProject(index, event)}
-                            className="far fa-edit"
-                            style={faIconStyles}
-                          ></i>
-                        </div>{" "}
                         <div>
-                          <p className={styles.textDate}>{project.date}</p>
+                          <p className={styles.type}>{project.type}</p>
+                          <p>
+                            {
+                              project.tasks.filter(
+                                (task) => task.type === "done"
+                              ).length
+                            }
+                            &#47;
+                            {project.tasks.length +
+                              " completed " +
+                              "(" +
+                              Math.round(
+                                project.tasks.length === 0
+                                  ? 0
+                                  : (project.tasks.filter(
+                                      (task) => task.type === "done"
+                                    ).length /
+                                      project.tasks.length) *
+                                      100
+                              ) +
+                              "%" +
+                              ")"}
+                          </p>
                         </div>
-                      </div>
-                      <div className={styles.footer}>
-                        <p className={styles.type}>{project.type}</p>
-                        <p>
-                          {
-                            project.tasks.filter((task) => task.type === "done")
-                              .length
-                          }
-                          &#47;
-                          {project.tasks.length +
-                            " completed " +
-                            "(" +
-                            Math.round(
-                              project.tasks.length === 0
-                                ? 0
-                                : (project.tasks.filter(
-                                    (task) => task.type === "done"
-                                  ).length /
-                                    project.tasks.length) *
-                                    100
-                            ) +
-                            "%" +
-                            ")"}
-                        </p>
                         <Slider
                           completedTasks={
                             project.tasks.filter((task) => task.type === "done")

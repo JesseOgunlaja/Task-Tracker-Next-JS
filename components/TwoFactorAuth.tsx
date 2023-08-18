@@ -4,10 +4,14 @@ import { FormEvent, useEffect, useRef } from "react";
 import * as jose from "jose";
 import { errorToast, successToast } from "@/utils/toast";
 
-const TwoFactorAuth = (props: {password: string, name: string, email: string}) => {
+const TwoFactorAuth = (props: {
+  password: string;
+  name: string;
+  email: string;
+}) => {
   const CODE = encryptString(
     String(Math.floor(Math.random() * 1000000000)),
-    true
+    true,
   );
 
   const codeInput = useRef<HTMLInputElement>(null);
@@ -18,7 +22,7 @@ const TwoFactorAuth = (props: {password: string, name: string, email: string}) =
         codeInput.current.value = "";
       }
       const SECRET = new TextEncoder().encode(
-        process.env.NEXT_PUBLIC_SECRET_KEY
+        process.env.NEXT_PUBLIC_SECRET_KEY,
       );
       const payload = {
         KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
@@ -59,19 +63,18 @@ const TwoFactorAuth = (props: {password: string, name: string, email: string}) =
       body: JSON.stringify({
         code: formValues.code,
         username: props.name,
-        password: props.password
+        password: props.password,
       }),
     });
-    const data = await res.json()
-    if(data.message === "Success") {
-      await new Promise(resolve => {
-        successToast("Successful login")
-        resolve("Success")
-      })
+    const data = await res.json();
+    if (data.message === "Success") {
+      await new Promise((resolve) => {
+        successToast("Successful login");
+        resolve("Success");
+      });
       window.location.reload();
-    }
-    else {
-      errorToast("Invalid code")
+    } else {
+      errorToast("Invalid code");
     }
   }
 

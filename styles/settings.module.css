@@ -23,7 +23,7 @@
   padding: 0px 20px 20px 20px;
   width: 90vw;
   transform: translateX(200px);
-  z-index: 10
+  z-index: 10;
 }
 
 .sideNav > * {
@@ -34,7 +34,7 @@
   border-bottom: 2px solid white;
 }
 
-.sideNav > a{
+.sideNav > a {
   color: white;
   text-decoration: none;
 }

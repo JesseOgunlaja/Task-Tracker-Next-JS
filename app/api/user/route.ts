@@ -21,18 +21,39 @@ function switchDateFormat(dateString: string) {
 }
 
 function isDateLowerThanMax(inputDate: string, index: number, user: any) {
-  // Parse the input date string into a Date object
-  const inputDateParts = inputDate.split("/");
-  const year = parseInt(inputDateParts[2], 10);
-  const month = parseInt(inputDateParts[1], 10) - 1; // Month is zero-based
-  const day = parseInt(inputDateParts[0], 10);
+  const dateFormat = user.settings.dateFormat
+
+  let dayIndex, monthIndex, yearIndex;
+  if (dateFormat === "dd/MM/yyyy") {
+    dayIndex = 0;
+    monthIndex = 1;
+    yearIndex = 2;
+  } else if (dateFormat === "MM/dd/yyyy") {
+    monthIndex = 0;
+    dayIndex = 1;
+    yearIndex = 2;
+  } else if (dateFormat === "yyyy-MM-dd") {
+    yearIndex = 0;
+    monthIndex = 1;
+    dayIndex = 2;
+  } else {
+    throw new Error("Invalid date format");
+  }
+
+  const parts = inputDate.split(/[-/]/); // Split the date string based on "-" or "/"
+
+  const day = parseInt(parts[dayIndex], 10); // Convert the day part to an integer
+  const month = parseInt(parts[monthIndex], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
+  const year = parseInt(parts[yearIndex], 10); // Convert the year part to an integer
+
   const parsedInputDate = new Date(year, month, day);
 
-  const projectDate = user.projects[index].date
-  const parts = projectDate.split("/")
-  const day2 = parts[0];
-  const month2 = parts[1] - 1;
-  const year2 = parts[2];
+  const projectDate = user.projects[index].date;
+  const parts2 = projectDate.split(/[-/]/);
+
+  const day2 = parts2[dayIndex];
+  const month2 = parts2[monthIndex] - 1;
+  const year2 = parts2[yearIndex];
   const maxDate = new Date(year2, month2, day2);
 
   return parsedInputDate <= maxDate;
@@ -86,7 +107,9 @@ export async function PATCH(req: NextRequest) {
       } else {
         const result = usernameSchema.safeParse(name);
         if (result.success === false) {
-          const error = result.error.format()._errors[0];
+          const error = result.error.issues.map((issue) => {
+            return { error: issue.message };
+          });
           return NextResponse.json({ error: error }, { status: 400 });
         } else {
           updateFields.name = name.toUpperCase();
@@ -103,7 +126,9 @@ export async function PATCH(req: NextRequest) {
         const result = emailSchema.safeParse(email);
 
         if (result.success === false) {
-          const error = result.error.format()._errors[0];
+          const error = result.error.issues.map((issue) => {
+            return { error: issue.message };
+          });
           return NextResponse.json({ error: error }, { status: 400 });
         } else {
           updateFields.email = email;
@@ -119,7 +144,9 @@ export async function PATCH(req: NextRequest) {
       } else {
         const result = passwordSchema.safeParse(password);
         if (result.success === false) {
-          const error = result.error.format()._errors[0];
+          const error = result.error.issues.map((issue) => {
+            return { error: issue.message };
+          });
           return NextResponse.json({ error: error }, { status: 400 });
         } else {
           updateFields.password = await bcrypt.hash(password, 10);
@@ -131,7 +158,9 @@ export async function PATCH(req: NextRequest) {
         return NextResponse.json({ message: "Invalid index" }, { status: 400 });
       }
       const newTasks: [] = tasks.map((task: any) => {
-        task.date = switchDateFormat(task.date);
+        if (user.settings.dateFormat === "dd/MM/yyyy") {
+          task.date = switchDateFormat(task.date);
+        }
         delete task._id;
         return task;
       });
@@ -154,21 +183,36 @@ export async function PATCH(req: NextRequest) {
         } else {
           updateFields[`projects.${index}.section`] = "to-do";
         }
-        const howManyOverMax = newTasks.filter((val: any) => !isDateLowerThanMax(switchDateFormat(val.date).split(" ")[0], index, user)).length
-        // console.log(howManyOverMax)
-        if(howManyOverMax === 0) {
-          updateFields[`projects.${index}.tasks`] = newTasks.map((task: any) => {
-            task.date = switchDateFormat(task.date);
-            return task;
-          });
-        }
-        else {
-          return NextResponse.json({message: "Date over max, set by project date"})
+        const howManyOverMax = newTasks.filter(
+          (val: any) =>
+            !isDateLowerThanMax(
+              user.settings.dateFormat === "dd/MM/yyyy" ? 
+              switchDateFormat(val.date).split(" ")[0] : val.date.split(" ")[0],
+              index,
+              user
+            )
+        ).length;
+        if (howManyOverMax === 0) {
+          updateFields[`projects.${index}.tasks`] = newTasks.map(
+            (task: any) => {
+              if (user.settings.dateFormat === "dd/MM/yyyy") {
+                task.date = switchDateFormat(task.date);
+              }
+              return task;
+            }
+          );
+        } else {
+          return NextResponse.json(
+            { message: "Date over max, set by project date" },
+            { status: 400 }
+          );
         }
       }
     }
     if (newProject) {
-      newProject.date = switchDateFormat(newProject.date);
+      if (user.settings.dateFormat === "dd/MM/yyyy") {
+        newProject.date = switchDateFormat(newProject.date);
+      }
       newProject.tasks = newProject.tasks.map((task: any) => {
         task.date = switchDateFormat(task.date);
         delete task._id;
@@ -182,10 +226,24 @@ export async function PATCH(req: NextRequest) {
         });
         return NextResponse.json({ errors: error }, { status: 400 });
       } else {
-        newProject.date = switchDateFormat(newProject.date);
-        const previousProjects = user.projects;
-        previousProjects.push(newProject);
-        updateFields.projects = previousProjects;
+        if (
+          user?.projects.filter(
+            (val: any) =>
+              val.name.toUpperCase() === newProject.name.toUpperCase()
+          ).length !== 0
+        ) {
+          return NextResponse.json(
+            { message: "Duplicate task title" },
+            { status: 400 }
+          );
+        } else {
+          if (user.settings.dateFormat === "dd/MM/yyyy") {
+            newProject.date = switchDateFormat(newProject.date);
+          }
+          const previousProjects: any[] = user.projects;
+          previousProjects.push(newProject);
+          updateFields.projects = previousProjects.sortByPriority();
+        }
       }
     }
     if (editedProject != undefined && editIndex != undefined) {
@@ -195,9 +253,13 @@ export async function PATCH(req: NextRequest) {
           { status: 400 }
         );
       } else {
-        editedProject.date = switchDateFormat(editedProject.date);
+        if (user.settings.dateFormat === "dd/MM/yyyy") {
+          editedProject.date = switchDateFormat(editedProject.date);
+        }
         editedProject.tasks = editedProject.tasks.map((task: any) => {
-          task.date = switchDateFormat(task.date);
+          if (user.settings.dateFormat === "dd/MM/yyyy") {
+            task.date = switchDateFormat(task.date);
+          }
           delete task._id;
           return task;
         });
@@ -208,12 +270,29 @@ export async function PATCH(req: NextRequest) {
           });
           return NextResponse.json({ errors: error }, { status: 400 });
         } else {
-          editedProject.date = switchDateFormat(editedProject.date);
+          if (user.settings.dateFormat === "dd/MM/yyyy") {
+            editedProject.date = switchDateFormat(editedProject.date);
+          }
           editedProject.tasks = editedProject.tasks.map((task: any) => {
-            task.date = switchDateFormat(task.date);
+            if (user.settings.dateFormat === "dd/MM/yyyy") {
+              task.date = switchDateFormat(task.date);
+            }
             return task;
           });
-          updateFields[`projects.${editIndex}`] = editedProject;
+          if (
+            user?.projects.filter((val: any, index: number) =>
+              index === editIndex
+                ? false
+                : val.name.toUpperCase() === editedProject.name.toUpperCase()
+            ).length !== 0
+          ) {
+            return NextResponse.json(
+              { message: "Duplicate task title" },
+              { status: 400 }
+            );
+          } else {
+            updateFields[`projects.${editIndex}`] = editedProject;
+          }
         }
       }
     }
@@ -224,9 +303,9 @@ export async function PATCH(req: NextRequest) {
           { status: 400 }
         );
       }
-      const currentProjects: [any] = user.projects;
+      const currentProjects: any[] = user.projects;
       currentProjects.splice(indexToDelete, 1);
-      updateFields[`projects`] = currentProjects;
+      updateFields[`projects`] = currentProjects.sortByPriority();
     }
 
     const result = await User.updateOne({ _id: id }, { $set: updateFields });

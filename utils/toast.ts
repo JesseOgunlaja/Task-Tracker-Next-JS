@@ -42,10 +42,10 @@ export async function promiseToast(
   successFunction?: Function,
 ) {
   let success: Boolean = true;
-  let data: any
+  let data: any;
   const fetchRequest = new Promise((resolve, reject) => {
     fetch(fetchUrl, fetchOptions).then(async (response: Response) => {
-      data = await response.json()
+      data = await response.json();
       if (response.ok) {
         resolve("Success");
       } else {

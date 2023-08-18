@@ -2,6 +2,8 @@
   "name": "task-tracker",
   "version": "0.1.0",
   "private": true,
+  "description": "Task Tracker Application",
+  "author": {"name": "Jesse", "email": "jesseogunlaja@gmail.com"},
   "scripts": {
     "dev": "next dev",
     "build": "next build",

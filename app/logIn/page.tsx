@@ -81,17 +81,16 @@ const Page = () => {
         error: "Invalid credentials",
       };
       await promiseToast(fetchUrl, fetchOptions, message, async (data: any) => {
-        if(data.name && data.email && data.twoFactorAuth === true) {
-          console.log(data)
-          setPassword(String(formValues.password))
-          setName(data.name)
-          setEmail(data.email)
+        if (data.name && data.email && data.twoFactorAuth === true) {
+          console.log(data);
+          setPassword(String(formValues.password));
+          setName(data.name);
+          setEmail(data.email);
           setShowTwoFactorAuth(true);
-        }
-        else {
+        } else {
           if (formValues.rememberCredentials === "on") {
             const header = { alg: "HS256", typ: "JWT" };
-  
+
             const payload = {
               name: encryptString(String(formValues.Username), true),
               password: encryptString(String(formValues.password), true),
@@ -101,14 +100,14 @@ const Page = () => {
               .setIssuedAt()
               .setExpirationTime("30d")
               .sign(SECRET);
-  
+
             const setCookie = (name: any, value: any, daysToExpire: number) => {
               const date = new Date();
               date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000);
               const expires = "expires=" + date.toUTCString();
               document.cookie = name + "=" + value + ";" + expires + ";path=/";
             };
-  
+
             setCookie("credentials", userCredentials, 30);
           }
           window.location.reload();
@@ -120,7 +119,7 @@ const Page = () => {
   function redirect() {
     window.location.href = window.location.href.replace(
       window.location.pathname,
-      "/reset-password"
+      "/reset-password",
     );
   }
 
@@ -209,11 +208,7 @@ const Page = () => {
               </>
             ) : (
               <>
-                <TwoFactorAuth
-                  email={email}
-                  name={name}
-                  password={password}
-                />
+                <TwoFactorAuth email={email} name={name} password={password} />
               </>
             )}
           </div>

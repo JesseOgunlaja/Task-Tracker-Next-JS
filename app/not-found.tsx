@@ -13,7 +13,7 @@ const Page = () => {
       } else {
         window.location.href = window.location.href.replace(
           window.location.pathname,
-          "/"
+          "/",
         );
       }
     }, 1000); // 1000 milliseconds = 1 second

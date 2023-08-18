@@ -24,6 +24,7 @@ type Project = {
   name: string;
   type: string;
   date: string;
+  priority: string;
   tasks: Task[];
 };
 
@@ -34,6 +35,7 @@ type User = {
   name: String;
   settings: {
     timeFormat: 12 | 24;
+    dateFormat: "dd/MM/yyyy" | "MM/dd/yyyy" | "yyyy-MM-dd";
   };
 };
 
@@ -57,9 +59,46 @@ async function getData(id: number) {
         "/pageNotFound"
       );
     } else {
+      data.user.projects = data.user.projects.sort((a, b) => {
+        // Sort tasks based on priority (High -> Medium -> Low)
+        if (a.priority === "High" && b.priority !== "High") return -1;
+        if (a.priority !== "High" && b.priority === "High") return 1;
+        if (a.priority === "Medium" && b.priority !== "Medium") return -1;
+        if (a.priority !== "Medium" && b.priority === "Medium") return 1;
+        // If priorities are the same, preserve original index order
+        return data.user.projects.indexOf(a) - data.user.projects.indexOf(b);
+      });
       return data.user;
     }
   }
+}
+
+function createDateFromFormat(dateString: string, dateFormat: string) {
+  let dayIndex, monthIndex, yearIndex;
+
+  if (dateFormat === "dd/MM/yyyy") {
+    dayIndex = 0;
+    monthIndex = 1;
+    yearIndex = 2;
+  } else if (dateFormat === "MM/dd/yyyy") {
+    monthIndex = 0;
+    dayIndex = 1;
+    yearIndex = 2;
+  } else if (dateFormat === "yyyy-MM-dd") {
+    yearIndex = 0;
+    monthIndex = 1;
+    dayIndex = 2;
+  } else {
+    throw new Error("Invalid date format");
+  }
+
+  const parts = dateString.split(/[-/]/);
+
+  const day = parseInt(parts[dayIndex], 10);
+  const month = parseInt(parts[monthIndex], 10) - 1;
+  const year = parseInt(parts[yearIndex], 10);
+
+  return new Date(year, month, day);
 }
 
 const Page = () => {
@@ -179,9 +218,25 @@ const Page = () => {
         const hh: number | string = startDate2.getHours();
         const mins: number | string = startDate2.getMinutes();
 
-        const formattedDate = `${dd}/${mm}/${yyyy} ${hh
-          .toString()
-          .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+        if (user?.settings.dateFormat === "dd/MM/yyyy") {
+          var formattedDate = `${dd}/${mm}/${yyyy} ${hh
+            .toString()
+            .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+        } else if (user?.settings.dateFormat === "MM/dd/yyyy") {
+          var formattedDate = `${mm}/${dd}/${yyyy} ${hh
+            .toString()
+            .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+        } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
+          var formattedDate = `${yyyy}-${mm}-${dd} ${hh
+            .toString()
+            .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`
+            console.log(formattedDate)
+        } else {
+          var formattedDate = `${dd}/${mm}/${yyyy} ${hh
+            .toString()
+            .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+        }
+
 
         tasks[editInput.current] = {
           title: String(formValues.title2),
@@ -219,63 +274,68 @@ const Page = () => {
     }
   }
   function formatDate(dateString: string) {
-    if (user?.settings.timeFormat === 24) {
-      const parts = dateString.split(" ")[0].split("/"); // Split the date string into day, month, and year parts
-      const day = parseInt(parts[0], 10); // Convert the day part to an integer
-      const month = parseInt(parts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
-      const year = parseInt(parts[2], 10); // Convert the year part to an integer
-      const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
+    const dateFormat = user?.settings.dateFormat;
 
-      const dateObject = new Date(year, month, day); // Create a new Date object with the components
+    if (!dateFormat) {
+      throw new Error("User settings missing");
+    }
 
-      const formattedDate = `${months[dateObject.getMonth()]} ${day}, ${year}`;
-      return formattedDate.concat(" " + dateString.split(" ")[1]);
+    let dayIndex, monthIndex, yearIndex;
+    if (dateFormat === "dd/MM/yyyy") {
+      dayIndex = 0;
+      monthIndex = 1;
+      yearIndex = 2;
+    } else if (dateFormat === "MM/dd/yyyy") {
+      monthIndex = 0;
+      dayIndex = 1;
+      yearIndex = 2;
+    } else if (dateFormat === "yyyy-MM-dd") {
+      yearIndex = 0;
+      monthIndex = 1;
+      dayIndex = 2;
     } else {
-      const parts = dateString.split("/"); // Split the date string into day, month, and year parts
-      const day = parseInt(parts[0], 10); // Convert the day part to an integer
-      const month = parseInt(parts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
-      const year = parseInt(parts[2], 10); // Convert the year part to an integer
-      const months = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
+      throw new Error("Invalid date format");
+    }
 
-      const dateObject = new Date(year, month, day); // Create a new Date object with the components
+    const parts = dateString.split(/[-/]/); // Split the date string based on "-" or "/"
 
+    const day = parseInt(parts[dayIndex], 10); // Convert the day part to an integer
+    const month = parseInt(parts[monthIndex], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
+    const year = parseInt(parts[yearIndex], 10); // Convert the year part to an integer
+
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const dateObject = new Date(year, month, day); // Create a new Date object with the components
+
+    if (user?.settings.timeFormat === 24) {
+      return `${months[dateObject.getMonth()]} ${day}, ${year} ${
+        dateString.split(" ")[1]
+      }`;
+    } else {
       const hours = Number(dateString.split(" ")[1].split(":")[0]);
       const minutes = dateString.split(" ")[1].split(":")[1];
       const ampm = hours >= 12 ? "PM" : "AM";
       const twelveHourFormat = hours % 12 || 12;
 
-      const formattedDate = `${
+      return `${
         months[dateObject.getMonth()]
-      } ${day}, ${year} ${twelveHourFormat}:${minutes
-        .toString()
-        .padStart(2, "0")} ${ampm}`;
-      return formattedDate;
+      } ${day}, ${year} ${twelveHourFormat}:${minutes.padStart(
+        2,
+        "0"
+      )} ${ampm}`;
     }
   }
 
@@ -341,9 +401,23 @@ const Page = () => {
       const hh: number | string = startDate.getHours();
       const mins: number | string = startDate.getMinutes();
 
-      const formattedDate = `${dd}/${mm}/${yyyy} ${hh
-        .toString()
-        .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+      if (user?.settings.dateFormat === "dd/MM/yyyy") {
+        var formattedDate = `${dd}/${mm}/${yyyy} ${hh
+          .toString()
+          .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+      } else if (user?.settings.dateFormat === "MM/dd/yyyy") {
+        var formattedDate = `${mm}/${dd}/${yyyy} ${hh
+          .toString()
+          .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+      } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
+        var formattedDate = `${yyyy}-${mm}-${dd} ${hh
+          .toString()
+          .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+      } else {
+        var formattedDate = `${dd}/${mm}/${yyyy} ${hh
+          .toString()
+          .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+      }
 
       const newTask: Task = {
         title: String(formValues.title),
@@ -379,6 +453,41 @@ const Page = () => {
     }
   }
 
+  function createDateWithTimeFormat(
+    dateTimeString: string,
+    dateFormat: string
+  ) {
+    let dayIndex, monthIndex, yearIndex;
+
+    if (dateFormat === "dd/MM/yyyy") {
+      dayIndex = 0;
+      monthIndex = 1;
+      yearIndex = 2;
+    } else if (dateFormat === "MM/dd/yyyy") {
+      monthIndex = 0;
+      dayIndex = 1;
+      yearIndex = 2;
+    } else if (dateFormat === "yyyy-MM-dd") {
+      yearIndex = 0;
+      monthIndex = 1;
+      dayIndex = 2;
+    } else {
+      throw new Error("Invalid date format");
+    }
+
+    const dateTimeParts = dateTimeString.split(/[ /:-]/).filter(val => val !== "")
+    console.log(dateTimeParts)
+
+    const day = parseInt(dateTimeParts[dayIndex], 10);
+    const month = parseInt(dateTimeParts[monthIndex], 10) - 1;
+    const year = parseInt(dateTimeParts[yearIndex], 10);
+
+    const hours = parseInt(dateTimeParts[3], 10);
+    const minutes = parseInt(dateTimeParts[4], 10);
+
+    return new Date(year, month, day, hours, minutes);
+  }
+
   async function startEditTask(index: number) {
     const taskBeingEdited = user?.projects[id].tasks[index];
     if (taskBeingEdited) {
@@ -387,20 +496,11 @@ const Page = () => {
       titleInput2.current!.value = taskBeingEdited.title || "";
       descriptionInput2.current!.value = taskBeingEdited.description || "";
       typeInput.current!.value = taskBeingEdited.type || "";
-      const parts = taskBeingEdited.date.split(" "); // Split the date string into date and time parts
-      const datePart = parts[0]; // Extract the date part "10/08/2023"
-      const timePart = parts[1]; // Extract the time part "14:29"
 
-      const dateParts = datePart.split("/"); // Split the date part into day, month, and year parts
-      const day = parseInt(dateParts[0], 10); // Convert the day part to an integer
-      const month = parseInt(dateParts[1], 10) - 1; // Convert the month part to an integer (months in JavaScript are 0-based)
-      const year = parseInt(dateParts[2], 10); // Convert the year part to an integer
-
-      const timeParts = timePart.split(":"); // Split the time part into hours and minutes
-      const hours = parseInt(timeParts[0], 10); // Convert the hours part to an integer
-      const minutes = parseInt(timeParts[1], 10); // Convert the minutes part to an integer
-
-      const formattedDate = new Date(year, month, day, hours, minutes); // Create a new Date object with the components
+      const formattedDate = createDateWithTimeFormat(
+        taskBeingEdited.date,
+        user.settings.dateFormat
+      ); // Create a new Date object with the components
       setStartDate2(formattedDate);
 
       editInput.current = index;
@@ -462,63 +562,70 @@ const Page = () => {
         </div>
         <div className={styles.page}>
           <dialog className={styles.dialog} ref={dialog}>
-            <form onSubmit={addTask} className={styles.form}>
-              <label htmlFor="title">Title</label>
-              <input
-                autoComplete="off"
-                ref={titleInput}
-                name="title"
-                id="title"
-                type="text"
-                placeholder="Work meeting"
-              />
-              <label htmlFor="date">Date</label>
-              <DatePicker
-                autoComplete="off"
-                showTimeSelect
-                timeFormat="HH:mm"
-                timeIntervals={30}
-                dateFormat={
-                  "MMMM d, yyyy " +
-                  (user?.settings.timeFormat === 24 ? "HH:mm" : "h:mm aa")
-                }
-                selected={startDate}
-                onChange={(date: Date) => setStartDate(date)}
-                minDate={new Date()}
-                maxDate={
-                  typeof user?.projects[id].date === "string"
-                    ? new Date(
-                        Number(user?.projects[id].date.split("/")[2]),
-                        Number(user?.projects[id].date.split("/")[1]) - 1,
-                        Number(user?.projects[id].date.split("/")[0])
-                      )
-                    : null
-                }
-                placeholderText="Select a date"
-                className={styles.date}
-                id="date"
-              />
-              <label htmlFor="description">Description</label>
-              <textarea
-                ref={descriptionInput}
-                name="description"
-                id="description"
-                placeholder="Schedule  work meeting"
-              />
-              <label htmlFor="priority">Priority</label>
-              <select name="priority" ref={priorityInput} id="priority">
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-              </select>
-              <input type="submit" />
-            </form>
+            {!user ? (
+              <p style={{ fontSize: "20px" }}>Loading...</p>
+            ) : (
+              <form onSubmit={addTask} className={styles.form}>
+                <label htmlFor="title">Title</label>
+                <input
+                  autoComplete="off"
+                  ref={titleInput}
+                  name="title"
+                  id="title"
+                  type="text"
+                  placeholder="Work meeting"
+                />
+                <label htmlFor="date">Date</label>
+                <DatePicker
+                  autoComplete="off"
+                  showTimeSelect
+                  timeFormat="HH:mm"
+                  timeIntervals={30}
+                  dateFormat={
+                    `${user?.settings.dateFormat} ` +
+                    (user?.settings.timeFormat === 24 ? "HH:mm" : "h:mm aa")
+                  }
+                  selected={startDate}
+                  onChange={(date: Date) => setStartDate(date)}
+                  minDate={new Date()}
+                  maxDate={
+                    typeof user?.projects[id].date === "string"
+                      ? createDateFromFormat(
+                          user?.projects[id].date,
+                          user?.settings.dateFormat
+                        )
+                      : null
+                  }
+                  placeholderText="Select a date"
+                  className={styles.date}
+                  id="date"
+                />
+                <label htmlFor="description">Description</label>
+                <textarea
+                  ref={descriptionInput}
+                  name="description"
+                  id="description"
+                  placeholder="Schedule  work meeting"
+                />
+                <label htmlFor="priority">Priority</label>
+                <select name="priority" ref={priorityInput} id="priority">
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+                <input type="submit" />
+              </form>
+            )}
             <button onClick={() => hideModal(1)} className={styles.backButton}>
               Back
             </button>
           </dialog>
 
           <dialog className={styles.dialog} ref={dialog2}>
+            {!user ? (
+              <p style={{fontSize: "20px"}}>Loading...</p>
+            ): (
+
             <form onSubmit={editTask} className={styles.form}>
               <label htmlFor="title2">Title</label>
               <input
@@ -536,15 +643,14 @@ const Page = () => {
                 timeFormat="HH:mm"
                 timeIntervals={30}
                 dateFormat={
-                  "MMMM d, yyyy " +
+                  `${user?.settings.dateFormat} ` +
                   (user?.settings.timeFormat === 24 ? "HH:mm" : "h:mm aa")
                 }
                 maxDate={
                   typeof user?.projects[id].date === "string"
-                    ? new Date(
-                        Number(user?.projects[id].date.split("/")[2]),
-                        Number(user?.projects[id].date.split("/")[1]) - 1,
-                        Number(user?.projects[id].date.split("/")[0])
+                    ? createDateFromFormat(
+                        user?.projects[id].date,
+                        user?.settings.dateFormat
                       )
                     : null
                 }
@@ -576,6 +682,7 @@ const Page = () => {
               </select>
               <input type="submit" />
             </form>
+            )}
             <div className={styles.bottomButton}>
               <button className={styles.back} onClick={() => hideModal(2)}>
                 Back

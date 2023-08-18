@@ -10,7 +10,6 @@ const OverallNav = ({ navStatus }: { navStatus: string }) => {
     pathname.includes("/terms-and-conditions") ||
     pathname.includes("/privacy-policy") ||
     pathname.includes("/settings");
-    console.log(pathname)
   return (
     <div>
       {!showBar && (

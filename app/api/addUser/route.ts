@@ -49,12 +49,8 @@ export async function POST(req: NextRequest) {
       settings: {
         twoFactorAuth: false,
         timeFormat: 12,
-        calendars: [
-          "Home",
-          "Work",
-          "Personal"
-        ]
-      }
+        calendars: ["Home", "Work", "Personal"],
+      },
     });
     try {
       const expirationDate = new Date(new Date().getTime() - 1000);
@@ -88,27 +84,26 @@ export async function POST(req: NextRequest) {
       });
       return NextResponse.json(
         { newUser, message: "Success" },
-        { status: 201 }
+        { status: 201 },
       );
     } catch (error: any) {
       if (error.message.includes("duplicate")) {
         if (error.message.includes("email")) {
           return NextResponse.json(
             { message: `Duplicate email` },
-            { status: 400 }
+            { status: 400 },
           );
         } else if (error.message.includes("name")) {
           return NextResponse.json(
             { message: `Duplicate name` },
-            { status: 400 }
+            { status: 400 },
           );
         }
       } else {
         return NextResponse.json({ error: error }, { status: 400 });
       }
     }
-  }
-  else {
-    return NextResponse.json({ message: 'Incorrect code'}, {status: 400})
+  } else {
+    return NextResponse.json({ message: "Incorrect code" }, { status: 400 });
   }
 }

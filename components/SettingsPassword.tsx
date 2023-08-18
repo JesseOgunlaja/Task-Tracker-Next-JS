@@ -11,7 +11,6 @@ const SettingsPassword = (props: any) => {
   return (
     <div className={styles.button}>
       <input
-        placeholder="Password"
         className={styles.input}
         name={props.name}
         id={props.name}

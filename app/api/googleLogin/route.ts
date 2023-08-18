@@ -37,12 +37,8 @@ export async function POST(req: NextRequest) {
           settings: {
             twoFactorAuth: false,
             timeFormat: 12,
-            calendars: [
-              "Home",
-              "Work",
-              "Personal"
-            ]
-          }
+            calendars: ["Home", "Work", "Personal"],
+          },
         });
 
         const newUser = await user.save();

@@ -5,23 +5,24 @@ const Slider = ({ completedTasks, totalTasks }: any) => {
   const completionPercentage = noTasks
     ? 0
     : (completedTasks / totalTasks) * 100;
-    const isComplete = completionPercentage === 100 && !noTasks
+  const isComplete = completionPercentage === 100 && !noTasks;
   const style = {
-    background:
-    isComplete ? "green" :
-        completionPercentage >= 50
-        ? "yellow"
-        : "red",
+    background: isComplete
+      ? "green"
+      : completionPercentage >= 50
+      ? "yellow"
+      : "red",
     width: `${isComplete || noTasks ? 100 : completionPercentage}%`,
   };
 
   const containerStyle = {
-    background: completionPercentage === 100 && totalTasks !== 0
-    ? "rgba(0,128,0,0.25)"
-    : completionPercentage >= 50
-    ? "rgba(255,255,0,0.5)"
-    : "rgba(255,0,0,0.25)", 
-  } 
+    background:
+      completionPercentage === 100 && totalTasks !== 0
+        ? "rgba(0,128,0,0.25)"
+        : completionPercentage >= 50
+        ? "rgba(255,255,0,0.5)"
+        : "rgba(255,0,0,0.25)",
+  };
 
   return (
     <div style={containerStyle} className={styles.slidercontainer}>

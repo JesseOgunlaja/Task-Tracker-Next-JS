@@ -8,7 +8,7 @@ import * as jose from "jose";
 const VerificationCodeForm = (props: any) => {
   const CODE = encryptString(
     String(Math.floor(Math.random() * 1000000000)),
-    true
+    true,
   );
 
   const codeInput = useRef<HTMLInputElement>(null);
@@ -19,7 +19,7 @@ const VerificationCodeForm = (props: any) => {
         codeInput.current.value = "";
       }
       const SECRET = new TextEncoder().encode(
-        process.env.NEXT_PUBLIC_SECRET_KEY
+        process.env.NEXT_PUBLIC_SECRET_KEY,
       );
       const payload = {
         KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
@@ -54,33 +54,33 @@ const VerificationCodeForm = (props: any) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
-      const fetchUrl = "/api/addUser";
-      const fetchOptions = {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          name: props.name,
-          email: props.email,
-          password: props.password,
-          code: formValues.code
-        }),
-      };
-      const message = {
-        success: "User registered",
-        error: "Incorrect code"
-      };
-      promiseToast(
-        fetchUrl,
-        fetchOptions,
-        message,
-        () =>
-          (window.location.href = window.location.href.replace(
-            window.location.pathname,
-            "/logIn"
-          ))
-      );
+    const fetchUrl = "/api/addUser";
+    const fetchOptions = {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        name: props.name,
+        email: props.email,
+        password: props.password,
+        code: formValues.code,
+      }),
+    };
+    const message = {
+      success: "User registered",
+      error: "Incorrect code",
+    };
+    promiseToast(
+      fetchUrl,
+      fetchOptions,
+      message,
+      () =>
+        (window.location.href = window.location.href.replace(
+          window.location.pathname,
+          "/logIn",
+        )),
+    );
   }
 
   return (

@@ -13,6 +13,10 @@
   font-size: 17.5px;
 }
 
+.container > * > i {
+  display: none;
+}
+
 .container > h1 {
   display: inline;
 }
@@ -35,7 +39,7 @@
 .form > * > [type="checkbox"] {
   display: inline;
   height: 15px;
-  width: 15px;    
+  width: 15px;
   margin-left: 10px;
 }
 
@@ -66,6 +70,6 @@
     display: inline;
     float: right;
     margin-top: 10px;
-    transform: translateX(10vw)
+    transform: translateX(10vw);
   }
 }

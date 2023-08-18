@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -20,7 +24,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
   "include": [
@@ -30,7 +36,11 @@
     ".next/types/**/*.ts",
     "utils/decryptString.ts",
     "utils/encryptString.ts",
-    "next-sitemap.config.js"
-, "app/not-found.tsx"  ],
-  "exclude": ["node_modules"]
+    "next-sitemap.config.js",
+    "app/not-found.tsx",
+    "build/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
