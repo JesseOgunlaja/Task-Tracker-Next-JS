@@ -318,6 +318,15 @@
 }
 
 @media (min-height: 100vw) {
+  .projects > *:nth-child(2) {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .projects > *:nth-child(2) > * {
+    width: none;
+  }
   .slidercontainer {
     width: 82%;
   }
