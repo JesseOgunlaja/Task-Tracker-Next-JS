@@ -50,13 +50,13 @@ async function getData(id: number) {
   if (data.user == null) {
     window.location.href = window.location.href.replace(
       window.location.pathname,
-      "/api/logout",
+      "/api/logout"
     );
   } else {
     if (data.user.projects[id] == null) {
       window.location.href = window.location.href.replace(
         window.location.pathname,
-        "/pageNotFound",
+        "/pageNotFound"
       );
     } else {
       data.user.projects = data.user.projects.sort((a, b) => {
@@ -110,6 +110,7 @@ const Page = () => {
   const [user, setUser] = useState<User>();
   const dialog = useRef<HTMLDialogElement>(null);
   const dialog2 = useRef<HTMLDialogElement>(null);
+  const dialog3 = useRef<HTMLDialogElement>(null);
   const titleInput = useRef<HTMLInputElement>(null);
   const titleInput2 = useRef<HTMLInputElement>(null);
   const descriptionInput = useRef<HTMLTextAreaElement>(null);
@@ -132,9 +133,12 @@ const Page = () => {
     if (modal === 1) {
       dialog.current!.style.display = "flex";
       dialog.current?.show();
-    } else {
+    } else if (modal === 2) {
       dialog2.current!.style.display = "flex";
       dialog2.current?.show();
+    } else {
+      dialog3.current!.style.display = "flex";
+      dialog3.current?.show();
     }
   }
 
@@ -146,9 +150,12 @@ const Page = () => {
     if (modal === 1) {
       dialog.current!.style.display = "none";
       dialog.current?.close();
-    } else {
+    } else if (modal === 2) {
       dialog2.current!.style.display = "none";
       dialog2.current?.close();
+    } else {
+      dialog3.current!.style.display = "none";
+      dialog3.current?.close();
     }
   }
 
@@ -244,7 +251,7 @@ const Page = () => {
           priority: String(
             String(String(formValues.priority2)[0])
               .toUpperCase()
-              .concat(String(formValues.priority2.slice(1))),
+              .concat(String(formValues.priority2.slice(1)))
           ),
           type: String(formValues.type2),
         };
@@ -333,7 +340,7 @@ const Page = () => {
         months[dateObject.getMonth()]
       } ${day}, ${year} ${twelveHourFormat}:${minutes.padStart(
         2,
-        "0",
+        "0"
       )} ${ampm}`;
     }
   }
@@ -357,13 +364,13 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number,
+    index: number
   ) {
     const results: boolean[] = [];
     if (index === 1) {
       results.push(
         checkLengths(String(formValues.title), String(formValues.description))
-          .error,
+          .error
       );
       results.push(checkValue("Title", 1).error);
       results.push(checkValue("Date", 1).error);
@@ -371,7 +378,7 @@ const Page = () => {
     } else {
       results.push(
         checkLengths(String(formValues.title2), String(formValues.description2))
-          .error,
+          .error
       );
       results.push(checkValue("Title", 2).error);
       results.push(checkValue("Date", 2).error);
@@ -424,7 +431,7 @@ const Page = () => {
         priority: String(
           String(String(formValues.priority)[0])
             .toUpperCase()
-            .concat(String(formValues.priority.slice(1))),
+            .concat(String(formValues.priority.slice(1)))
         ),
         description: String(formValues.description),
         type: "to-do",
@@ -454,7 +461,7 @@ const Page = () => {
 
   function createDateWithTimeFormat(
     dateTimeString: string,
-    dateFormat: string,
+    dateFormat: string
   ) {
     let dayIndex, monthIndex, yearIndex;
 
@@ -500,7 +507,7 @@ const Page = () => {
 
       const formattedDate = createDateWithTimeFormat(
         taskBeingEdited.date,
-        user.settings.dateFormat,
+        user.settings.dateFormat
       ); // Create a new Date object with the components
       setStartDate2(formattedDate);
 
@@ -522,7 +529,7 @@ const Page = () => {
       const currentUser = JSON.parse(JSON.stringify(user));
       currentUser.projects[id].tasks = tasks;
       setUser(currentUser);
-      hideModal(2);
+      hideModal(3);
     } else {
       if (data.message === "Date over max, set by project date") {
         errorToast("Date exceedes, the date set in project");
@@ -593,7 +600,7 @@ const Page = () => {
                     typeof user?.projects[id].date === "string"
                       ? createDateFromFormat(
                           user?.projects[id].date,
-                          user?.settings.dateFormat,
+                          user?.settings.dateFormat
                         )
                       : null
                   }
@@ -650,7 +657,7 @@ const Page = () => {
                     typeof user?.projects[id].date === "string"
                       ? createDateFromFormat(
                           user?.projects[id].date,
-                          user?.settings.dateFormat,
+                          user?.settings.dateFormat
                         )
                       : null
                   }
@@ -687,8 +694,27 @@ const Page = () => {
               <button className={styles.back} onClick={() => hideModal(2)}>
                 Back
               </button>
-              <button className={styles.delete} onClick={deleteTask}>
+              <button
+                className={styles.delete}
+                onClick={() => {
+                  hideModal(2);
+                  showModal(3);
+                }}
+              >
                 Delete
+              </button>
+            </div>
+          </dialog>
+          <dialog ref={dialog3} className={styles.dialog}>
+            <div>
+              <p>Are you sure?</p>
+            </div>
+            <div className={styles.bottomButton}>
+              <button className={styles.back} onClick={() => hideModal(3)}>
+                No
+              </button>
+              <button className={styles.delete} onClick={deleteTask}>
+                Yes
               </button>
             </div>
           </dialog>
@@ -713,7 +739,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === ""),
+                          searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.projects[id].tasks.map(
@@ -742,7 +768,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -774,7 +800,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -803,7 +829,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
@@ -818,7 +844,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === ""),
+                          searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.projects[id].tasks.map(
@@ -847,7 +873,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -879,7 +905,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -908,7 +934,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
@@ -922,7 +948,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === ""),
+                          searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.projects[id].tasks.map(
@@ -951,7 +977,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -983,7 +1009,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -1012,7 +1038,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>

@@ -52,6 +52,7 @@ const Page = () => {
   const [searchField, setSearchField] = useState<string>("");
   const dialog = useRef<HTMLDialogElement>(null);
   const dialog2 = useRef<HTMLDialogElement>(null);
+  const dialog3 = useRef<HTMLDialogElement>(null);
   const titleInput = useRef<HTMLInputElement>(null);
   const titleInput2 = useRef<HTMLInputElement>(null);
   const priorityInput = useRef<HTMLSelectElement>(null);
@@ -72,9 +73,12 @@ const Page = () => {
     if (modal === 1) {
       dialog.current!.style.display = "flex";
       dialog.current?.show();
-    } else {
+    } else if (modal === 2) {
       dialog2.current!.style.display = "flex";
       dialog2.current?.show();
+    } else {
+      dialog3.current!.style.display = "flex";
+      dialog3.current?.show();
     }
   }
 
@@ -85,9 +89,12 @@ const Page = () => {
     if (modal === 1) {
       dialog.current!.style.display = "none";
       dialog.current?.close();
-    } else {
+    } else if (modal === 2) {
       dialog2.current!.style.display = "none";
       dialog2.current?.close();
+    } else {
+      dialog3.current!.style.display = "none";
+      dialog3.current?.close();
     }
   }
 
@@ -130,7 +137,7 @@ const Page = () => {
     } else if (
       valueChecking === "Titles" &&
       user?.projects.filter(
-        (val) => val.name.toUpperCase() === value.toUpperCase(),
+        (val) => val.name.toUpperCase() === value.toUpperCase()
       ).length !== 0
     ) {
       errorToast("Duplicate title");
@@ -154,7 +161,7 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number,
+    index: number
   ) {
     const results: boolean[] = [];
     if (index === 1) {
@@ -234,7 +241,7 @@ const Page = () => {
 
       const formattedDate = createDateFromFormat(
         taskBeingEdited.date,
-        user.settings.dateFormat,
+        user.settings.dateFormat
       ); // Create a new Date object with the components
       setStartDate2(formattedDate);
       showModal(2);
@@ -300,7 +307,7 @@ const Page = () => {
         priority: String(
           String(String(formValues.priority2)[0])
             .toUpperCase()
-            .concat(String(formValues.priority2.slice(1))),
+            .concat(String(formValues.priority2.slice(1)))
         ),
         section: user?.projects[editInput.current].section,
         type: String(formValues.section),
@@ -345,7 +352,7 @@ const Page = () => {
       const currentUser = JSON.parse(JSON.stringify(user));
       currentUser.projects = data.user.projects;
       console.log(data.user.projects);
-      hideModal(2);
+      hideModal(3);
       setUser(currentUser);
     } else {
       errorToast("An error occurred. Please try again.");
@@ -468,8 +475,27 @@ const Page = () => {
             <button className={styles.back} onClick={() => hideModal(2)}>
               Back
             </button>
-            <button className={styles.delete} onClick={deleteProject}>
+            <button
+              className={styles.delete}
+              onClick={() => {
+                hideModal(2);
+                showModal(3);
+              }}
+            >
               Delete
+            </button>
+          </div>
+        </dialog>
+        <dialog ref={dialog3} className={styles.dialog}>
+          <div>
+            <p>Are you sure?</p>
+          </div>
+          <div className={styles.bottomButton}>
+            <button className={styles.back} onClick={() => hideModal(3)}>
+              No
+            </button>
+            <button className={styles.delete} onClick={deleteProject}>
+              Yes
             </button>
           </div>
         </dialog>
@@ -489,9 +515,7 @@ const Page = () => {
                 Add
               </div>
             </div>
-            {user == null ? (
-              <p style={{ fontSize: "20px" }}>Loading ...</p>
-            ) : (
+            {user != null && (
               <>
                 {user.projects.filter((val) => val.section !== "done")
                   .length === 0 && <p>No projects</p>}
@@ -529,18 +553,15 @@ const Page = () => {
                         <div>
                           <p className={styles.type}>{project.type}</p>
                           <p>
-                         
-                            {
-                              Math.round(
-                                project.tasks.length === 0
-                                  ? 0
-                                  : (project.tasks.filter(
-                                      (task) => task.type === "done",
-                                    ).length /
-                                      project.tasks.length) *
-                                      100,
-                              ) +
-                              "%"}
+                            {Math.round(
+                              project.tasks.length === 0
+                                ? 0
+                                : (project.tasks.filter(
+                                    (task) => task.type === "done"
+                                  ).length /
+                                    project.tasks.length) *
+                                    100
+                            ) + "%"}
                           </p>
                         </div>
                         <Slider
@@ -564,13 +585,13 @@ const Page = () => {
                         {project.priority}
                       </div>
                     </Link>
-                  ),
+                  )
               )}
-              <div className={styles.doneText}>Done</div>
               {user == null ? (
-                <p style={{ fontSize: "20px" }}>Loading ...</p>
+                <p style={{ fontSize: "20px" }}>Loading...</p>
               ) : (
                 <>
+                  <div className={styles.doneText}>Done</div>
                   {user.projects.filter((val) => val.section !== "done")
                     .length === 0 && <p>No projects</p>}
                 </>
@@ -606,17 +627,15 @@ const Page = () => {
                         <div>
                           <p className={styles.type}>{project.type}</p>
                           <p>
-                            {
-                              Math.round(
-                                project.tasks.length === 0
-                                  ? 0
-                                  : (project.tasks.filter(
-                                      (task) => task.type === "done",
-                                    ).length /
-                                      project.tasks.length) *
-                                      100,
-                              ) +
-                              "%"}
+                            {Math.round(
+                              project.tasks.length === 0
+                                ? 0
+                                : (project.tasks.filter(
+                                    (task) => task.type === "done"
+                                  ).length /
+                                    project.tasks.length) *
+                                    100
+                            ) + "%"}
                           </p>
                         </div>
                         <Slider
@@ -640,7 +659,7 @@ const Page = () => {
                         {project.priority}
                       </div>
                     </Link>
-                  ),
+                  )
               )}
             </div>
           </div>
