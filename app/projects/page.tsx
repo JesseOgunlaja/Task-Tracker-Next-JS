@@ -446,7 +446,7 @@ const Page = () => {
             <label htmlFor="section">Section</label>
             <select
               ref={typeInput}
-              defaultValue={user?.projects[editInput.current].type}
+              defaultValue={user?.projects[editInput.current]?.type}
               name="section"
               id="section"
             >

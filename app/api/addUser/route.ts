@@ -45,10 +45,11 @@ export async function POST(req: NextRequest) {
       name: body.name.toUpperCase(),
       email: body.email.toLowerCase(),
       password: await bcrypt.hash(body.password, 10),
-      tasks: [],
+      projects: [],
       settings: {
         twoFactorAuth: false,
         timeFormat: 12,
+        dateFormat: "dd-MM-yyyy",
         calendars: ["Home", "Work", "Personal"],
       },
     });
