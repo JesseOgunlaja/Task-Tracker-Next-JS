@@ -37,6 +37,15 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true },
   projects: [projectsSchema],
   settings: settingsSchema,
+  tasks: [
+    {
+      title: { type: String, required: true },
+      date: { type: String, required: true },
+      type: { type: String, required: true },
+      description: { type: String, required: true },
+      priority: { type: String, required: true },
+    },
+  ],
 });
 
 let isConnected = false;

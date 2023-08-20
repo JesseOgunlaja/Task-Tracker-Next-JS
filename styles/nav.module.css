@@ -40,20 +40,30 @@
   margin-right: 15px;
 }
 
+.nav ul li:nth-child(4)::after, .nav ul li:nth-child(5)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  padding: 3px;
+  background: linear-gradient(45deg, rgb(0, 140, 255), rgb(255, 140, 255));
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
 .nav ul li:nth-child(4),
 .nav ul li:nth-child(5) {
+  position: relative;
   width: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-image: -webkit-linear-gradient(
-      45deg,
-      rgb(0, 140, 255),
-      rgb(255, 140, 255)
-    )
-    1;
-  border-width: 2.5px;
-  border-style: solid;
 }
 
 .website {

@@ -120,7 +120,7 @@
   top: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(200, 200, 200, 0.85);
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -136,6 +136,11 @@
   min-height: 550px;
   width: 500px;
   color: white;
+}
+
+.description::placeholder {
+  font-family: "Poppins", sans-serif;
+  
 }
 
 .dialog > :nth-child(1) > p {

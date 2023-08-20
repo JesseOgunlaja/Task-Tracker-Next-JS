@@ -90,6 +90,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
     const {
+      aloneTasks,
       indexToDelete,
       editIndex,
       editedProject,
@@ -163,6 +164,32 @@ export async function PATCH(req: NextRequest) {
         } else {
           updateFields.password = await bcrypt.hash(password, 10);
         }
+      }
+    }
+
+    if(aloneTasks) {
+      const newTasks: [] = aloneTasks.map((task: any) => {
+        if (user.settings.dateFormat === "dd/MM/yyyy") {
+          task.date = switchDateFormat(task.date);
+        }
+        delete task._id;
+        return task;
+      });
+      const result = tasksSchema.safeParse(newTasks);
+      if (result.success === false) {
+        const error = result.error.issues.map((issue) => {
+          return { error: issue.message };
+        });
+        return NextResponse.json({ errors: error }, { status: 400 });
+      } else {
+        updateFields.tasks = newTasks.map(
+          (task: any) => {
+            if (user.settings.dateFormat === "dd/MM/yyyy") {
+              task.date = switchDateFormat(task.date);
+            }
+            return task;
+          },
+        );
       }
     }
     if (tasks != undefined && index != undefined) {

@@ -32,6 +32,7 @@ type User = {
   projects: Project[];
   password: String;
   email: String;
+  tasks: Task[];
   name: String;
   settings: {
     timeFormat: 12 | 24;
@@ -44,26 +45,26 @@ const descriptionSchema = z
   .string()
   .max(250, { message: "Description too long" });
 
-async function getData(id: number) {
+async function getData() {
   const res = await fetch("/api/user");
   const data: { user: User } = await res.json();
   if (data.user == undefined || Object.keys(data.user).length === 0) {
-    errorToast("An error occured. PLease reload the page and try again.");
+    errorToast("An error occured. Please reload the page and try again.");
   } else {
-    if (data.user.projects[id] == null) {
+    if (data.user.tasks == null) {
       window.location.href = window.location.href.replace(
         window.location.pathname,
         "/pageNotFound"
       );
     } else {
-      data.user.projects = data.user.projects.sort((a, b) => {
+      data.user.tasks = data.user.tasks.sort((a, b) => {
         // Sort tasks based on priority (High -> Medium -> Low)
         if (a.priority === "High" && b.priority !== "High") return -1;
         if (a.priority !== "High" && b.priority === "High") return 1;
         if (a.priority === "Medium" && b.priority !== "Medium") return -1;
         if (a.priority !== "Medium" && b.priority === "Medium") return 1;
         // If priorities are the same, preserve original index order
-        return data.user.projects.indexOf(a) - data.user.projects.indexOf(b);
+        return data.user.tasks.indexOf(a) - data.user.tasks.indexOf(b);
       });
 
       return data.user;
@@ -100,8 +101,6 @@ function createDateFromFormat(dateString: string, dateFormat: string) {
 }
 
 const Page = () => {
-  const id = Number(useParams().id);
-
   const [startDate, setStartDate] = useState(new Date());
   const [startDate2, setStartDate2] = useState(new Date());
   const [searchField, setSearchField] = useState<string>("");
@@ -120,7 +119,7 @@ const Page = () => {
 
   useEffect(() => {
     async function awaitPromise() {
-      const data = await getData(id);
+      const data = await getData();
       setUser(data);
     }
     awaitPromise();
@@ -209,8 +208,8 @@ const Page = () => {
     const formValues = Object.fromEntries(formData.entries());
     if (checkAllValues(formValues, 2).error === false) {
       let tasks;
-      if (user?.projects[id].tasks) {
-        tasks = [...user?.projects[id].tasks];
+      if (user?.tasks) {
+        tasks = [...user?.tasks];
       }
       if (tasks) {
         const yyyy: number | string = startDate2.getFullYear();
@@ -256,15 +255,14 @@ const Page = () => {
         const res = await fetch("/api/user", {
           method: "PATCH",
           body: JSON.stringify({
-            tasks: tasks,
-            index: id,
+            aloneTasks: tasks,
           }),
         });
         const data = await res.json();
         console.log(data.user);
         if (data.user != undefined && Object.keys(data.user).length !== 0) {
           const currentUser = JSON.parse(JSON.stringify(user));
-          currentUser.projects[id].tasks = tasks;
+          currentUser.tasks = tasks;
           setUser(currentUser);
           hideModal(2);
         } else {
@@ -392,8 +390,8 @@ const Page = () => {
     const formValues = Object.fromEntries(formData.entries());
     if (checkAllValues(formValues, 1).error === false) {
       let tasks;
-      if (user?.projects[id].tasks) {
-        tasks = [...user?.projects[id].tasks];
+      if (user?.tasks) {
+        tasks = [...user?.tasks];
       }
       const yyyy: number | string = startDate.getFullYear();
       let mm: number | string = startDate.getMonth() + 1; // Months start at 0
@@ -439,12 +437,12 @@ const Page = () => {
       }
       const res = await fetch("/api/user", {
         method: "PATCH",
-        body: JSON.stringify({ tasks: tasks, index: id }),
+        body: JSON.stringify({ aloneTasks: tasks }),
       });
       const data = await res.json();
       if (data.user != undefined && Object.keys(data.user).length !== 0) {
         const currentUser = JSON.parse(JSON.stringify(user));
-        currentUser.projects[id].tasks = tasks;
+        currentUser.tasks = tasks;
         setUser(currentUser);
         hideModal(1);
       } else {
@@ -495,7 +493,7 @@ const Page = () => {
   }
 
   async function startEditTask(index: number) {
-    const taskBeingEdited = user?.projects[id].tasks[index];
+    const taskBeingEdited = user?.tasks[index];
     if (taskBeingEdited) {
       priorityInput2.current!.value =
         taskBeingEdited.priority.toLowerCase() || "";
@@ -515,17 +513,17 @@ const Page = () => {
   }
 
   async function deleteTask() {
-    let tasks = user?.projects[id].tasks;
+    let tasks = user?.tasks;
     tasks?.splice(editInput.current, 1);
 
     const res = await fetch("/api/user", {
       method: "PATCH",
-      body: JSON.stringify({ tasks: tasks, index: id }),
+      body: JSON.stringify({ aloneTasks: tasks }),
     });
     const data = await res.json();
     if (data.user != undefined && Object.keys(data.user).length !== 0) {
       const currentUser = JSON.parse(JSON.stringify(user));
-      currentUser.projects[id].tasks = tasks;
+      currentUser.tasks = tasks;
       setUser(currentUser);
       hideModal(3);
     } else {
@@ -538,20 +536,24 @@ const Page = () => {
   }
 
   async function handleDrop(drag: { id: number; userParam: User }, drop: any) {
-    const tasks = drag.userParam.projects[id].tasks;
+    const tasks = drag.userParam.tasks;
     const index = drag.id;
     if (tasks[index].type !== drop) {
       tasks[index].type = drop;
-      await fetch("/api/user", {
+      const res = await fetch("/api/user", {
         method: "PATCH",
         body: JSON.stringify({
-          index: id,
-          tasks: tasks,
+          aloneTasks: tasks,
         }),
       });
-      const currentUser = JSON.parse(JSON.stringify(drag.userParam));
-      currentUser.projects[id].tasks = tasks;
-      setUser(currentUser);
+      const data = await res.json();
+      if (data.user == undefined || Object.keys(data.user).length === 0) {
+        errorToast("An error occured. Please try again");
+      } else {
+        const currentUser = JSON.parse(JSON.stringify(drag.userParam));
+        currentUser.tasks = data.user.tasks;
+        setUser(currentUser);
+      }
     }
   }
 
@@ -595,9 +597,9 @@ const Page = () => {
                   onChange={(date: Date) => setStartDate(date)}
                   minDate={new Date()}
                   maxDate={
-                    typeof user?.projects[id].date === "string"
+                    typeof user?.tasks === "string"
                       ? createDateFromFormat(
-                          user?.projects[id].date,
+                          user?.tasks,
                           user?.settings.dateFormat
                         )
                       : null
@@ -609,7 +611,6 @@ const Page = () => {
                 <label htmlFor="description">Description</label>
                 <textarea
                   ref={descriptionInput}
-                  className={styles.description}
                   name="description"
                   id="description"
                   placeholder="Schedule  work meeting"
@@ -653,9 +654,9 @@ const Page = () => {
                     (user?.settings.timeFormat === 24 ? "HH:mm" : "h:mm aa")
                   }
                   maxDate={
-                    typeof user?.projects[id].date === "string"
+                    typeof user?.tasks === "string"
                       ? createDateFromFormat(
-                          user?.projects[id].date,
+                          user?.tasks,
                           user?.settings.dateFormat
                         )
                       : null
@@ -669,7 +670,6 @@ const Page = () => {
                 />
                 <label htmlFor="description2">Description</label>
                 <textarea
-                  className={styles.description}
                   ref={descriptionInput2}
                   id="description2"
                   name="description2"
@@ -733,7 +733,7 @@ const Page = () => {
                     </div>
                   </div>
                   {user &&
-                    user.projects[id].tasks?.filter(
+                    user?.tasks?.filter(
                       (val) =>
                         val.type === "to-do" &&
                         (val.title
@@ -742,7 +742,7 @@ const Page = () => {
                           searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
-                    user.projects[id].tasks.map(
+                    user?.tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
                         task.priority === "High" &&
@@ -771,7 +771,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.projects[id].tasks.map(
+                    user?.tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
                         task.priority === "Medium" &&
@@ -803,7 +803,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.projects[id].tasks.map(
+                    user?.tasks.map(
                       (task, index) =>
                         task.type === "to-do" &&
                         task.priority === "Low" &&
@@ -838,7 +838,7 @@ const Page = () => {
                 <div className={styles.ongoing}>
                   <div className={styles.sectionText}>In progress</div>
                   {user &&
-                    user.projects[id].tasks?.filter(
+                    user?.tasks?.filter(
                       (val) =>
                         val.type === "in-progress" &&
                         (val.title
@@ -847,7 +847,7 @@ const Page = () => {
                           searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
-                    user.projects[id].tasks.map(
+                    user?.tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
                         task.priority === "High" &&
@@ -876,7 +876,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.projects[id].tasks.map(
+                    user?.tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
                         task.priority === "Medium" &&
@@ -908,7 +908,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.projects[id].tasks.map(
+                    user?.tasks.map(
                       (task, index) =>
                         task.type === "in-progress" &&
                         task.priority === "Low" &&
@@ -942,7 +942,7 @@ const Page = () => {
                 <div className={styles.done}>
                   <div className={styles.sectionText}>Done</div>
                   {user &&
-                    user.projects[id].tasks?.filter(
+                    user?.tasks?.filter(
                       (val) =>
                         val.type === "done" &&
                         (val.title
@@ -951,7 +951,7 @@ const Page = () => {
                           searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
-                    user.projects[id].tasks.map(
+                    user?.tasks.map(
                       (task, index) =>
                         task.type === "done" &&
                         task.priority === "High" &&
@@ -980,7 +980,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.projects[id].tasks.map(
+                    user?.tasks.map(
                       (task, index) =>
                         task.type === "done" &&
                         task.priority === "Medium" &&
@@ -1012,7 +1012,7 @@ const Page = () => {
                         )
                     )}
                   {user &&
-                    user.projects[id].tasks.map(
+                    user?.tasks.map(
                       (task, index) =>
                         task.type === "done" &&
                         task.priority === "Low" &&

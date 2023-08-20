@@ -32,6 +32,9 @@ const SignedInNavbar = ({ pathname }: any) => {
           <li>
             <Link href="/projects">Projects</Link>
           </li>
+          <li>
+            <Link href="/tasks">Tasks</Link>
+          </li>
           <li className={styles.logout}>
             <Link href="/api/logout">Logout</Link>
           </li>
@@ -66,6 +69,9 @@ const SignedInNavbar = ({ pathname }: any) => {
         <div className={navShowing != null ? styles.phoneLinks : undefined}>
           <Link onClick={() => setNavShowing(false)} href="/projects">
             Projects
+          </Link>
+          <Link onClick={() => setNavShowing(false)} href="/tasks">
+            Tasks
           </Link>
           <Link
             onClick={() => setNavShowing(false)}

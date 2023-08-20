@@ -64,7 +64,11 @@ const Page = () => {
     async function getData() {
       const res = await fetch(`/api/user`);
       const data = await res.json();
-      setUser(data.user);
+      if (data.user != undefined && Object.keys(data.user).length !== 0) {
+        setUser(data.user);
+      } else {
+        errorToast("An error occured. PLease reload the page and try again.");
+      }
     }
     getData();
   }, []);
