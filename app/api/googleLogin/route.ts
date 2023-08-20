@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
           settings: {
             twoFactorAuth: false,
             timeFormat: 12,
-            dateFormat: "dd-MM-yyyy",
+            dateFormat:"dd/MM/yyyy",
             calendars: ["Home", "Work", "Personal"],
           },
         });
