@@ -17,3 +17,12 @@ body {
   font-family: "Poppins", sans-serif;
   overflow-x: hidden;
 }
+
+::-webkit-scrollbar {
+  background: transparent;
+  width: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
