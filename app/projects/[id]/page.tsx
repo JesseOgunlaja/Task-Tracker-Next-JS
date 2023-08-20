@@ -612,7 +612,7 @@ const Page = () => {
                   className={styles.description}
                   name="description"
                   id="description"
-                  placeholder="Schedule  work meeting"
+                  placeholder="Schedule work meeting"
                 />
                 <label htmlFor="priority">Priority</label>
                 <select name="priority" ref={priorityInput} id="priority">

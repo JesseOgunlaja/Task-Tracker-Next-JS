@@ -16,15 +16,6 @@ const ratelimit = new Ratelimit({
 });
 
 export async function userJWT(request: NextRequest) {
-  const ip = request.ip ?? "127.0.0.1";
-  const { success } = await ratelimit.limit(ip);
-
-  if (!success) {
-    return NextResponse.json(
-      { message: "Too many requests from this IP" },
-      { status: 429 },
-    );
-  }
   try {
     let cookie = request.cookies.get("token")?.value;
     let decoded = await verifyJWT(String(cookie));
@@ -36,12 +27,22 @@ export async function userJWT(request: NextRequest) {
           headers: {
             Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
           },
-        },
+        }
       );
       const data = await res.json();
       const uuid = data.result;
       if (uuid === decoded.payload.uuid && uuid != null) {
         requestHeaders.set("id", decoded.payload.id);
+
+        const ip = decoded.payload.id;
+        const { success } = await ratelimit.limit(ip);
+
+        if (!success) {
+          return NextResponse.json(
+            { message: "Too many requests from this IP" },
+            { status: 429 }
+          );
+        }
 
         return NextResponse.next({
           request: {
@@ -52,9 +53,27 @@ export async function userJWT(request: NextRequest) {
         return NextResponse.json({ message: `Invalid token` }, { status: 401 });
       }
     } else {
+      const ip = request.ip ?? "127.0.0.1";
+      const { success } = await ratelimit.limit(ip);
+
+      if (!success) {
+        return NextResponse.json(
+          { message: "Too many requests from this IP" },
+          { status: 429 }
+        );
+      }
       return NextResponse.json({ message: `Invalid token` }, { status: 401 });
     }
   } catch (err) {
+    const ip = request.ip ?? "127.0.0.1";
+    const { success } = await ratelimit.limit(ip);
+
+    if (!success) {
+      return NextResponse.json(
+        { message: "Too many requests from this IP" },
+        { status: 429 }
+      );
+    }
     return NextResponse.json({ error: `${err}` }, { status: 401 });
   }
 }

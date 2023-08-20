@@ -120,7 +120,7 @@
   top: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(200, 200, 200, 0.85);
+  background: rgba(51, 51, 51, 0.65);
   overflow-y: scroll;
   overflow-x: hidden;
 }
