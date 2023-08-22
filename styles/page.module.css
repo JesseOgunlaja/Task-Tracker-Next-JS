@@ -22,7 +22,7 @@
 .signUp {
   padding: 15px;
   background: darkblue;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 25px;
   width: 250px;
   text-align: center;
@@ -35,13 +35,15 @@
 }
 
 .container2 {
+  padding: 50px;
   display: flex;
   justify-content: center;
+  align-items: center;
   transform: translateY(75px);
+  gap: 15px;
 }
 
 .descriptions {
-  /* transform: translateY(50px); */
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;

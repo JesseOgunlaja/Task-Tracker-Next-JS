@@ -48,7 +48,7 @@ async function getData(id: number) {
   const res = await fetch("/api/user");
   const data: { user: User } = await res.json();
   if (data.user == undefined || Object.keys(data.user).length === 0) {
-    errorToast("An error occured. PLease reload the page and try again.");
+    errorToast("An error occured. Please reload the page and try again.");
   } else {
     if (data.user.projects[id] == null) {
       window.location.href = window.location.href.replace(
@@ -70,6 +70,10 @@ async function getData(id: number) {
     }
   }
 }
+
+const element = document.querySelector('.gr_');
+console.log(element)
+
 
 function createDateFromFormat(dateString: string, dateFormat: string) {
   let dayIndex, monthIndex, yearIndex;
@@ -235,7 +239,6 @@ const Page = () => {
           var formattedDate = `${yyyy}-${mm}-${dd} ${hh
             .toString()
             .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
-          console.log(formattedDate);
         } else {
           var formattedDate = `${dd}/${mm}/${yyyy} ${hh
             .toString()
@@ -261,7 +264,6 @@ const Page = () => {
           }),
         });
         const data = await res.json();
-        console.log(data.user);
         if (data.user != undefined && Object.keys(data.user).length !== 0) {
           const currentUser = JSON.parse(JSON.stringify(user));
           currentUser.projects[id].tasks = tasks;
@@ -482,7 +484,6 @@ const Page = () => {
     const dateTimeParts = dateTimeString
       .split(/[ /:-]/)
       .filter((val) => val !== "");
-    console.log(dateTimeParts);
 
     const day = parseInt(dateTimeParts[dayIndex], 10);
     const month = parseInt(dateTimeParts[monthIndex], 10) - 1;
@@ -612,6 +613,9 @@ const Page = () => {
                   className={styles.description}
                   name="description"
                   id="description"
+                  data-gramm="false"
+                  data-gramm_editor="false"
+                  data-enable-grammarly="false"
                   placeholder="Schedule work meeting"
                 />
                 <label htmlFor="priority">Priority</label>
@@ -674,6 +678,9 @@ const Page = () => {
                   id="description2"
                   name="description2"
                   placeholder="Schedule work meeting"
+                  data-gramm="false"
+                  data-gramm_editor="false"
+                  data-enable-grammarly="false"
                 />
                 <label htmlFor="type2">Type</label>
                 <select name="type2" ref={typeInput} id="type2">

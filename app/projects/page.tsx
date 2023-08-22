@@ -595,9 +595,8 @@ const Page = () => {
                 <p style={{ fontSize: "20px" }}>Loading...</p>
               ) : (
                 <>
-                  <div className={styles.doneText}>Done</div>
-                  {user.projects.filter((val) => val.section !== "done")
-                    .length === 0 && <p>No projects</p>}
+                  {user.projects.filter((val) => val.section === "done")
+                    .length !== 0 && <div className={styles.doneText}>Done</div>}
                 </>
               )}
               {user?.projects.map(

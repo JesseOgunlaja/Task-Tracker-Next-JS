@@ -41,12 +41,12 @@ const Page = () => {
       <div className={styles.container2}>
         <Image
           className={styles.image}
-          width={773.75}
-          height={580}
+          width={843.2708688}
+          height={450}
           alt="Managing tasks"
-          src="/sampleWebsite.png"
+          src="/websiteView.png"
           placeholder="blur"
-          blurDataURL={rgbDataURL(41, 43, 47)}
+          blurDataURL={rgbDataURL(39, 41, 56)}
         ></Image>
         <div className={styles.descriptions}>
           <div className={styles.description}>
