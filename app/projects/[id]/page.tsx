@@ -12,17 +12,6 @@ import DatePicker from "react-datepicker";
 import { useParams } from "next/navigation";
 import "react-datepicker/dist/react-datepicker.css";
 
-export const getStaticPaths = async () => {
-  return {
-    paths: [{
-      params: {
-        id: '1'
-      }
-    }],
-    fallback: false
-  }
-};
-
 type Task = {
   title: string;
   date: string;
