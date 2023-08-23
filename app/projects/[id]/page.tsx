@@ -12,6 +12,17 @@ import DatePicker from "react-datepicker";
 import { useParams } from "next/navigation";
 import "react-datepicker/dist/react-datepicker.css";
 
+export const getStaticPaths = async () => {
+  return {
+    paths: [{
+      params: {
+        id: '1'
+      }
+    }],
+    fallback: false
+  }
+};
+
 type Task = {
   title: string;
   date: string;
@@ -66,14 +77,19 @@ async function getData(id: number) {
         return data.user.projects.indexOf(a) - data.user.projects.indexOf(b);
       });
 
+      console.log(
+        data.user.projects.map((project: any, index: number) => ({
+          id: index,
+        }))
+      );
+
       return data.user;
     }
   }
 }
 
-const element = document.querySelector('.gr_');
-console.log(element)
-
+const element = document.querySelector(".gr_");
+console.log(element);
 
 function createDateFromFormat(dateString: string, dateFormat: string) {
   let dayIndex, monthIndex, yearIndex;

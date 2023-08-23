@@ -49,7 +49,7 @@ const page = () => {
             ></Image>
             <p className={styles.factTitle}>Keep it together</p>
             <p className={styles.factText}>
-              Store tasks relating to different things in different folders. So
+              Store tasks relating to different things in different projects. So
               it&apos;s right there when you need it
             </p>
           </div>

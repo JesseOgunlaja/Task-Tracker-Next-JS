@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
     }
     if (
       (String(request.nextUrl.pathname) === "/settings" ||
-        String(request.nextUrl.pathname).includes("/projects")) &&
+        String(request.nextUrl.pathname).includes("/projects") || String(request.nextUrl.pathname).includes("/tasks")) &&
       (await checkSignedIn(request)) === false
     ) {
       return NextResponse.redirect(new URL("/logIn", request.url));

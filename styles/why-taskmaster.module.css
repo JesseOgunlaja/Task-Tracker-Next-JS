@@ -37,6 +37,11 @@
   color: white;
 }
 
+.title, .text, .signUp {
+  opacity: 0;
+  animation: slideDown 1s 1 ease-in-out forwards;
+}
+
 .facts {
   display: flex;
   gap: 10px;
@@ -63,6 +68,21 @@
 
 .fact:nth-child(2) > .image {
   transform: translateX(-10px);
+}
+.fact:nth-child(2),
+.fact:nth-child(3) {
+  opacity: 0;
+  animation: slideUp 1s 1 ease-in-out forwards;
+}
+
+.fact:nth-child(1) {
+  opacity: 0;
+  animation: slideRight 1s 1 1s ease-in-out forwards;
+}
+
+.fact:nth-child(4) {
+  opacity: 0;
+  animation: slideLeft 1s 1 1s ease-in-out forwards;
 }
 
 @media (min-width: 100vh) {
@@ -91,5 +111,45 @@
   .text,
   .title {
     width: 95vw;
+  }
+}
+
+@keyframes slideRight {
+  from {
+    transform: translateX(-400px);
+  }
+  to {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(400px);
+  }
+  to {
+    transform: translateX(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(400px);
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-200px)
+  }
+  to {
+    transform: translateY(0px);
+    opacity: 1;
   }
 }

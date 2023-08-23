@@ -610,6 +610,9 @@ const Page = () => {
                 />
                 <label htmlFor="description">Description</label>
                 <textarea
+                  data-gramm="false"
+                  data-gramm_editor="false"
+                  data-enable-grammarly="false"
                   ref={descriptionInput}
                   name="description"
                   id="description"
@@ -670,6 +673,9 @@ const Page = () => {
                 />
                 <label htmlFor="description2">Description</label>
                 <textarea
+                  data-gramm="false"
+                  data-gramm_editor="false"
+                  data-enable-grammarly="false"
                   ref={descriptionInput2}
                   id="description2"
                   name="description2"
