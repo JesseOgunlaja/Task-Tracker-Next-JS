@@ -1,9 +1,8 @@
 import styles from "@/styles/signingUp.module.css";
-import { decryptString } from "@/utils/decryptString";
 import { encryptString } from "@/utils/encryptString";
-import { errorToast, promiseToast } from "@/utils/toast";
-import { FormEvent, useEffect, useRef } from "react";
+import { promiseToast } from "@/utils/toast";
 import * as jose from "jose";
+import { FormEvent, useEffect, useRef } from "react";
 
 const VerificationCodeForm = (props: any) => {
   const CODE = encryptString(

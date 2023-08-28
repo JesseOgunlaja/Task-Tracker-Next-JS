@@ -1,16 +1,15 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
-import styles from "@/styles/projectPage.module.css";
-import { errorToast } from "@/utils/toast";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
 import DragComponent from "@/components/DragComponent";
 import DropComponent from "@/components/DropComponent";
-import { z } from "zod";
+import styles from "@/styles/projectPage.module.css";
+import { errorToast } from "@/utils/toast";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import DatePicker from "react-datepicker";
-import { useParams } from "next/navigation";
 import "react-datepicker/dist/react-datepicker.css";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { z } from "zod";
 
 type Task = {
   title: string;
@@ -30,10 +29,10 @@ type Project = {
 
 type User = {
   projects: Project[];
-  password: String;
-  email: String;
+  password: string;
+  email: string;
   tasks: Task[];
-  name: String;
+  name: string;
   settings: {
     timeFormat: 12 | 24;
     dateFormat: "dd/MM/yyyy" | "MM/dd/yyyy" | "yyyy-MM-dd";
@@ -126,7 +125,7 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function showModal(modal: Number) {
+  function showModal(modal: number) {
     if (modal === 1) {
       dialog.current!.style.display = "flex";
       dialog.current?.show();
@@ -139,7 +138,7 @@ const Page = () => {
     }
   }
 
-  function hideModal(modal: Number) {
+  function hideModal(modal: number) {
     setStartDate(new Date());
     titleInput.current!.value = "";
     priorityInput.current!.value = "low";
@@ -156,8 +155,8 @@ const Page = () => {
     }
   }
 
-  function checkValue(valueChecking: String, dialog: Number) {
-    let symbols = /[^a-zA-Z0-9\s]/;
+  function checkValue(valueChecking: string, dialog: number) {
+    const symbols = /[^a-zA-Z0-9\s]/;
     let value;
 
     if (dialog === 1) {
@@ -201,6 +200,8 @@ const Page = () => {
       return { error: false };
     }
   }
+  
+  let formattedDate = ""
 
   async function editTask(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -221,22 +222,21 @@ const Page = () => {
 
         const hh: number | string = startDate2.getHours();
         const mins: number | string = startDate2.getMinutes();
-
         if (user?.settings.dateFormat === "dd/MM/yyyy") {
-          var formattedDate = `${dd}/${mm}/${yyyy} ${hh
+          formattedDate = `${dd}/${mm}/${yyyy} ${hh
             .toString()
             .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
         } else if (user?.settings.dateFormat === "MM/dd/yyyy") {
-          var formattedDate = `${mm}/${dd}/${yyyy} ${hh
+          formattedDate = `${mm}/${dd}/${yyyy} ${hh
             .toString()
             .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
         } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
-          var formattedDate = `${yyyy}-${mm}-${dd} ${hh
+          formattedDate = `${yyyy}-${mm}-${dd} ${hh
             .toString()
             .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
           console.log(formattedDate);
         } else {
-          var formattedDate = `${dd}/${mm}/${yyyy} ${hh
+          formattedDate = `${dd}/${mm}/${yyyy} ${hh
             .toString()
             .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
         }
@@ -404,19 +404,19 @@ const Page = () => {
       const mins: number | string = startDate.getMinutes();
 
       if (user?.settings.dateFormat === "dd/MM/yyyy") {
-        var formattedDate = `${dd}/${mm}/${yyyy} ${hh
+        formattedDate = `${dd}/${mm}/${yyyy} ${hh
           .toString()
           .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
       } else if (user?.settings.dateFormat === "MM/dd/yyyy") {
-        var formattedDate = `${mm}/${dd}/${yyyy} ${hh
+        formattedDate = `${mm}/${dd}/${yyyy} ${hh
           .toString()
           .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
       } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
-        var formattedDate = `${yyyy}-${mm}-${dd} ${hh
+        formattedDate = `${yyyy}-${mm}-${dd} ${hh
           .toString()
           .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
       } else {
-        var formattedDate = `${dd}/${mm}/${yyyy} ${hh
+        formattedDate = `${dd}/${mm}/${yyyy} ${hh
           .toString()
           .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
       }
@@ -513,7 +513,7 @@ const Page = () => {
   }
 
   async function deleteTask() {
-    let tasks = user?.tasks;
+    const tasks = user?.tasks;
     tasks?.splice(editInput.current, 1);
 
     const res = await fetch("/api/user", {

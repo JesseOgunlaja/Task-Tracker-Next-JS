@@ -2,10 +2,10 @@ import { NextRequest } from "next/server";
 import { verifyJWT } from "@/utils/auth";
 
 export async function checkSignedIn(req: NextRequest) {
-  let cookie = req.cookies.get("token")?.value;
+  const cookie = req.cookies.get("token")?.value;
   if (cookie) {
     try {
-      let decoded = await verifyJWT(String(cookie));
+      const decoded = await verifyJWT(String(cookie));
       if (decoded.payload.id) {
         const res = await fetch(
           `${process.env.REDIS_URL}/get/${decoded.payload.id}`,

@@ -1,9 +1,8 @@
 import styles from "@/styles/reset-password.module.css";
-import Password from "./FormPassword";
-import { errorToast } from "@/utils/toast";
 import { FormEvent, useRef, useState } from "react";
-const jwt = require("jsrsasign");
 import { z } from "zod";
+import Password from "./FormPassword";
+const jwt = require("jsrsasign");
 
 const passwordSchema = z
   .string()
@@ -29,7 +28,7 @@ const ChangePassword = (props: any) => {
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
     if (checkPassword().error === false) {
-      const SECRET: String = process.env.NEXT_PUBLIC_SECRET_KEY || "";
+      const SECRET: string = process.env.NEXT_PUBLIC_SECRET_KEY || "";
       const payload = {
         KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
         exp: Math.floor(Date.now() / 1000) + 1,
@@ -57,7 +56,7 @@ const ChangePassword = (props: any) => {
 
   function checkPassword() {
     const element = passwordInput.current?.firstChild as HTMLDivElement;
-    let innerElement = element.firstChild as HTMLInputElement;
+    const innerElement = element.firstChild as HTMLInputElement;
     const password = innerElement.value;
     const result = passwordSchema.safeParse(password);
 

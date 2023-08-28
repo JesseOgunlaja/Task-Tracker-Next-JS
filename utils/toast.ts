@@ -39,9 +39,9 @@ export async function promiseToast(
   fetchUrl: RequestInfo,
   fetchOptions: RequestInit,
   message: MessageType,
-  successFunction?: Function,
+  successFunction?: (data: any) => void,
 ) {
-  let success: Boolean = true;
+  let success: boolean = true;
   let data: any;
   const fetchRequest = new Promise((resolve, reject) => {
     fetch(fetchUrl, fetchOptions).then(async (response: Response) => {

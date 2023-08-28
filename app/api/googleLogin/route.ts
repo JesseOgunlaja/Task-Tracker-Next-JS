@@ -1,11 +1,11 @@
 import { connectToDB } from "@/utils/mongoDB";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 const { OAuth2Client } = require("google-auth-library");
 const jwt = require("jsonwebtoken");
 const client = new OAuth2Client(
   "127574879175-5f5ath1lrnqnc83t4tntdv30i8s92amu.apps.googleusercontent.com",
 );
-import { cookies } from "next/headers";
 const { v4: uuidv4 } = require("uuid");
 
 export async function POST(req: NextRequest) {
@@ -23,9 +23,7 @@ export async function POST(req: NextRequest) {
       })
     ).getPayload();
 
-    let checkUser;
-
-    checkUser = await User.findOne({ email: ticket.email.toLowerCase() });
+    const checkUser = await User.findOne({ email: ticket.email.toLowerCase() });
     if (checkUser != null && checkUser.password !== "GMAIL") {
       return NextResponse.json({ message: "Email in use" }, { status: 400 });
     } else {
