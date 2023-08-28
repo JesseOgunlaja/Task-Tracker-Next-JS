@@ -89,7 +89,7 @@ export async function PATCH(request: NextRequest) {
           if (user.name === name.toUpperCase()) {
             return NextResponse.json({ message: "Same" }, { status: 400 });
           } else {
-            let duplicateUser = await User.findOne({
+            const duplicateUser = await User.findOne({
               name: name.toUpperCase(),
             });
             if (duplicateUser == null) {

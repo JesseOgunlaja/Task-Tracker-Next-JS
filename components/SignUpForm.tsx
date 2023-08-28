@@ -10,9 +10,9 @@ import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 const SignUpForm = () => {
   const password = useRef("");
   const termsCheckbox = useRef<HTMLInputElement>(null);
-  const [nameError, setNameError] = useState<String>("");
-  const [emailError, setEmailError] = useState<String>("");
-  const [passwordError, setPasswordError] = useState<String>("");
+  const [nameError, setNameError] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
 
   const nameInput = useRef<HTMLInputElement>(null);
@@ -34,7 +34,7 @@ const SignUpForm = () => {
 
   function checkPassword() {
     const element = passwordInput.current?.firstChild as HTMLDivElement;
-    let innerElement = element.firstChild as HTMLInputElement;
+    const innerElement = element.firstChild as HTMLInputElement;
     const password = innerElement.value;
     const result = passwordSchema.safeParse(password);
 
@@ -60,7 +60,7 @@ const SignUpForm = () => {
     }
   }
 
-  async function checkDuplicate(name: String, email: string) {
+  async function checkDuplicate(name: string, email: string) {
     const res = await fetch("/api/checkDuplicate", {
       method: "POST",
       headers: {
@@ -116,7 +116,7 @@ const SignUpForm = () => {
         )
       ) {
         const element = passwordInput.current?.firstChild as HTMLDivElement;
-        let innerElement = element.firstChild as HTMLInputElement;
+        const innerElement = element.firstChild as HTMLInputElement;
         password.current = innerElement.value;
         setSubmitted(true);
       }

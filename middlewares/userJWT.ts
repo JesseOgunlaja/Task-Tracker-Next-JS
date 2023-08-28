@@ -17,8 +17,8 @@ const ratelimit = new Ratelimit({
 
 export async function userJWT(request: NextRequest) {
   try {
-    let cookie = request.cookies.get("token")?.value;
-    let decoded = await verifyJWT(String(cookie));
+    const cookie = request.cookies.get("token")?.value;
+    const decoded = await verifyJWT(String(cookie));
     if (decoded.payload.id) {
       const requestHeaders = new Headers(request.headers);
       const res = await fetch(

@@ -1,8 +1,8 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
 import styles from "@/styles/reset-password.module.css";
+import { decryptString } from "@/utils/decryptString";
 import { encryptString } from "@/utils/encryptString";
 import { errorToast } from "@/utils/toast";
-import { decryptString } from "@/utils/decryptString";
+import { FormEvent, useEffect, useRef } from "react";
 import ChangePassword from "./ChangePassword";
 const jwt = require("jsrsasign");
 
@@ -21,7 +21,7 @@ const CheckCode = (props: any) => {
 
   useEffect(() => {
     async function sendEmail() {
-      const SECRET: String = process.env.NEXT_PUBLIC_SECRET_KEY || "";
+      const SECRET: string = process.env.NEXT_PUBLIC_SECRET_KEY || "";
       const payload = {
         KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
         exp: Math.floor(Date.now() / 1000) + 5,

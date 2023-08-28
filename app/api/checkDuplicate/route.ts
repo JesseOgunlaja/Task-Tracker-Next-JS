@@ -2,8 +2,8 @@ import { connectToDB } from "@/utils/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 
 type ObjectResponse = {
-  nameDuplicate?: Boolean;
-  emailDuplicate?: Boolean;
+  nameDuplicate?: boolean;
+  emailDuplicate?: boolean;
 };
 
 export async function POST(request: NextRequest) {
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const email = body.email;
   const name = body.name;
-  let response: ObjectResponse = {};
+  const response: ObjectResponse = {};
 
   let user = await User.findOne({ name: name.toUpperCase() });
   if (user == null) {

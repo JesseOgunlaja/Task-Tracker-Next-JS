@@ -1,9 +1,9 @@
 "use client";
 
-import styles from "@/styles/projects.module.css";
 import Slider from "@/components/Slider";
+import styles from "@/styles/projects.module.css";
+import { errorToast } from "@/utils/toast";
 import Link from "next/link";
-import DatePicker from "react-datepicker";
 import {
   CSSProperties,
   FormEvent,
@@ -12,9 +12,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { z } from "zod";
-import { errorToast } from "@/utils/toast";
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { z } from "zod";
 
 type Task = {
   title: string;
@@ -73,7 +73,7 @@ const Page = () => {
     getData();
   }, []);
 
-  function showModal(modal: Number) {
+  function showModal(modal: number) {
     if (modal === 1) {
       dialog.current!.style.display = "flex";
       dialog.current?.show();
@@ -86,7 +86,7 @@ const Page = () => {
     }
   }
 
-  function hideModal(modal: Number) {
+  function hideModal(modal: number) {
     setStartDate(new Date());
     titleInput.current!.value = "";
     priorityInput.current!.value = "low";
@@ -102,8 +102,8 @@ const Page = () => {
     }
   }
 
-  function checkValue(valueChecking: String, dialog: Number) {
-    let symbols = /[^a-zA-Z0-9\s]/;
+  function checkValue(valueChecking: string, dialog: number) {
+    const symbols = /[^a-zA-Z0-9\s]/;
     let value: string | any;
 
     if (dialog === 1) {
@@ -181,6 +181,8 @@ const Page = () => {
     return { error: result };
   }
 
+  let formattedDate = "";
+
   async function addProject(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -194,14 +196,14 @@ const Page = () => {
       if (mm < 10) mm = "0" + mm;
 
       if (user?.settings.dateFormat === "dd/MM/yyyy") {
-        var formattedDate = `${dd}/${mm}/${yyyy}`;
+        formattedDate = `${dd}/${mm}/${yyyy}`;
       } else if (user?.settings.dateFormat === "MM/dd/yyyy") {
-        var formattedDate = `${mm}/${dd}/${yyyy}`;
+        formattedDate = `${mm}/${dd}/${yyyy}`;
       } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
-        var formattedDate = `${yyyy}-${mm}-${dd}`;
+        formattedDate = `${yyyy}-${mm}-${dd}`;
         console.log(formattedDate);
       } else {
-        var formattedDate = `${dd}/${mm}/${yyyy}`;
+        formattedDate = `${dd}/${mm}/${yyyy}`;
       }
 
       const newProject = {
@@ -295,14 +297,14 @@ const Page = () => {
       if (mm < 10) mm = "0" + mm;
 
       if (user?.settings.dateFormat === "dd/MM/yyyy") {
-        var formattedDate = `${dd}/${mm}/${yyyy}`;
+        formattedDate = `${dd}/${mm}/${yyyy}`;
       } else if (user?.settings.dateFormat === "MM/dd/yyyy") {
-        var formattedDate = `${mm}/${dd}/${yyyy}`;
+        formattedDate = `${mm}/${dd}/${yyyy}`;
       } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
-        var formattedDate = `${yyyy}-${mm}-${dd}`;
+        formattedDate = `${yyyy}-${mm}-${dd}`;
         console.log(formattedDate);
       } else {
-        var formattedDate = `${dd}/${mm}/${yyyy}`;
+        formattedDate = `${dd}/${mm}/${yyyy}`;
       }
 
       const editedProject = {
