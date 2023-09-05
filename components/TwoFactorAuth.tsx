@@ -2,7 +2,7 @@ import styles from "@/styles/signingUp.module.css";
 import { encryptString } from "@/utils/encryptString";
 import { FormEvent, useEffect, useRef } from "react";
 import * as jose from "jose";
-import { errorToast, successToast } from "@/utils/toast";
+import { errorToast, promiseToast, successToast } from "@/utils/toast";
 
 const TwoFactorAuth = (props: {
   password: string;
@@ -55,27 +55,29 @@ const TwoFactorAuth = (props: {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
-    const res = await fetch("/api/logIn", {
+    const fetchUrl = "/api/logIn";
+    const fetchOptions = {
       method: "POST",
       headers: {
         "Content-type": "application/json",
       },
       body: JSON.stringify({
-        code: formValues.code,
+        code: Number(formValues.code),
         username: props.name,
         password: props.password,
       }),
-    });
-    const data = await res.json();
-    if (data.message === "Success") {
-      await new Promise((resolve) => {
-        successToast("Successful login");
-        resolve("Success");
-      });
-      window.location.reload();
-    } else {
-      errorToast("Invalid code");
-    }
+    };
+    const message = {
+      success: {
+        render() {
+          return "Successful login";
+        },
+      },
+      error: "Invalid code",
+    };
+    await promiseToast(fetchUrl, fetchOptions, message, () =>
+      window.location.reload(),
+    );
   }
 
   return (

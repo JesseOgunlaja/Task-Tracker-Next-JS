@@ -18,8 +18,71 @@
   flex-direction: column;
 }
 
+.dialog {
+  display: none;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(51, 51, 51, 0.5);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.dialog > :nth-child(1) {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50px 50px 0px 50px;
+  background: black;
+  border-radius: 10px 10px 0px 0px;
+  min-height: 550px;
+  width: 500px;
+  color: white;
+}
+
+.dialog > :nth-child(1) > p {
+  font-size: 25px;
+}
+
+.dialog > :nth-child(2) > * {
+  width: 200px !important;
+}
+
+.dialog > :nth-child(1) {
+  padding-top: 20px !important;
+  height: 80px !important;
+  min-height: 0px !important;
+  justify-content: space-between !important;
+  width: 400px;
+}
+
+.bottomButton > * {
+  width: 250px;
+  padding: 15px 30px;
+  font-size: 25px;
+  color: black;
+  cursor: pointer;
+}
+
+.back {
+  border-radius: 0px 0px 0px 10px;
+  background: white;
+}
+
+.delete {
+  border-radius: 0px 0px 10px 0px;
+  background: red;
+}
+
 .container {
-  min-height: 200vh;
+  min-height: 100vh;
   padding: 0px 20px 20px 20px;
   width: 90vw;
   transform: translateX(200px);

@@ -1,26 +1,20 @@
-"use client";
+import { headers } from "next/headers";
+import ClientOverallNav from "./ClientOverallNav";
+import { checkSignedIn } from "@/utils/checkSignedIn";
 
-import SignedInNavbar from "./SignedInNavbar";
-import Navbar from "./Navbar";
-import { usePathname } from "next/navigation";
+const OverallNav = async () => {
+  const headersList = headers();
+  const token = headersList
+    .get("cookie")
+    ?.split(";")
+    .find((cookie) => cookie.trim().startsWith("token" + "="))
+    ?.split("=")[1]
+    ?.trim();
+  const signedIn = await checkSignedIn(String(token), true);
 
-const OverallNav = ({ navStatus }: { navStatus: string }) => {
-  const pathname = usePathname();
-  const showBar =
-    pathname.includes("/terms-and-conditions") ||
-    pathname.includes("/privacy-policy") ||
-    pathname.includes("/settings");
   return (
     <div>
-      {!showBar && (
-        <>
-          {navStatus === "yes" || pathname.includes("/projects") ? (
-            <SignedInNavbar pathname={pathname} />
-          ) : (
-            <Navbar />
-          )}
-        </>
-      )}
+      <ClientOverallNav signedIn={signedIn} />
     </div>
   );
 };

@@ -1,0 +1,73 @@
+.page {
+  height: 97.5vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.container,
+.container2 {
+  min-width: 500px;
+  height: 250px;
+  display: flex;
+  background: white;
+  font-size: 20px;
+  flex-direction: column;
+  color: black;
+  border-radius: 10px;
+  padding-top: 10px;
+}
+
+.container > p:nth-child(1),
+.container2 > p:nth-child(1) {
+  padding-bottom: 10px;
+  font-size: 30px;
+  width: 100%;
+  text-align: center;
+  border-bottom: 2px solid black;
+}
+
+.container > div {
+  display: flex;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 15px;
+  position: relative;
+  gap: 15px;
+}
+
+.container > div::before {
+  content: "";
+  border-right: 2px solid black;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50.5%; /* Adjust the position as needed */
+  transform: translateX(-50%);
+}
+
+.container > a,
+.container2 > a {
+  background: rgb(0, 140, 255);
+  padding: 15px;
+  color: white;
+  margin-top: 10px;
+  min-height: 40px;
+  border-radius: 10px;
+  font-size: 22.5px;
+  width: 40%;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.container2 {
+  align-items: center;
+}
+
+.container2 > p:nth-child(2) {
+  width: 80%;
+  text-align: center;
+}

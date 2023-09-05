@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 const inter = Inter({ subsets: ["latin"] });
 import { Analytics } from "@vercel/analytics/react";
 import OverallNav from "@/components/OverallNav";
-import { cookies } from "next/headers";
+import GoogleProvider from "@/components/GoogleProvider";
 
 export const metadata: Metadata = {
   title: "TaskMaster",
@@ -18,15 +18,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = cookies();
-  const navStatus = cookieStore.get("nav")?.value || "no-bar";
-
   return (
     <html lang="en">
       <body className={inter.className}>
         <main>
-          <OverallNav navStatus={navStatus} />
-          {children}
+          <OverallNav />
+          <GoogleProvider>{children}</GoogleProvider>
           <Analytics />
           <ToastContainer
             position="top-right"

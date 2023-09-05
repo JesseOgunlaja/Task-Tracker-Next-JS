@@ -1,11 +1,15 @@
-import { connectToDB } from "@/utils/mongoDB";
+import { User, getByEmail, redis } from "@/utils/redis";
 import { passwordSchema } from "@/utils/zod";
 import { NextRequest, NextResponse } from "next/server";
 const bcrypt = require("bcrypt");
 
 export async function PATCH(request: NextRequest) {
-  const User = await connectToDB();
   const body = await request.json();
+
+  const CODE = await redis.get(body.email);
+  if (Number(CODE) !== Number(body.code) || body.code == undefined) {
+    return NextResponse.json({ message: "Invalid code" }, { status: 400 });
+  }
 
   const result = passwordSchema.safeParse(body.password);
 
@@ -18,15 +22,11 @@ export async function PATCH(request: NextRequest) {
     password: await bcrypt.hash(body.password, 10),
   };
   try {
-    if ((await User.findOne({ email: body.email })).password !== "GMAIL") {
-      await User.updateOne({ email: body.email }, { $set: updateFields });
-      return NextResponse.json({ message: "Success" }, { status: 200 });
-    } else {
-      return NextResponse.json(
-        { message: "Can't change password for GMAIL account" },
-        { status: 400 },
-      );
-    }
+    const key = (
+      (await getByEmail(body.email, true)) as { user: User; key: string }
+    ).key;
+    await redis.hset(key, updateFields);
+    return NextResponse.json({ message: "Success" }, { status: 200 });
   } catch (err) {
     return NextResponse.json({ error: `${err}` }, { status: 400 });
   }

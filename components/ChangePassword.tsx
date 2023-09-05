@@ -1,9 +1,11 @@
 import styles from "@/styles/reset-password.module.css";
 import Password from "./FormPassword";
-import { errorToast } from "@/utils/toast";
+import { errorToast, promiseToast, successToast } from "@/utils/toast";
 import { FormEvent, useRef, useState } from "react";
 const jwt = require("jsrsasign");
 import { z } from "zod";
+import { changePassword } from "@/utils/serverless";
+import { toast } from "react-toastify";
 
 const passwordSchema = z
   .string()
@@ -29,29 +31,20 @@ const ChangePassword = (props: any) => {
     const formData = new FormData(e.currentTarget);
     const formValues = Object.fromEntries(formData.entries());
     if (checkPassword().error === false) {
-      const SECRET: String = process.env.NEXT_PUBLIC_SECRET_KEY || "";
-      const payload = {
-        KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
-        exp: Math.floor(Date.now() / 1000) + 1,
-      };
-      const header = { alg: "HS256", typ: "JWT" };
-      const sHeader = JSON.stringify(header);
-      const sPayload = JSON.stringify(payload);
-      const globalToken = jwt.jws.JWS.sign("HS256", sHeader, sPayload, SECRET);
-      await fetch("/api/reset-password", {
-        method: "PATCH",
-        headers: {
-          authorization: globalToken,
-        },
-        body: JSON.stringify({
-          email: props.email,
-          password: formValues.password,
-        }),
-      });
-      window.location.href = window.location.href.replace(
-        window.location.pathname,
-        "/logIn",
+      const result = await changePassword(
+        props,
+        formValues,
+        window.location.origin,
       );
+      if (result.success) {
+        successToast("Successfully changed password");
+        window.location.href = window.location.href.replace(
+          window.location.pathname,
+          "/logIn",
+        );
+      } else {
+        errorToast("An error occurred. Please try again");
+      }
     }
   }
 

@@ -77,6 +77,21 @@
   padding-bottom: 35px;
 }
 
+.skeleton {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 33%;
+  aspect-ratio: 2.5 / 1;
+  border-radius: 15px;
+  padding: 25px;
+  background: #404457;
+  cursor: pointer;
+  padding-bottom: 35px;
+}
+
 .addProject {
   background: rgb(0, 140, 255);
   font-size: 20px;
@@ -179,6 +194,7 @@
   min-height: 75vh;
   max-height: 75vh;
   overflow-y: scroll;
+  overflow-x: hidden;
   width: 82.5vw;
 }
 

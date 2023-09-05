@@ -15,33 +15,7 @@ import {
 import { z } from "zod";
 import { errorToast } from "@/utils/toast";
 import "react-datepicker/dist/react-datepicker.css";
-
-type Task = {
-  title: string;
-  date: string;
-  description: string;
-  type: string;
-  priority: string;
-};
-
-type Project = {
-  name: string;
-  date: string;
-  type: string;
-  section: string;
-  priority: string;
-  tasks: Task[];
-};
-
-type Settings = {
-  calendars: [string];
-  dateFormat: string;
-};
-
-type User = {
-  projects: Project[];
-  settings: Settings;
-};
+import { User } from "@/utils/redis";
 
 const titleSchema = z.string().max(40, { message: "Title too long" });
 
@@ -67,7 +41,7 @@ const Page = () => {
       if (data.user != undefined && Object.keys(data.user).length !== 0) {
         setUser(data.user);
       } else {
-        errorToast("An error occured. PLease reload the page and try again.");
+        errorToast("An error occured. Please reload the page and try again.");
       }
     }
     getData();
@@ -141,7 +115,7 @@ const Page = () => {
     } else if (
       valueChecking === "Titles" &&
       user?.projects.filter(
-        (val) => val.name.toUpperCase() === value.toUpperCase()
+        (val) => val.name.toUpperCase() === value.toUpperCase(),
       ).length !== 0
     ) {
       errorToast("Duplicate title");
@@ -165,7 +139,7 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number
+    index: number,
   ) {
     const results: boolean[] = [];
     if (index === 1) {
@@ -199,7 +173,6 @@ const Page = () => {
         var formattedDate = `${mm}/${dd}/${yyyy}`;
       } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
         var formattedDate = `${yyyy}-${mm}-${dd}`;
-        console.log(formattedDate);
       } else {
         var formattedDate = `${dd}/${mm}/${yyyy}`;
       }
@@ -223,7 +196,6 @@ const Page = () => {
         }),
       });
       const data = await res.json();
-      console.log(data);
       if (data.user) {
         const currentUser = JSON.parse(JSON.stringify(user));
         currentUser.projects = data.user.projects;
@@ -245,7 +217,7 @@ const Page = () => {
 
       const formattedDate = createDateFromFormat(
         taskBeingEdited.date,
-        user.settings.dateFormat
+        user.settings.dateFormat,
       ); // Create a new Date object with the components
       setStartDate2(formattedDate);
       showModal(2);
@@ -300,7 +272,6 @@ const Page = () => {
         var formattedDate = `${mm}/${dd}/${yyyy}`;
       } else if (user?.settings.dateFormat === "yyyy-MM-dd") {
         var formattedDate = `${yyyy}-${mm}-${dd}`;
-        console.log(formattedDate);
       } else {
         var formattedDate = `${dd}/${mm}/${yyyy}`;
       }
@@ -311,7 +282,7 @@ const Page = () => {
         priority: String(
           String(String(formValues.priority2)[0])
             .toUpperCase()
-            .concat(String(formValues.priority2.slice(1)))
+            .concat(String(formValues.priority2.slice(1))),
         ),
         section: user?.projects[editInput.current].section,
         type: String(formValues.section),
@@ -331,8 +302,7 @@ const Page = () => {
       const data = await res.json();
       if (data.user != undefined && Object.keys(data.user).length !== 0) {
         const currentUser = JSON.parse(JSON.stringify(user));
-        currentUser.projects[editInput.current] =
-          data.user[`projects.${editInput.current}`];
+        currentUser.projects = data.user[`projects`];
         setUser(currentUser);
         hideModal(2);
       } else {
@@ -355,7 +325,6 @@ const Page = () => {
     if (data.user != undefined && Object.keys(data.user).length !== 0) {
       const currentUser = JSON.parse(JSON.stringify(user));
       currentUser.projects = data.user.projects;
-      console.log(data.user.projects);
       hideModal(3);
       setUser(currentUser);
     } else {
@@ -519,11 +488,20 @@ const Page = () => {
                 Add
               </div>
             </div>
-            {user != null && (
-              <>
-                {user.projects.filter((val) => val.section !== "done")
-                  .length === 0 && <p>No projects</p>}
-              </>
+            {user != null ? (
+              <>{user.projects.length === 0 && <p>No projects</p>}</>
+            ) : (
+              <p
+                style={{
+                  fontSize: "30px",
+                  display: "flex",
+                  width: "80vw",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                Loading...
+              </p>
             )}
             <div>
               {user?.projects.map(
@@ -561,10 +539,10 @@ const Page = () => {
                               project.tasks.length === 0
                                 ? 0
                                 : (project.tasks.filter(
-                                    (task) => task.type === "done"
+                                    (task) => task.type === "done",
                                   ).length /
                                     project.tasks.length) *
-                                    100
+                                    100,
                             ) + "%"}
                           </p>
                         </div>
@@ -589,14 +567,14 @@ const Page = () => {
                         {project.priority}
                       </div>
                     </Link>
-                  )
+                  ),
               )}
-              {user == null ? (
-                <p style={{ fontSize: "20px" }}>Loading...</p>
-              ) : (
+              {user != null && (
                 <>
                   {user.projects.filter((val) => val.section === "done")
-                    .length !== 0 && <div className={styles.doneText}>Done</div>}
+                    .length !== 0 && (
+                    <div className={styles.doneText}>Done</div>
+                  )}
                 </>
               )}
               {user?.projects.map(
@@ -634,10 +612,10 @@ const Page = () => {
                               project.tasks.length === 0
                                 ? 0
                                 : (project.tasks.filter(
-                                    (task) => task.type === "done"
+                                    (task) => task.type === "done",
                                   ).length /
                                     project.tasks.length) *
-                                    100
+                                    100,
                             ) + "%"}
                           </p>
                         </div>
@@ -662,7 +640,7 @@ const Page = () => {
                         {project.priority}
                       </div>
                     </Link>
-                  )
+                  ),
               )}
             </div>
           </div>

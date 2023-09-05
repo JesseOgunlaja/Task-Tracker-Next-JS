@@ -4,47 +4,28 @@ import { userJWT } from "./middlewares/userJWT";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  if (!String(request.nextUrl.pathname).includes("/api")) {
-    const response = NextResponse.next();
-
-    const signedIn = await checkSignedIn(request);
-    response.cookies.set({
-      name: "nav",
-      value: signedIn ? "yes" : "no",
-      secure: true,
-      sameSite: "strict",
-    });
-    if (
-      (String(request.nextUrl.pathname).includes("/logIn") ||
-        String(request.nextUrl.pathname).includes("/reset-password")) &&
-      (await checkSignedIn(request))
-    ) {
-      return NextResponse.redirect(new URL("/projects", request.url));
-    }
-    if (
-      (String(request.nextUrl.pathname) === "/settings" ||
-        String(request.nextUrl.pathname).includes("/projects") || String(request.nextUrl.pathname).includes("/tasks")) &&
-      (await checkSignedIn(request)) === false
-    ) {
-      return NextResponse.redirect(new URL("/logIn", request.url));
-    }
-    response.cookies.set({
-      name: "pathname",
-      value: request.nextUrl.pathname,
-      secure: true,
-      sameSite: "strict",
-    });
-    return response;
+  const pathname = String(request.nextUrl.pathname);
+  if (
+    (pathname.includes("/logIn") || pathname.includes("/reset-password")) &&
+    (await checkSignedIn(request))
+  ) {
+    return NextResponse.redirect(new URL("/projects", request.url));
   }
   if (
-    String(request.nextUrl.pathname).includes("/api/user") ||
-    String(request.nextUrl.pathname) === "/api/settingsChange"
+    (pathname === "/settings" ||
+      pathname.includes("/projects") ||
+      pathname.includes("/tasks")) &&
+    (await checkSignedIn(request)) === false
   ) {
+    return NextResponse.redirect(new URL("/logIn", request.url));
+  }
+
+  if (pathname.includes("/api/user") || pathname === "/api/settingsChange") {
     return userJWT(request);
   }
   if (
-    String(request.nextUrl.pathname).includes("/api/sendEmail") ||
-    String(request.nextUrl.pathname).includes("/api/reset-password")
+    pathname.includes("/api/sendEmail") ||
+    pathname.includes("/api/reset-password")
   ) {
     return globalJWT(request);
   }

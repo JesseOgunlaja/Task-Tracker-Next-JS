@@ -3,15 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    const expirationDate = new Date(new Date().getTime() - 1000000000);
-    cookies().set({
-      name: "token",
-      value: "",
-      httpOnly: true,
-      secure: true,
-      sameSite: "strict",
-      expires: expirationDate,
-    });
+    cookies().delete("token");
     return NextResponse.redirect(new URL("/logIn", request.url));
   } catch (err) {
     return NextResponse.json({ error: `${err}` }, { status: 500 });

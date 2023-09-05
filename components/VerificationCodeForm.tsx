@@ -1,55 +1,10 @@
 import styles from "@/styles/signingUp.module.css";
-import { decryptString } from "@/utils/decryptString";
-import { encryptString } from "@/utils/encryptString";
-import { errorToast, promiseToast } from "@/utils/toast";
-import { FormEvent, useEffect, useRef } from "react";
-import * as jose from "jose";
+import { promiseToast } from "@/utils/toast";
+import { FormEvent } from "react";
+
+let sent = false;
 
 const VerificationCodeForm = (props: any) => {
-  const CODE = encryptString(
-    String(Math.floor(Math.random() * 1000000000)),
-    true,
-  );
-
-  const codeInput = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    async function sendEmail() {
-      if (codeInput.current) {
-        codeInput.current.value = "";
-      }
-      const SECRET = new TextEncoder().encode(
-        process.env.NEXT_PUBLIC_SECRET_KEY,
-      );
-      const payload = {
-        KEY: process.env.NEXT_PUBLIC_GLOBAL_KEY,
-        exp: Math.floor(Date.now() / 1000) + 5,
-      };
-
-      const header = { alg: "HS256", typ: "JWT" };
-      const jwt = await new jose.SignJWT(payload)
-        .setProtectedHeader(header)
-        .setIssuedAt()
-        .setExpirationTime("5s")
-        .sign(SECRET);
-
-      await fetch("/api/sendEmail", {
-        method: "POST",
-        headers: {
-          authorization: jwt,
-        },
-        body: JSON.stringify({
-          email: props.email,
-          code: CODE,
-        }),
-      });
-    }
-    if (props.ready) {
-      sendEmail();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.ready]);
-
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -64,14 +19,14 @@ const VerificationCodeForm = (props: any) => {
         name: props.name,
         email: props.email,
         password: props.password,
-        code: formValues.code,
+        code: Number(formValues.code),
       }),
     };
     const message = {
       success: "User registered",
       error: "Incorrect code",
     };
-    promiseToast(
+    await promiseToast(
       fetchUrl,
       fetchOptions,
       message,
@@ -95,7 +50,7 @@ const VerificationCodeForm = (props: any) => {
       )}
       <form className={styles.form} onSubmit={submit}>
         <input
-          ref={codeInput}
+          defaultValue=""
           type="number"
           name="code"
           placeholder="Verification Code"

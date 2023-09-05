@@ -3,6 +3,7 @@
 import styles from "@/styles/taskSettings.module.css";
 import { errorToast, successToast } from "@/utils/toast";
 import { FormEvent, useState } from "react";
+import { toast } from "react-toastify";
 
 const TaskSettings = ({
   user: userProp,
@@ -20,22 +21,38 @@ const TaskSettings = ({
     const formValues = Object.fromEntries(formData.entries());
     const timeFormat = formValues.timeFormat;
 
-    const res = await fetch("/api/settingsChange", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        timeFormat: Number(timeFormat),
-      }),
+    let data: any;
+    const fetchRequest = new Promise((resolve, reject) => {
+      fetch("/api/settingsChange", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          timeFormat: Number(timeFormat),
+        }),
+      }).then(async (response: Response) => {
+        data = await response.json();
+        if (data.message === "Success") {
+          resolve(data);
+        } else {
+          reject(data);
+        }
+      });
     });
-    const data = await res.json();
-    if (data.message === "Success") {
-      successToast("Success");
-    }
-    if (data.message === "Same") {
-      errorToast("Time format has not changed");
-    }
+    await toast.promise(fetchRequest, {
+      pending: "Loading",
+      success: "Success",
+      error: {
+        render() {
+          if (data.message === "Same") {
+            return "Time format has not changed";
+          } else {
+            return "An error occurred. Please try again";
+          }
+        },
+      },
+    });
   }
 
   function addNewSection() {
@@ -52,26 +69,38 @@ const TaskSettings = ({
     ).length;
 
     if (amountOfEmptyStrings === 0) {
-      const res = await fetch("/api/settingsChange", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          calendars: user.settings.calendars,
-        }),
+      let data: any;
+      const fetchRequest = new Promise((resolve, reject) => {
+        fetch("/api/settingsChange", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            calendars: user.settings.calendars,
+          }),
+        }).then(async (response: Response) => {
+          data = await response.json();
+          if (data.message === "Success") {
+            resolve(data);
+          } else {
+            reject(data);
+          }
+        });
       });
-      const data = await res.json();
-      if (data.message === "Same") {
-        errorToast("Calendars have not changed");
-      } else if (
-        data.message === "Success" &&
-        Object.keys(data.user).length !== 0
-      ) {
-        successToast("Success");
-      } else {
-        errorToast("An error occurred. Please try again.");
-      }
+      await toast.promise(fetchRequest, {
+        pending: "Loading",
+        success: "Success",
+        error: {
+          render() {
+            if (data.message === "Same") {
+              return "Calendars have not changed";
+            } else {
+              return "An error occurred. Please try again";
+            }
+          },
+        },
+      });
     } else {
       errorToast("Calendars can't be empty strings");
     }
@@ -103,26 +132,38 @@ const TaskSettings = ({
     const formValues = Object.fromEntries(formData.entries());
     const dateFormat = formValues.dateFormat;
 
-    const res = await fetch("/api/settingsChange", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        dateFormat,
-      }),
+    let data: any;
+    const fetchRequest = new Promise((resolve, reject) => {
+      fetch("/api/settingsChange", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          dateFormat,
+        }),
+      }).then(async (response: Response) => {
+        data = await response.json();
+        if (data.message === "Success") {
+          resolve(data);
+        } else {
+          reject(data);
+        }
+      });
     });
-    const data = await res.json();
-    if (data.message === "Same") {
-      errorToast("Date format the same as before");
-    } else if (
-      data.message === "Success" &&
-      Object.keys(data.user).length !== 0
-    ) {
-      successToast("Success");
-    } else {
-      errorToast("An error occurred. Please try again.");
-    }
+    await toast.promise(fetchRequest, {
+      pending: "Loading",
+      success: "Success",
+      error: {
+        render() {
+          if (data.message === "Same") {
+            return "Date format the same as before";
+          } else {
+            return "An error occurred. Please try again";
+          }
+        },
+      },
+    });
   }
 
   return (

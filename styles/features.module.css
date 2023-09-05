@@ -33,17 +33,17 @@
 
 .feature:nth-child(1) > .image {
   opacity: 0;
-  animation: slideRight 1s 1  ease-in-out forwards;
+  animation: slideRight 1s 1 ease-in-out forwards;
 }
 
 .feature:nth-child(1) > .description {
   opacity: 0;
-  animation: slideLeft 1s 1  ease-in-out forwards;
+  animation: slideLeft 1s 1 ease-in-out forwards;
 }
 
 .feature:nth-child(2) {
   opacity: 0;
-  animation: slideUp 1s 1 1s  ease-in-out forwards;
+  animation: slideUp 1s 1 1s ease-in-out forwards;
 }
 
 @media (min-height: 100vw) {

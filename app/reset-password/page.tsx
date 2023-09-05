@@ -2,7 +2,7 @@
 
 import CheckCode from "@/components/CheckCode";
 import styles from "@/styles/reset-password.module.css";
-import { errorToast } from "@/utils/toast";
+import { errorToast, promiseToast } from "@/utils/toast";
 import { FormEvent, useRef, useState } from "react";
 
 const Page = () => {
@@ -23,23 +23,33 @@ const Page = () => {
     if (formValues.username === "") {
       errorToast("Invalid username or password");
     } else {
-      const res = await fetch("/api/checkEmail", {
+      const fetchUrl = "/api/checkEmail";
+      const fetchOptions = {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
         body: JSON.stringify({
-          name: String(formValues.username),
+          email: String(formValues.email),
         }),
-      });
-      const data = await res.json();
-      if (data.success) {
+      };
+      const message = {
+        success: "User found",
+        error: {
+          render({ data }: any) {
+            if (data.message === "Can't reset password for GMAIL") {
+              return "Can't reset password for GMAIL";
+            } else {
+              return "User not found";
+            }
+          },
+        },
+      };
+      await promiseToast(fetchUrl, fetchOptions, message, (data: any) => {
         email!.current = data.email;
         name!.current = String(formValues.username);
         setValidName(true);
-      } else {
-        errorToast("No user found with that username");
-      }
+      });
     }
   }
 
@@ -50,13 +60,13 @@ const Page = () => {
           {validName === false ? (
             <>
               <form onSubmit={submit} className={styles.form}>
-                <label htmlFor="username">Username</label>
+                <label htmlFor="email">Email</label>
                 <input
                   autoFocus
                   autoComplete="off"
                   type="text"
-                  name="username"
-                  id="username"
+                  name="email"
+                  id="email"
                 />
                 <input type="submit" />
               </form>

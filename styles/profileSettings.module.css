@@ -17,6 +17,17 @@
   display: none;
 }
 
+.deleteAccount {
+  padding: 10px;
+  font-size: 20px;
+  border-radius: 7.5px;
+  background: transparent;
+  background: red;
+  width: 250px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
 .container > h1 {
   display: inline;
 }
@@ -58,6 +69,43 @@
   padding: 15px;
   border-radius: 5px;
   font-size: 17.5px;
+}
+
+.authButton {
+  margin-top: 5px;
+  background: rgb(0, 140, 255);
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 20px;
+  color: white;
+  cursor: pointer;
+}
+
+.error {
+  display: block;
+  padding: 0px;
+  margin: 0px;
+  color: red;
+  font-size: 15px;
+  margin-bottom: 5px;
+}
+
+.bottomButton > * {
+  width: 250px;
+  padding: 15px 30px;
+  font-size: 25px;
+  color: black;
+  cursor: pointer;
+}
+
+.back {
+  border-radius: 0px 0px 0px 10px;
+  background: white;
+}
+
+.delete {
+  border-radius: 0px 0px 10px 0px;
+  background: red;
 }
 
 @media (min-height: 100vw) {

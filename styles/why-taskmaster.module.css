@@ -37,7 +37,9 @@
   color: white;
 }
 
-.title, .text, .signUp {
+.title,
+.text,
+.signUp {
   opacity: 0;
   animation: slideDown 1s 1 ease-in-out forwards;
 }
@@ -69,11 +71,6 @@
 .fact:nth-child(2) > .image {
   transform: translateX(-10px);
 }
-.fact:nth-child(2),
-.fact:nth-child(3) {
-  opacity: 0;
-  animation: slideUp 1s 1 ease-in-out forwards;
-}
 
 .fact:nth-child(1) {
   opacity: 0;
@@ -89,9 +86,22 @@
   .fact {
     aspect-ratio: 1;
   }
+  .fact:nth-child(2),
+  .fact:nth-child(3) {
+    opacity: 0;
+    animation: slideUp 1s 1 ease-in-out forwards;
+  }
 }
 
 @media (min-height: 100vw) {
+  .fact:nth-child(2) {
+    opacity: 0;
+    animation: slideLeft 1s 1 1s ease-in-out forwards;
+  }
+  .fact:nth-child(3) {
+    opacity: 0;
+    animation: slideRight 1s 1 1s ease-in-out forwards;
+  }
   .facts {
     flex-direction: column;
   }
@@ -146,7 +156,7 @@
 
 @keyframes slideDown {
   from {
-    transform: translateY(-200px)
+    transform: translateY(-200px);
   }
   to {
     transform: translateY(0px);

@@ -32,7 +32,8 @@
     "utils/encryptString.ts",
     "next-sitemap.config.js",
     "app/not-found.tsx",
-    "build/types/**/*.ts"
+    "build/types/**/*.ts",
+    "components/VerificationCodeFormPage.tsx"
   ],
   "exclude": ["node_modules"]
 }

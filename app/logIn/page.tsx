@@ -5,11 +5,13 @@ import styles from "@/styles/logIn.module.css";
 import { errorToast, promiseToast } from "@/utils/toast";
 import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import { encryptString } from "@/utils/encryptString";
 import { decryptString } from "@/utils/decryptString";
 import * as jose from "jose";
 import TwoFactorAuth from "@/components/TwoFactorAuth";
+import { toast } from "react-toastify";
+import GoogleButton from "@/components/GoogleButton";
 
 const Page = () => {
   const usernameRef = useRef<HTMLInputElement>(null);
@@ -20,13 +22,6 @@ const Page = () => {
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
-  useEffect(() => {
-    async function connect() {
-      await fetch("/api/connect");
-    }
-    connect();
-  }, []);
 
   useEffect(() => {
     async function getCredentials() {
@@ -78,37 +73,48 @@ const Page = () => {
       };
       const message = {
         success: "Valid credentials",
-        error: "Invalid credentials",
+        error: {
+          render({ data }: any) {
+            if (data.message === "Invalid credentials") {
+              return "Invalid credentials";
+            } else {
+              return "An error occurred. Please try again";
+            }
+          },
+        },
       };
       await promiseToast(fetchUrl, fetchOptions, message, async (data: any) => {
+        async function setCredentials() {
+          const header = { alg: "HS256", typ: "JWT" };
+
+          const payload = {
+            name: encryptString(String(formValues.Username), true),
+            password: encryptString(String(formValues.password), true),
+          };
+          const userCredentials = await new jose.SignJWT(payload)
+            .setProtectedHeader(header)
+            .setIssuedAt()
+            .setExpirationTime("30d")
+            .sign(SECRET);
+
+          const setCookie = (name: any, value: any, daysToExpire: number) => {
+            const date = new Date();
+            date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000);
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+          };
+
+          setCookie("credentials", userCredentials, 30);
+        }
         if (data.name && data.email && data.twoFactorAuth === true) {
-          console.log(data);
+          setCredentials();
           setPassword(String(formValues.password));
           setName(data.name);
           setEmail(data.email);
           setShowTwoFactorAuth(true);
         } else {
           if (formValues.rememberCredentials === "on") {
-            const header = { alg: "HS256", typ: "JWT" };
-
-            const payload = {
-              name: encryptString(String(formValues.Username), true),
-              password: encryptString(String(formValues.password), true),
-            };
-            const userCredentials = await new jose.SignJWT(payload)
-              .setProtectedHeader(header)
-              .setIssuedAt()
-              .setExpirationTime("30d")
-              .sign(SECRET);
-
-            const setCookie = (name: any, value: any, daysToExpire: number) => {
-              const date = new Date();
-              date.setTime(date.getTime() + daysToExpire * 24 * 60 * 60 * 1000);
-              const expires = "expires=" + date.toUTCString();
-              document.cookie = name + "=" + value + ";" + expires + ";path=/";
-            };
-
-            setCookie("credentials", userCredentials, 30);
+            setCredentials();
           }
           window.location.reload();
         }
@@ -129,91 +135,103 @@ const Page = () => {
   };
 
   async function signUpWithGoogle(credentials: any) {
-    const res = await fetch("/api/googleLogin", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        credentials: credentials,
-      }),
+    let data: any;
+    const fetchRequest = new Promise((resolve, reject) => {
+      fetch("/api/googleLogin", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          googleCode: credentials,
+        }),
+      }).then(async (response) => {
+        data = await response.json();
+        if (data.message === "Success") {
+          window.location.reload();
+          resolve(data);
+        } else {
+          reject(data);
+        }
+      });
     });
-    const data = await res.json();
-    if (data.message === "Success") {
+    await toast.promise(fetchRequest, {
+      pending: "Loading",
+      success: "Valid credentials",
+      error: {
+        render() {
+          if (data.message === "Email in use") {
+            return "Email isn't registered with google";
+          } else {
+            return "An error occured, please try again";
+          }
+        },
+      },
+    });
+    if (data.message === "Sucess") {
       window.location.reload();
     }
-    if (data.message === "Email in use") {
-      errorToast("Email isn't registered with google");
-    }
   }
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => signUpWithGoogle(codeResponse.access_token),
+  });
 
   return (
     <>
       <title>Log in</title>
-      <GoogleOAuthProvider clientId="127574879175-5f5ath1lrnqnc83t4tntdv30i8s92amu.apps.googleusercontent.com">
-        <div className={styles.page}>
-          <div className={styles.container}>
-            {!showTwoFactorAuth ? (
-              <>
-                <h1>Log in</h1>
-                <br></br>
-                <GoogleLogin
-                  onSuccess={(credentialResponse) => {
-                    signUpWithGoogle(credentialResponse);
-                  }}
-                  onError={() => {
-                    console.log("Login Failed");
-                  }}
-                  text="signin_with"
-                  type="standard"
-                  width={350}
+      <div className={styles.page}>
+        <div className={styles.container}>
+          {!showTwoFactorAuth ? (
+            <>
+              <h1>Log in</h1>
+              <br></br>
+              <GoogleButton googleFunction={login} />
+              <p className={styles.continue}>Or continue with</p>
+              <form
+                style={{ marginTop: "30px" }}
+                className={styles.form}
+                onSubmit={submit}
+              >
+                <input
+                  ref={usernameRef}
+                  autoComplete="off"
+                  name="Username"
+                  type="text"
+                  placeholder="Username/Email"
                 />
-                <p className={styles.continue}>Or continue with</p>
-                <form
-                  style={{ marginTop: "30px" }}
-                  className={styles.form}
-                  onSubmit={submit}
-                >
-                  <input
-                    ref={usernameRef}
-                    autoComplete="off"
-                    name="Username"
-                    type="text"
-                    placeholder="Username/Email"
-                  />
-                  <div ref={passwordInput}>
-                    <FormPassword style={style} />
-                  </div>
-                  <div>
-                    <label htmlFor="rememberCredentials">Remember me</label>
-                    <input
-                      ref={credentialsRef}
-                      type="checkbox"
-                      id="rememberCredentials"
-                      name="rememberCredentials"
-                    />
-                    <p onClick={redirect}>Forgot password?</p>
-                  </div>
-                  <label className={styles.terms}>
-                    By clicking Log In, you agree to our{" "}
-                    <Link href="/privacy-policy">Privacy policy</Link> and{" "}
-                    <Link href="/terms-and-conditions">Terms of service</Link>
-                  </label>
-                  <input type="Submit" value="Log in" readOnly />
-                </form>
-                <div className={styles.account}>
-                  <p>Don&apos;t have an account?</p>
-                  <Link href="signUp">Sign up now</Link>
+                <div ref={passwordInput}>
+                  <FormPassword style={style} />
                 </div>
-              </>
-            ) : (
-              <>
-                <TwoFactorAuth email={email} name={name} password={password} />
-              </>
-            )}
-          </div>
+                <div>
+                  <label htmlFor="rememberCredentials">Remember me</label>
+                  <input
+                    ref={credentialsRef}
+                    type="checkbox"
+                    id="rememberCredentials"
+                    name="rememberCredentials"
+                  />
+                  <p onClick={redirect}>Forgot password?</p>
+                </div>
+                <label className={styles.terms}>
+                  By clicking Log In, you agree to our{" "}
+                  <Link href="/privacy-policy">Privacy policy</Link> and{" "}
+                  <Link href="/terms-and-conditions">Terms of service</Link>
+                </label>
+                <input type="Submit" value="Log in" readOnly />
+              </form>
+              <div className={styles.account}>
+                <p>Don&apos;t have an account?</p>
+                <Link href="signUp">Sign up now</Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <TwoFactorAuth email={email} name={name} password={password} />
+            </>
+          )}
         </div>
-      </GoogleOAuthProvider>
+      </div>
     </>
   );
 };

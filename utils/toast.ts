@@ -30,9 +30,15 @@ export const successToast = (text: string) => {
   }
 };
 
+type toastOptions =
+  | {
+      render: (data: any) => string;
+    }
+  | string;
+
 type MessageType = {
-  success: string;
-  error?: string;
+  success: toastOptions;
+  error?: toastOptions;
 };
 
 export async function promiseToast(
@@ -47,10 +53,10 @@ export async function promiseToast(
     fetch(fetchUrl, fetchOptions).then(async (response: Response) => {
       data = await response.json();
       if (response.ok) {
-        resolve("Success");
+        resolve(data);
       } else {
         success = false;
-        reject();
+        reject(data);
       }
     });
   });

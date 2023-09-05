@@ -34,6 +34,35 @@
   font-size: 22.5px;
 }
 
+.dialog {
+  display: none;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(51, 51, 51, 0.5);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.dialog > :nth-child(1) {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  padding: 50px 50px 0px 50px;
+  background: black;
+  border-radius: 10px 10px 0px 0px;
+  min-height: 550px;
+  width: 500px;
+  color: white;
+}
+
 .backButton {
   width: 550px;
   padding: 15px 30px;
@@ -42,6 +71,16 @@
   color: black;
   border-radius: 0px 0px 10px 10px;
   transform: translateY(80px);
+  cursor: pointer;
+}
+
+.passwordBackButton {
+  width: 500px;
+  padding: 15px 30px;
+  font-size: 25px;
+  background: white;
+  color: black;
+  border-radius: 0px 0px 10px 10px;
   cursor: pointer;
 }
 

@@ -1,14 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyJWT } from "@/utils/auth";
-
 import { Ratelimit } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
-
-const redis = new Redis({
-  url: process.env.REDIS_URL || "",
-  token: process.env.REDIS_TOKEN || "",
-});
+import { redis } from "@/utils/redis";
 
 const ratelimit = new Ratelimit({
   redis: redis,
@@ -17,20 +11,49 @@ const ratelimit = new Ratelimit({
 
 export async function userJWT(request: NextRequest) {
   try {
-    let cookie = request.cookies.get("token")?.value;
-    let decoded = await verifyJWT(String(cookie));
-    if (decoded.payload.id) {
-      const requestHeaders = new Headers(request.headers);
-      const res = await fetch(
-        `${process.env.REDIS_URL}/get/${decoded.payload.id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
-          },
+    if (
+      request.nextUrl.pathname.includes("/settingsChange") &&
+      request.method === "PATCH"
+    ) {
+      const body = await request.json();
+      if (body.createMagicLink == false) {
+        if (body.code == undefined || body.email == undefined) {
+          let message = [];
+          if (body.code == undefined) {
+            message.push("Code needed");
+          }
+          if (body.email == undefined) {
+            message.push("Email needed");
+          }
+          return NextResponse.json({ message: message.join(" and ") });
         }
-      );
-      const data = await res.json();
-      const uuid = data.result;
+        const CODE = (await redis.get(body.email)) as string;
+        if (CODE == undefined) {
+          return NextResponse.json(
+            { message: "Code expired" },
+            { status: 400 },
+          );
+        }
+        if (CODE.split(" ")[0] === body.code) {
+          const requestHeaders = new Headers(request.headers);
+          requestHeaders.set("id", CODE.split(" ")[1]);
+          return NextResponse.next({
+            request: {
+              headers: requestHeaders,
+            },
+          });
+        }
+        var cookie = body.token;
+      } else {
+        var cookie: any = request.cookies.get("token")?.value;
+      }
+    } else {
+      var cookie: any = request.cookies.get("token")?.value;
+    }
+    let decoded = await verifyJWT(String(cookie));
+    if (decoded.payload.id && decoded.payload.uuid) {
+      const requestHeaders = new Headers(request.headers);
+      const uuid = await redis.hget(decoded.payload.id, "uuid");
       if (uuid === decoded.payload.uuid && uuid != null) {
         requestHeaders.set("id", decoded.payload.id);
 
@@ -40,7 +63,7 @@ export async function userJWT(request: NextRequest) {
         if (!success) {
           return NextResponse.json(
             { message: "Too many requests from this IP" },
-            { status: 429 }
+            { status: 429 },
           );
         }
 
@@ -59,7 +82,7 @@ export async function userJWT(request: NextRequest) {
       if (!success) {
         return NextResponse.json(
           { message: "Too many requests from this IP" },
-          { status: 429 }
+          { status: 429 },
         );
       }
       return NextResponse.json({ message: `Invalid token` }, { status: 401 });
@@ -71,9 +94,13 @@ export async function userJWT(request: NextRequest) {
     if (!success) {
       return NextResponse.json(
         { message: "Too many requests from this IP" },
-        { status: 429 }
+        { status: 429 },
       );
     }
-    return NextResponse.json({ error: `${err}` }, { status: 401 });
+    console.log(err);
+    return NextResponse.json(
+      { message: "Unathorized", pathname: request.headers.get("referer") },
+      { status: 401 },
+    );
   }
 }

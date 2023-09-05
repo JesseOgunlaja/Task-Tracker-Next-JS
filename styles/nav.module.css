@@ -40,7 +40,8 @@
   margin-right: 15px;
 }
 
-.nav ul li:nth-child(4)::after, .nav ul li:nth-child(5)::after {
+.nav ul li:nth-child(4)::after,
+.nav ul li:nth-child(5)::after {
   content: "";
   position: absolute;
   inset: 0;

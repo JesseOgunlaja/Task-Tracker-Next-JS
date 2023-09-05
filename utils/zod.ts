@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const usernameSchema = z
   .string()
-  .min(0, {
+  .min(1, {
     message: "Username required",
   })
   .min(5, {
@@ -15,13 +15,11 @@ export const usernameSchema = z
     message: "No symbols or spaces allowed",
   });
 
-export const emailSchema = z.string().email().min(0, {
-  message: "Email required",
-});
+export const emailSchema = z.string().email();
 
 export const passwordSchema = z
   .string()
-  .min(0, {
+  .min(1, {
     message: "Password required",
   })
   .min(8, {

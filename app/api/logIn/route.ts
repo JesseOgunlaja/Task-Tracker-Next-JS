@@ -1,46 +1,62 @@
-import { connectToDB } from "@/utils/mongoDB";
 import { NextRequest, NextResponse } from "next/server";
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 import { cookies } from "next/headers";
 import { checkSignedIn } from "@/utils/checkSignedIn";
+import { User, getByEmail, getByName, redis } from "@/utils/redis";
 
 export async function POST(req: NextRequest) {
   if (await checkSignedIn(req)) {
     return NextResponse.json({ message: "Success" }, { status: 200 });
   } else {
-    const User = await connectToDB();
-
     const body = await req.json();
     const username = body.username;
     const password = body.password;
     let user;
+    let key;
 
     try {
       if (username.includes("@")) {
-        user = await User.findOne({ email: username.toLowerCase() });
+        const result = (await getByEmail(username, true)) as {
+          user: User;
+          key: string;
+        };
+        if (result != undefined) {
+          user = result.user;
+          key = result.key;
+        } else {
+          return NextResponse.json(
+            { message: "Invalid credentials" },
+            { status: 400 },
+          );
+        }
       } else {
-        user = await User.findOne({ name: username.toUpperCase() });
+        const result = (await getByName(username, true)) as {
+          user: User;
+          key: string;
+        };
+        if (result != undefined) {
+          console.log("Hi");
+          user = result.user;
+          key = result.key;
+        } else {
+          return NextResponse.json(
+            { message: "Invalid credentials" },
+            { status: 400 },
+          );
+        }
       }
-
-      if (await bcrypt.compare(password, user.password)) {
-        if (!user.settings.twoFactorAuth) {
-          const res = await fetch(`${process.env.REDIS_URL}/get/${user._id}/`, {
-            headers: {
-              Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
-            },
-          });
-          const data = await res.json();
-          const uuid = data.result;
+      if (await bcrypt.compare(password, user?.password)) {
+        if (!user?.settings.twoFactorAuth) {
           const payload = {
             iat: Date.now(),
             exp: Math.floor(
               (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000,
             ),
-            username: user.name,
-            email: user.email,
-            id: user._id,
-            uuid: uuid,
+            username: user?.name,
+            email: user?.email,
+            id: key,
+            uuid: user?.uuid,
           };
           const token = jwt.sign(payload, process.env.SECRET_KEY);
           const expirationDate = new Date();
@@ -55,28 +71,12 @@ export async function POST(req: NextRequest) {
           });
           return NextResponse.json({ message: "Success" }, { status: 200 });
         }
-        if (body.code) {
-          const res = await fetch(
-            `${process.env.REDIS_URL}/get/${user.email}`,
-            {
-              headers: {
-                Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
-              },
-            },
-          );
-          const data = await res.json();
-          const CODE = data.result;
-          if (body.code === CODE) {
-            const res = await fetch(
-              `${process.env.REDIS_URL}/get/${user._id}/`,
-              {
-                headers: {
-                  Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
-                },
-              },
-            );
-            const data = await res.json();
-            const uuid = data.result;
+        if (body.code != undefined) {
+          console.log("hi");
+          const CODE = await redis.get(user.email);
+          if (body.code === Number(CODE)) {
+            await redis.del(user.email);
+            const uuid = await redis.hget(String(key), "uuid");
             const payload = {
               iat: Date.now(),
               exp: Math.floor(
@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
               ),
               username: user.name,
               email: user.email,
-              id: user._id,
+              id: key,
               uuid: uuid,
             };
             const token = jwt.sign(payload, process.env.SECRET_KEY);
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
         );
       }
     } catch (err) {
-      return NextResponse.json({ error: `${err}` }, { status: 400 });
+      return NextResponse.json({ message: `${err}` }, { status: 400 });
     }
   }
 }

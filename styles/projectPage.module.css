@@ -140,7 +140,6 @@
 
 .description::placeholder {
   font-family: "Poppins", sans-serif;
-  
 }
 
 .dialog > :nth-child(1) > p {
@@ -148,7 +147,7 @@
 }
 
 .dialog:nth-child(3) > :nth-child(2) > * {
-    width: 200px !important;
+  width: 200px !important;
 }
 
 .dialog:nth-child(3) > :nth-child(1) {
@@ -156,7 +155,7 @@
   height: 80px !important;
   min-height: 0px !important;
   justify-content: space-between !important;
-  width: 400px
+  width: 400px;
 }
 
 .backButton {

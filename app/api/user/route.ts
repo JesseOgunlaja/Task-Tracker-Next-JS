@@ -1,14 +1,7 @@
-import { connectToDB } from "@/utils/mongoDB";
-import {
-  emailSchema,
-  passwordSchema,
-  projectsSchema,
-  tasksSchema,
-  usernameSchema,
-} from "@/utils/zod";
-import { headers } from "next/headers";
+import { User, redis } from "@/utils/redis";
+import { projectsSchema, tasksSchema } from "@/utils/zod";
+import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-const bcrypt = require("bcrypt");
 
 function switchDateFormat(dateString: string) {
   const parts = dateString.split("/");
@@ -59,25 +52,11 @@ function isDateLowerThanMax(inputDate: string, index: number, user: any) {
   return parsedInputDate <= maxDate;
 }
 
-Array.prototype.sortByPriority = function () {
-  return this.sort((a, b) => {
-    // Sort tasks based on priority (High -> Medium -> Low)
-    if (a.priority === "High" && b.priority !== "High") return -1;
-    if (a.priority !== "High" && b.priority === "High") return 1;
-    if (a.priority === "Medium" && b.priority !== "Medium") return -1;
-    if (a.priority !== "Medium" && b.priority === "Medium") return 1;
-    // If priorities are the same, preserve original index order
-    return this.indexOf(a) - this.indexOf(b);
-  });
-};
-
 export async function GET() {
-  const User = await connectToDB();
-
   try {
     const requestHeaders = headers();
     const id = requestHeaders.get("id");
-    const user = await User.findById(id);
+    const user = await redis.hgetall(String(id));
     return NextResponse.json({ user: user }, { status: 200 });
   } catch (err) {
     return NextResponse.json({ error: `${err}` }, { status: 500 });
@@ -85,8 +64,6 @@ export async function GET() {
 }
 
 export async function PATCH(req: NextRequest) {
-  const User = await connectToDB();
-
   try {
     const body = await req.json();
     const {
@@ -96,9 +73,6 @@ export async function PATCH(req: NextRequest) {
       editedProject,
       newProject,
       index,
-      name,
-      email,
-      password,
       tasks,
     } = body;
 
@@ -107,67 +81,9 @@ export async function PATCH(req: NextRequest) {
 
     const updateFields: any = {};
 
-    const user = await User.findById(id);
+    const user = (await redis.hgetall(String(id))) as User;
 
-    const gmailUser = user.password === "GMAIL";
-
-    if (name) {
-      if (gmailUser) {
-        return NextResponse.json(
-          { message: "Can't change name for Gmail account" },
-          { status: 400 },
-        );
-      } else {
-        const result = usernameSchema.safeParse(name);
-        if (result.success === false) {
-          const error = result.error.issues.map((issue) => {
-            return { error: issue.message };
-          });
-          return NextResponse.json({ error: error }, { status: 400 });
-        } else {
-          updateFields.name = name.toUpperCase();
-        }
-      }
-    }
-    if (email) {
-      if (gmailUser) {
-        return NextResponse.json(
-          { message: "Can't change email for Gmail account" },
-          { status: 400 },
-        );
-      } else {
-        const result = emailSchema.safeParse(email);
-
-        if (result.success === false) {
-          const error = result.error.issues.map((issue) => {
-            return { error: issue.message };
-          });
-          return NextResponse.json({ error: error }, { status: 400 });
-        } else {
-          updateFields.email = email;
-        }
-      }
-    }
-    if (password) {
-      if (gmailUser) {
-        return NextResponse.json(
-          { message: "Can't change password for Gmail account" },
-          { status: 400 },
-        );
-      } else {
-        const result = passwordSchema.safeParse(password);
-        if (result.success === false) {
-          const error = result.error.issues.map((issue) => {
-            return { error: issue.message };
-          });
-          return NextResponse.json({ error: error }, { status: 400 });
-        } else {
-          updateFields.password = await bcrypt.hash(password, 10);
-        }
-      }
-    }
-
-    if(aloneTasks) {
+    if (aloneTasks) {
       const newTasks: [] = aloneTasks.map((task: any) => {
         if (user.settings.dateFormat === "dd/MM/yyyy") {
           task.date = switchDateFormat(task.date);
@@ -182,14 +98,12 @@ export async function PATCH(req: NextRequest) {
         });
         return NextResponse.json({ errors: error }, { status: 400 });
       } else {
-        updateFields.tasks = newTasks.map(
-          (task: any) => {
-            if (user.settings.dateFormat === "dd/MM/yyyy") {
-              task.date = switchDateFormat(task.date);
-            }
-            return task;
-          },
-        );
+        updateFields.tasks = newTasks.map((task: any) => {
+          if (user.settings.dateFormat === "dd/MM/yyyy") {
+            task.date = switchDateFormat(task.date);
+          }
+          return task;
+        });
       }
     }
     if (tasks != undefined && index != undefined) {
@@ -210,18 +124,6 @@ export async function PATCH(req: NextRequest) {
         });
         return NextResponse.json({ errors: error }, { status: 400 });
       } else {
-        const tasksCompleted = newTasks.filter(
-          (task: any) => task.type === "done",
-        ).length;
-        const tasksLength = newTasks.length;
-        const completionPercentage = (tasksCompleted / tasksLength) * 100;
-        if (completionPercentage === 100 && tasksLength !== 0) {
-          updateFields[`projects.${index}.section`] = "done";
-        } else if (completionPercentage >= 50) {
-          updateFields[`projects.${index}.section`] = "in-progress";
-        } else {
-          updateFields[`projects.${index}.section`] = "to-do";
-        }
         const howManyOverMax = newTasks.filter(
           (val: any) =>
             !isDateLowerThanMax(
@@ -229,22 +131,34 @@ export async function PATCH(req: NextRequest) {
                 ? switchDateFormat(val.date).split(" ")[0]
                 : val.date.split(" ")[0],
               index,
-              user,
-            ),
+              user
+            )
         ).length;
         if (howManyOverMax === 0) {
-          updateFields[`projects.${index}.tasks`] = newTasks.map(
-            (task: any) => {
-              if (user.settings.dateFormat === "dd/MM/yyyy") {
-                task.date = switchDateFormat(task.date);
-              }
-              return task;
-            },
-          );
+          const currentProjects = user.projects;
+          const tasksCompleted = newTasks.filter(
+            (task: any) => task.type === "done"
+          ).length;
+          const tasksLength = newTasks.length;
+          const completionPercentage = (tasksCompleted / tasksLength) * 100;
+          if (completionPercentage === 100 && tasksLength !== 0) {
+            currentProjects[index].section = "done";
+          } else if (completionPercentage >= 50) {
+            currentProjects[index].section = "in-progress";
+          } else {
+            currentProjects[index].section = "to-do";
+          }
+          currentProjects[index].tasks = newTasks.map((task: any) => {
+            if (user.settings.dateFormat === "dd/MM/yyyy") {
+              task.date = switchDateFormat(task.date);
+            }
+            return task;
+          });
+          updateFields.projects = currentProjects;
         } else {
           return NextResponse.json(
             { message: "Date over max, set by project date" },
-            { status: 400 },
+            { status: 400 }
           );
         }
       }
@@ -269,12 +183,12 @@ export async function PATCH(req: NextRequest) {
         if (
           user?.projects.filter(
             (val: any) =>
-              val.name.toUpperCase() === newProject.name.toUpperCase(),
+              val.name.toUpperCase() === newProject.name.toUpperCase()
           ).length !== 0
         ) {
           return NextResponse.json(
             { message: "Duplicate task title" },
-            { status: 400 },
+            { status: 400 }
           );
         } else {
           if (user.settings.dateFormat === "dd/MM/yyyy") {
@@ -290,7 +204,7 @@ export async function PATCH(req: NextRequest) {
       if (user.projects[editIndex] == null) {
         return NextResponse.json(
           { message: "Incorrect index" },
-          { status: 400 },
+          { status: 400 }
         );
       } else {
         if (user.settings.dateFormat === "dd/MM/yyyy") {
@@ -323,15 +237,17 @@ export async function PATCH(req: NextRequest) {
             user?.projects.filter((val: any, index: number) =>
               index === editIndex
                 ? false
-                : val.name.toUpperCase() === editedProject.name.toUpperCase(),
+                : val.name.toUpperCase() === editedProject.name.toUpperCase()
             ).length !== 0
           ) {
             return NextResponse.json(
               { message: "Duplicate task title" },
-              { status: 400 },
+              { status: 400 }
             );
           } else {
-            updateFields[`projects.${editIndex}`] = editedProject;
+            const newTasks = user.projects;
+            newTasks[editIndex] = editedProject;
+            updateFields["projects"] = newTasks;
           }
         }
       }
@@ -340,7 +256,7 @@ export async function PATCH(req: NextRequest) {
       if (user.projects[indexToDelete] == null) {
         return NextResponse.json(
           { message: `Index ${indexToDelete} could not be found` },
-          { status: 400 },
+          { status: 400 }
         );
       }
       const currentProjects: any[] = user.projects;
@@ -348,13 +264,40 @@ export async function PATCH(req: NextRequest) {
       updateFields[`projects`] = currentProjects.sortByPriority();
     }
 
-    const result = await User.updateOne({ _id: id }, { $set: updateFields });
+    await redis.hset(String(id), updateFields);
 
-    if (result.nModified === 0) {
-      return NextResponse.json({ message: "User not found" }, { status: 400 });
-    } else {
-      return NextResponse.json({ user: updateFields }, { status: 200 });
-    }
+    return NextResponse.json({ user: updateFields }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: `${err}` }, { status: 500 });
+  }
+}
+
+export async function DELETE() {
+  try {
+    const requestHeaders = headers();
+    const id = requestHeaders.get("id");
+
+    const expirationDate = new Date(new Date().getTime() - 1000000000);
+    cookies().set({
+      name: "token",
+      value: "",
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      expires: expirationDate,
+    });
+    cookies().set({
+      name: "credentials",
+      value: "",
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      expires: expirationDate,
+    });
+
+    await redis.del(String(id));
+
+    return NextResponse.json({ message: "Success" }, { status: 200 });
   } catch (err) {
     return NextResponse.json({ error: `${err}` }, { status: 500 });
   }

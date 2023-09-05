@@ -1,4 +1,4 @@
-import { connectToDB } from "@/utils/mongoDB";
+import { getByEmail, getByName } from "@/utils/redis";
 import { NextRequest, NextResponse } from "next/server";
 
 type ObjectResponse = {
@@ -7,25 +7,27 @@ type ObjectResponse = {
 };
 
 export async function POST(request: NextRequest) {
-  const User = await connectToDB();
+  try {
+    const body = await request.json();
+    const email = body.email;
+    const name = body.name;
+    let response: ObjectResponse = {};
 
-  const body = await request.json();
-  const email = body.email;
-  const name = body.name;
-  let response: ObjectResponse = {};
+    let user = await getByName(name.toUpperCase());
+    if (user == undefined) {
+      response.nameDuplicate = false;
+    } else {
+      response.nameDuplicate = true;
+    }
+    user = await getByEmail(email.toLowerCase());
+    if (user == undefined) {
+      response.emailDuplicate = false;
+    } else {
+      response.emailDuplicate = true;
+    }
 
-  let user = await User.findOne({ name: name.toUpperCase() });
-  if (user == null) {
-    response.nameDuplicate = false;
-  } else {
-    response.nameDuplicate = true;
+    return NextResponse.json(response, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: `${err}` }, { status: 500 });
   }
-  user = await User.findOne({ email: email.toLowerCase() });
-  if (user == null) {
-    response.emailDuplicate = false;
-  } else {
-    response.emailDuplicate = true;
-  }
-
-  return NextResponse.json(response, { status: 200 });
 }

@@ -9,8 +9,8 @@ import DragComponent from "@/components/DragComponent";
 import DropComponent from "@/components/DropComponent";
 import { z } from "zod";
 import DatePicker from "react-datepicker";
-import { useParams } from "next/navigation";
 import "react-datepicker/dist/react-datepicker.css";
+import { redis } from "@/utils/redis";
 
 type Task = {
   title: string;
@@ -51,24 +51,7 @@ async function getData() {
   if (data.user == undefined || Object.keys(data.user).length === 0) {
     errorToast("An error occured. Please reload the page and try again.");
   } else {
-    if (data.user.tasks == null) {
-      window.location.href = window.location.href.replace(
-        window.location.pathname,
-        "/pageNotFound"
-      );
-    } else {
-      data.user.tasks = data.user.tasks.sort((a, b) => {
-        // Sort tasks based on priority (High -> Medium -> Low)
-        if (a.priority === "High" && b.priority !== "High") return -1;
-        if (a.priority !== "High" && b.priority === "High") return 1;
-        if (a.priority === "Medium" && b.priority !== "Medium") return -1;
-        if (a.priority !== "Medium" && b.priority === "Medium") return 1;
-        // If priorities are the same, preserve original index order
-        return data.user.tasks.indexOf(a) - data.user.tasks.indexOf(b);
-      });
-
-      return data.user;
-    }
+    return data.user;
   }
 }
 
@@ -248,7 +231,7 @@ const Page = () => {
           priority: String(
             String(String(formValues.priority2)[0])
               .toUpperCase()
-              .concat(String(formValues.priority2.slice(1)))
+              .concat(String(formValues.priority2.slice(1))),
           ),
           type: String(formValues.type2),
         };
@@ -336,7 +319,7 @@ const Page = () => {
         months[dateObject.getMonth()]
       } ${day}, ${year} ${twelveHourFormat}:${minutes.padStart(
         2,
-        "0"
+        "0",
       )} ${ampm}`;
     }
   }
@@ -360,13 +343,13 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number
+    index: number,
   ) {
     const results: boolean[] = [];
     if (index === 1) {
       results.push(
         checkLengths(String(formValues.title), String(formValues.description))
-          .error
+          .error,
       );
       results.push(checkValue("Title", 1).error);
       results.push(checkValue("Date", 1).error);
@@ -374,7 +357,7 @@ const Page = () => {
     } else {
       results.push(
         checkLengths(String(formValues.title2), String(formValues.description2))
-          .error
+          .error,
       );
       results.push(checkValue("Title", 2).error);
       results.push(checkValue("Date", 2).error);
@@ -427,7 +410,7 @@ const Page = () => {
         priority: String(
           String(String(formValues.priority)[0])
             .toUpperCase()
-            .concat(String(formValues.priority.slice(1)))
+            .concat(String(formValues.priority.slice(1))),
         ),
         description: String(formValues.description),
         type: "to-do",
@@ -457,7 +440,7 @@ const Page = () => {
 
   function createDateWithTimeFormat(
     dateTimeString: string,
-    dateFormat: string
+    dateFormat: string,
   ) {
     let dayIndex, monthIndex, yearIndex;
 
@@ -503,7 +486,7 @@ const Page = () => {
 
       const formattedDate = createDateWithTimeFormat(
         taskBeingEdited.date,
-        user.settings.dateFormat
+        user.settings.dateFormat,
       ); // Create a new Date object with the components
       setStartDate2(formattedDate);
 
@@ -535,8 +518,13 @@ const Page = () => {
     }
   }
 
-  async function handleDrop(drag: { id: number; userParam: User }, drop: any) {
-    const tasks = drag.userParam.tasks;
+  async function handleDrop(drag: { id: number }, drop: any) {
+    let newUser: any;
+    setUser((prevUser) => {
+      newUser = prevUser as User;
+      return prevUser;
+    });
+    const tasks = newUser?.tasks;
     const index = drag.id;
     if (tasks[index].type !== drop) {
       tasks[index].type = drop;
@@ -550,7 +538,7 @@ const Page = () => {
       if (data.user == undefined || Object.keys(data.user).length === 0) {
         errorToast("An error occured. Please try again");
       } else {
-        const currentUser = JSON.parse(JSON.stringify(drag.userParam));
+        const currentUser = JSON.parse(JSON.stringify(newUser));
         currentUser.tasks = data.user.tasks;
         setUser(currentUser);
       }
@@ -600,7 +588,7 @@ const Page = () => {
                     typeof user?.tasks === "string"
                       ? createDateFromFormat(
                           user?.tasks,
-                          user?.settings.dateFormat
+                          user?.settings.dateFormat,
                         )
                       : null
                   }
@@ -660,7 +648,7 @@ const Page = () => {
                     typeof user?.tasks === "string"
                       ? createDateFromFormat(
                           user?.tasks,
-                          user?.settings.dateFormat
+                          user?.settings.dateFormat,
                         )
                       : null
                   }
@@ -724,7 +712,7 @@ const Page = () => {
               </button>
             </div>
           </dialog>
-          <title>Dashboard</title>
+          <title>Tasks</title>
           <div className={styles.container}>
             <div className={styles.tasks}>
               <DropComponent type={"to-do"} onDrop={handleDrop}>
@@ -745,7 +733,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === "")
+                          searchField === ""),
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user?.tasks.map(
@@ -756,11 +744,7 @@ const Page = () => {
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
                           searchField === "") && (
-                          <DragComponent
-                            id={index}
-                            userParam={user}
-                            key={index}
-                          >
+                          <DragComponent id={index} key={index}>
                             <div
                               onClick={() => startEditTask(index)}
                               className={styles.task}
@@ -774,7 +758,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user?.tasks.map(
@@ -785,11 +769,7 @@ const Page = () => {
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
                           searchField === "") && (
-                          <DragComponent
-                            id={index}
-                            userParam={user}
-                            key={index}
-                          >
+                          <DragComponent id={index} key={index}>
                             <div
                               onClick={() => startEditTask(index)}
                               className={styles.task}
@@ -806,7 +786,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user?.tasks.map(
@@ -817,11 +797,7 @@ const Page = () => {
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
                           searchField === "") && (
-                          <DragComponent
-                            id={index}
-                            userParam={user}
-                            key={index}
-                          >
+                          <DragComponent id={index} key={index}>
                             <div
                               onClick={() => startEditTask(index)}
                               className={styles.task}
@@ -835,7 +811,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                 </div>
               </DropComponent>
@@ -850,7 +826,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === "")
+                          searchField === ""),
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user?.tasks.map(
@@ -861,11 +837,7 @@ const Page = () => {
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
                           searchField === "") && (
-                          <DragComponent
-                            id={index}
-                            userParam={user}
-                            key={index}
-                          >
+                          <DragComponent id={index} key={index}>
                             <div
                               onClick={() => startEditTask(index)}
                               className={styles.task}
@@ -879,7 +851,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user?.tasks.map(
@@ -890,11 +862,7 @@ const Page = () => {
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
                           searchField === "") && (
-                          <DragComponent
-                            id={index}
-                            userParam={user}
-                            key={index}
-                          >
+                          <DragComponent id={index} key={index}>
                             <div
                               onClick={() => startEditTask(index)}
                               className={styles.task}
@@ -911,7 +879,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user?.tasks.map(
@@ -922,11 +890,7 @@ const Page = () => {
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
                           searchField === "") && (
-                          <DragComponent
-                            id={index}
-                            userParam={user}
-                            key={index}
-                          >
+                          <DragComponent id={index} key={index}>
                             <div
                               onClick={() => startEditTask(index)}
                               className={styles.task}
@@ -940,7 +904,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                 </div>
               </DropComponent>
@@ -954,7 +918,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === "")
+                          searchField === ""),
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user?.tasks.map(
@@ -965,11 +929,7 @@ const Page = () => {
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
                           searchField === "") && (
-                          <DragComponent
-                            id={index}
-                            userParam={user}
-                            key={index}
-                          >
+                          <DragComponent id={index} key={index}>
                             <div
                               onClick={() => startEditTask(index)}
                               className={styles.task}
@@ -983,7 +943,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user?.tasks.map(
@@ -994,11 +954,7 @@ const Page = () => {
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
                           searchField === "") && (
-                          <DragComponent
-                            id={index}
-                            userParam={user}
-                            key={index}
-                          >
+                          <DragComponent id={index} key={index}>
                             <div
                               onClick={() => startEditTask(index)}
                               className={styles.task}
@@ -1015,7 +971,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                   {user &&
                     user?.tasks.map(
@@ -1026,11 +982,7 @@ const Page = () => {
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
                           searchField === "") && (
-                          <DragComponent
-                            id={index}
-                            userParam={user}
-                            key={index}
-                          >
+                          <DragComponent id={index} key={index}>
                             <div
                               onClick={() => startEditTask(index)}
                               className={styles.task}
@@ -1044,7 +996,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        )
+                        ),
                     )}
                 </div>
               </DropComponent>

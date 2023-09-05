@@ -4,12 +4,16 @@ import ProfileSettings from "@/components/ProfileSettings";
 import TaskSettings from "@/components/TaskSettings";
 import styles from "@/styles/settings.module.css";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const Page = () => {
   const back = useSearchParams().get("back");
   const [user, setUser] = useState<any>();
+  const dialog = useRef<HTMLDialogElement>(null);
+  const [settingsSection, setSettingsSection] = useState<"profile" | "app">(
+    "profile",
+  );
 
   useEffect(() => {
     async function getData() {
@@ -20,13 +24,42 @@ const Page = () => {
     getData();
   }, []);
 
+  if (window != undefined) {
+    window.onbeforeunload = () => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "instant",
+      });
+    };
+  }
+
+  useEffect(() => {
+    if (window != undefined) {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "instant",
+      });
+    }
+  }, [settingsSection]);
+
   return (
     <div className={styles.page}>
+      <dialog ref={dialog} className={styles.dialog}>
+        <div>
+          <p>Are you sure?</p>
+        </div>
+        <div className={styles.bottomButton}>
+          <button className={styles.back}>No</button>
+          <button className={styles.delete}>Yes</button>
+        </div>
+      </dialog>
       <title>Settings</title>
 
       <ul className={styles.sideNav}>
-        <li onClick={() => window.scrollTo(0, 0)}>Account</li>
-        <li onClick={() => window.scrollTo(0, 840)}>App settings</li>
+        <li onClick={() => setSettingsSection("profile")}>Account</li>
+        <li onClick={() => setSettingsSection("app")}>App settings</li>
         <li>Something</li>
         <li>Something</li>
         <li>Something</li>
@@ -39,9 +72,10 @@ const Page = () => {
       <div className={styles.container}>
         {user ? (
           <>
-            <ProfileSettings back={back} user={user} />
-
-            <TaskSettings user={user} />
+            {settingsSection === "profile" && (
+              <ProfileSettings back={back} user={user} dialog={dialog} />
+            )}
+            {settingsSection === "app" && <TaskSettings user={user} />}
           </>
         ) : (
           <p style={{ fontSize: "20px" }}>Loading...</p>

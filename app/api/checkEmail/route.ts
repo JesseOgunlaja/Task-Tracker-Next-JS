@@ -1,12 +1,10 @@
-import { connectToDB } from "@/utils/mongoDB";
+import { User, getByEmail } from "@/utils/redis";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const User = await connectToDB();
-
   const body = await request.json();
 
-  const user = await User.findOne({ name: body.name.toUpperCase() });
+  const user = (await getByEmail((body.email as string).toLowerCase())) as User;
 
   if (user) {
     if (user.password !== "GMAIL") {
@@ -16,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     } else {
       return NextResponse.json(
-        { success: false, message: "Can't reset password for Gmail" },
+        { success: false, message: "Can't reset password for GMAIL" },
         { status: 400 },
       );
     }

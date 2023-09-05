@@ -1,31 +1,8 @@
-"use client";
-
-import { useEffect } from "react";
 import styles from "@/styles/page.module.css";
 import Link from "next/link";
 import Image from "next/image";
 
-const keyStr =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-
-const triplet = (e1: number, e2: number, e3: number) =>
-  keyStr.charAt(e1 >> 2) +
-  keyStr.charAt(((e1 & 3) << 4) | (e2 >> 4)) +
-  keyStr.charAt(((e2 & 15) << 2) | (e3 >> 6)) +
-  keyStr.charAt(e3 & 63);
-
-const rgbDataURL = (r: number, g: number, b: number) =>
-  `data:image/gif;base64,R0lGODlhAQABAPAA${
-    triplet(0, r, g) + triplet(b, 255, 255)
-  }/yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==`;
-
 const Page = () => {
-  useEffect(() => {
-    async function connect() {
-      await fetch("/api/connect");
-    }
-    connect();
-  }, []);
   return (
     <>
       <div className={styles.container}>
@@ -44,9 +21,13 @@ const Page = () => {
           width={843.2708688}
           height={450}
           alt="Managing tasks"
-          src="/websiteView.png"
+          src="/websiteView-min.webp"
           placeholder="blur"
-          blurDataURL={rgbDataURL(39, 41, 56)}
+          blurDataURL={
+            "data:image/gif;base64,R0lGODlhAQABAPAAACcpOP///yH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+          }
+          priority
+          loading="eager"
         ></Image>
         <div className={styles.descriptions}>
           <div className={styles.description}>

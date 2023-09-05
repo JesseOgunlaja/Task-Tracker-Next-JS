@@ -1,16 +1,8 @@
-"use client";
-
 import SignUpForm from "@/components/SignUpForm";
 import styles from "@/styles/signingUp.module.css";
-import { useEffect } from "react";
+import { encryptString } from "@/utils/encryptString";
 
 const Page = () => {
-  useEffect(() => {
-    async function connect() {
-      await fetch("/api/connect");
-    }
-    connect();
-  }, []);
   return (
     <>
       <title>Sign up</title>
