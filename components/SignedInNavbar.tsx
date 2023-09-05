@@ -36,14 +36,10 @@ const SignedInNavbar = ({ pathname }: any) => {
             <Link href="/tasks">Tasks</Link>
           </li>
           <li className={styles.logout}>
-            <div>Logout</div>
+            <Link href="/api/logout">Logout</Link>
           </li>
           <li>
-            <Link
-              href={`/settings?back=${
-                pathname === "/changeEmailMagicLink" ? "/" : pathname
-              }`}
-            >
+            <Link href={`/settings?back=${pathname}`}>
               <i id={styles.faIcon} className="fa">
                 &#xf013;
               </i>
