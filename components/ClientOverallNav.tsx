@@ -1,29 +1,15 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import React from "react";
 import SignedInNavbar from "./SignedInNavbar";
 import Navbar from "./Navbar";
 
 const ClientOverallNav = ({ signedIn }: any) => {
-  const pathname = usePathname();
-
-  const showBar =
-    pathname.includes("/terms-and-conditions") ||
-    pathname.includes("/privacy-policy") ||
-    pathname.includes("/settings");
+  const showBar = true;
   return (
     <div>
       {" "}
       {!showBar && (
-        <>
-          {signedIn ||
-          (pathname.includes("/projects") && !pathname.includes("/logIn")) ? (
-            <SignedInNavbar pathname={pathname} />
-          ) : (
-            <Navbar />
-          )}
-        </>
+        <>{signedIn ? <SignedInNavbar pathname={"/"} /> : <Navbar />}</>
       )}
     </div>
   );
