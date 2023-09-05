@@ -83,9 +83,9 @@ const SignedInNavbar = ({ pathname }: any) => {
           >
             Settings
           </Link>
-          <Link onClick={() => setNavShowing(false)} href="/api/logout">
+          <a onClick={() => setNavShowing(false)} href="/api/logout">
             Log out
-          </Link>
+          </a>
         </div>
       </div>
     </div>
