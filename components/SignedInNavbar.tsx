@@ -36,16 +36,7 @@ const SignedInNavbar = ({ pathname }: any) => {
             <Link href="/tasks">Tasks</Link>
           </li>
           <li className={styles.logout}>
-            <button
-              onClick={() => {
-                window.location.href = window.location.href.replace(
-                  window.location.pathname,
-                  "/api/logout"
-                );
-              }}
-            >
-              Logout
-            </button>
+            <a href="/api/logout">Logout</a>
           </li>
           <li>
             <Link

@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
   const pathname = String(request.nextUrl.pathname);
+  console.log(request.cookies.get("token"));
   if (
     (pathname.includes("/logIn") || pathname.includes("/reset-password")) &&
     (await checkSignedIn(request))

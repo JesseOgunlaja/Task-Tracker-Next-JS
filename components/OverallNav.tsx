@@ -10,7 +10,7 @@ const OverallNav = async () => {
     .find((cookie) => cookie.trim().startsWith("token" + "="))
     ?.split("=")[1]
     ?.trim();
-  const signedIn = await checkSignedIn(String(token), true);
+  const signedIn = true;
 
   return (
     <div>
