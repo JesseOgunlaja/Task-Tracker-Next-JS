@@ -31,6 +31,8 @@ const page = () => {
               height={450}
               alt="Finishing task picture"
               className={styles.image}
+              priority
+              loading="eager"
             ></Image>
           </div>
           <div className={styles.feature}>

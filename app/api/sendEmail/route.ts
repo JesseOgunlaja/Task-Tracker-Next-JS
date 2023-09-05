@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
     
       <!-- start preheader -->
       <div class="preheader" style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-        This is your verification code to make your account.
+        This is your verification code.
       </div>
       <!-- end preheader -->
     
@@ -163,7 +163,7 @@ export async function POST(req: NextRequest) {
               <!-- start copy -->
               <tr>
                 <td align="left" bgcolor="#ffffff" style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-                  <p style="margin: 0;">Use the code below to verify the email and make an account <a href="https://taskmasterapp.com">TaskMaster</a>, you can safely delete this email.</p>
+                  <p style="margin: 0;">Use the code below to verify the email and make an account or to reset your password at <a href="https://taskmasterapp.com">TaskMaster</a>, you can safely delete this email.</p>
                 </td>
               </tr>
               <!-- end copy -->
@@ -211,7 +211,7 @@ export async function POST(req: NextRequest) {
               <!-- start permission -->
               <tr>
                 <td align="center" bgcolor="#e9ecef" style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                  <p style="margin: 0;">You received this email because we received a request to make an account. If you didn't request to make an account you can safely delete this email.</p>
+                  <p style="margin: 0;">You received this email because we received a request to make an account or reset your password. If you didn't request to make an account or reset your password you can safely delete this email.</p>
                 </td>
               </tr>
               <!-- end permission -->
@@ -228,7 +228,7 @@ export async function POST(req: NextRequest) {
     
       </table>
       <!-- end body -->
-      <script>
+      <script async>
         async function copy() {
           navigator.clipboard.writeText(${decryptString(body.code, true)})
         }
@@ -242,12 +242,12 @@ export async function POST(req: NextRequest) {
     await transporter.sendMail(mailOptions);
     await redis.set(
       body.email,
-      Number(decryptString(body.code, true).toLowerCase()),
+      Number(decryptString(body.code, true).toLowerCase())
     );
     await redis.expire(body.email, 3600);
     return NextResponse.json(
       { message: `Message sent succesfully` },
-      { status: 200 },
+      { status: 200 }
     );
   } catch (error) {
     return new Response(`${error}`, { status: 500 });
