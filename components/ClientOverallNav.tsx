@@ -8,7 +8,10 @@ import Navbar from "./Navbar";
 const ClientOverallNav = ({ signedIn }: any) => {
   const pathname = usePathname();
 
-  const showBar = false;
+  const showBar =
+    pathname.includes("/terms-and-conditions") ||
+    pathname.includes("/privacy-policy") ||
+    pathname.includes("/settings");
   return (
     <div>
       {" "}
