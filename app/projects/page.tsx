@@ -115,7 +115,7 @@ const Page = () => {
     } else if (
       valueChecking === "Titles" &&
       user?.projects.filter(
-        (val) => val.name.toUpperCase() === value.toUpperCase(),
+        (val) => val.name.toUpperCase() === value.toUpperCase()
       ).length !== 0
     ) {
       errorToast("Duplicate title");
@@ -139,7 +139,7 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number,
+    index: number
   ) {
     const results: boolean[] = [];
     if (index === 1) {
@@ -217,7 +217,7 @@ const Page = () => {
 
       const formattedDate = createDateFromFormat(
         taskBeingEdited.date,
-        user.settings.dateFormat,
+        user.settings.dateFormat
       ); // Create a new Date object with the components
       setStartDate2(formattedDate);
       showModal(2);
@@ -282,7 +282,7 @@ const Page = () => {
         priority: String(
           String(String(formValues.priority2)[0])
             .toUpperCase()
-            .concat(String(formValues.priority2.slice(1))),
+            .concat(String(formValues.priority2.slice(1)))
         ),
         section: user?.projects[editInput.current].section,
         type: String(formValues.section),
@@ -539,10 +539,10 @@ const Page = () => {
                               project.tasks.length === 0
                                 ? 0
                                 : (project.tasks.filter(
-                                    (task) => task.type === "done",
+                                    (task) => task.type === "done"
                                   ).length /
                                     project.tasks.length) *
-                                    100,
+                                    100
                             ) + "%"}
                           </p>
                         </div>
@@ -567,7 +567,7 @@ const Page = () => {
                         {project.priority}
                       </div>
                     </Link>
-                  ),
+                  )
               )}
               {user != null && (
                 <>
@@ -612,10 +612,10 @@ const Page = () => {
                               project.tasks.length === 0
                                 ? 0
                                 : (project.tasks.filter(
-                                    (task) => task.type === "done",
+                                    (task) => task.type === "done"
                                   ).length /
                                     project.tasks.length) *
-                                    100,
+                                    100
                             ) + "%"}
                           </p>
                         </div>
@@ -640,7 +640,7 @@ const Page = () => {
                         {project.priority}
                       </div>
                     </Link>
-                  ),
+                  )
               )}
             </div>
           </div>
