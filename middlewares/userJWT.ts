@@ -31,7 +31,7 @@ export async function userJWT(request: NextRequest) {
         if (CODE == undefined) {
           return NextResponse.json(
             { message: "Code expired" },
-            { status: 400 },
+            { status: 400 }
           );
         }
         if (CODE.split(" ")[0] === body.code) {
@@ -63,7 +63,7 @@ export async function userJWT(request: NextRequest) {
         if (!success) {
           return NextResponse.json(
             { message: "Too many requests from this IP" },
-            { status: 429 },
+            { status: 429 }
           );
         }
 
@@ -82,7 +82,7 @@ export async function userJWT(request: NextRequest) {
       if (!success) {
         return NextResponse.json(
           { message: "Too many requests from this IP" },
-          { status: 429 },
+          { status: 429 }
         );
       }
       return NextResponse.json({ message: `Invalid token` }, { status: 401 });
@@ -94,13 +94,13 @@ export async function userJWT(request: NextRequest) {
     if (!success) {
       return NextResponse.json(
         { message: "Too many requests from this IP" },
-        { status: 429 },
+        { status: 429 }
       );
     }
     console.log(err);
     return NextResponse.json(
       { message: "Unathorized", pathname: request.headers.get("referer") },
-      { status: 401 },
+      { status: 401 }
     );
   }
 }

@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
         } else {
           return NextResponse.json(
             { message: "Invalid credentials" },
-            { status: 400 },
+            { status: 400 }
           );
         }
       } else {
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         } else {
           return NextResponse.json(
             { message: "Invalid credentials" },
-            { status: 400 },
+            { status: 400 }
           );
         }
       }
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
           const payload = {
             iat: Date.now(),
             exp: Math.floor(
-              (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000,
+              (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000
             ),
             username: user?.name,
             email: user?.email,
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
             const payload = {
               iat: Date.now(),
               exp: Math.floor(
-                (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000,
+                (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000
               ),
               username: user.name,
               email: user.email,
@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
           } else {
             return NextResponse.json(
               { message: "Invalid code" },
-              { status: 400 },
+              { status: 400 }
             );
           }
         }
@@ -113,12 +113,12 @@ export async function POST(req: NextRequest) {
             email: user.email,
             name: user.name,
           },
-          { status: 200 },
+          { status: 200 }
         );
       } else {
         return NextResponse.json(
           { message: "Invalid credentials" },
-          { status: 400 },
+          { status: 400 }
         );
       }
     } catch (err) {

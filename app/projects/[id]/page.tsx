@@ -22,12 +22,13 @@ async function getData(id: number) {
   const res = await fetch("/api/user");
   const data: { user: User } = await res.json();
   if (data.user == undefined || Object.keys(data.user).length === 0) {
+    console.log(data);
     errorToast("An error occured. Please reload the page and try again.");
   } else {
     if (data.user.projects[id] == null) {
       window.location.href = window.location.href.replace(
         window.location.pathname,
-        "/pageNotFound",
+        "/pageNotFound"
       );
     } else {
       data.user.projects = data.user.projects.sort((a, b) => {
@@ -43,7 +44,7 @@ async function getData(id: number) {
       console.log(
         data.user.projects.map((project: any, index: number) => ({
           id: index,
-        })),
+        }))
       );
 
       return data.user;
@@ -231,7 +232,7 @@ const Page = () => {
           priority: String(
             String(String(formValues.priority2)[0])
               .toUpperCase()
-              .concat(String(formValues.priority2.slice(1))),
+              .concat(String(formValues.priority2.slice(1)))
           ) as Priorities,
           type: String(formValues.type2) as Types,
         };
@@ -319,7 +320,7 @@ const Page = () => {
         months[dateObject.getMonth()]
       } ${day}, ${year} ${twelveHourFormat}:${minutes.padStart(
         2,
-        "0",
+        "0"
       )} ${ampm}`;
     }
   }
@@ -343,13 +344,13 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number,
+    index: number
   ) {
     const results: boolean[] = [];
     if (index === 1) {
       results.push(
         checkLengths(String(formValues.title), String(formValues.description))
-          .error,
+          .error
       );
       results.push(checkValue("Title", 1).error);
       results.push(checkValue("Date", 1).error);
@@ -357,7 +358,7 @@ const Page = () => {
     } else {
       results.push(
         checkLengths(String(formValues.title2), String(formValues.description2))
-          .error,
+          .error
       );
       results.push(checkValue("Title", 2).error);
       results.push(checkValue("Date", 2).error);
@@ -410,7 +411,7 @@ const Page = () => {
         priority: String(
           String(String(formValues.priority)[0])
             .toUpperCase()
-            .concat(String(formValues.priority.slice(1))),
+            .concat(String(formValues.priority.slice(1)))
         ) as Priorities,
         description: String(formValues.description),
         type: "to-do",
@@ -440,7 +441,7 @@ const Page = () => {
 
   function createDateWithTimeFormat(
     dateTimeString: string,
-    dateFormat: string,
+    dateFormat: string
   ) {
     let dayIndex, monthIndex, yearIndex;
 
@@ -485,7 +486,7 @@ const Page = () => {
 
       const formattedDate = createDateWithTimeFormat(
         taskBeingEdited.date,
-        user.settings.dateFormat,
+        user.settings.dateFormat
       ); // Create a new Date object with the components
       setStartDate2(formattedDate);
 
@@ -583,7 +584,7 @@ const Page = () => {
                     typeof user?.projects[id].date === "string"
                       ? createDateFromFormat(
                           user?.projects[id].date,
-                          user?.settings.dateFormat,
+                          user?.settings.dateFormat
                         )
                       : null
                   }
@@ -644,7 +645,7 @@ const Page = () => {
                     typeof user?.projects[id].date === "string"
                       ? createDateFromFormat(
                           user?.projects[id].date,
-                          user?.settings.dateFormat,
+                          user?.settings.dateFormat
                         )
                       : null
                   }
@@ -730,7 +731,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === ""),
+                          searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.projects[id].tasks.map(
@@ -755,7 +756,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -783,7 +784,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -808,7 +809,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
@@ -823,7 +824,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === ""),
+                          searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.projects[id].tasks.map(
@@ -848,7 +849,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -876,7 +877,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -901,7 +902,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
@@ -915,7 +916,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === ""),
+                          searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user.projects[id].tasks.map(
@@ -940,7 +941,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -968,7 +969,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user.projects[id].tasks.map(
@@ -993,7 +994,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
