@@ -36,7 +36,7 @@ const SignedInNavbar = ({ pathname }: any) => {
             <Link href="/tasks">Tasks</Link>
           </li>
           <li className={styles.logout}>
-            <a href="/api/logout">Logout</a>
+            <div>Logout</div>
           </li>
           <li>
             <Link
