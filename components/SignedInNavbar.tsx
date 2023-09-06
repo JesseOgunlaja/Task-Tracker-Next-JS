@@ -9,7 +9,7 @@ const SignedInNavbar = ({ pathname }: any) => {
   const [navShowing, setNavShowing] = useState<boolean | null>(null);
 
   return (
-    <div>
+    <div className={styles.wholeContainer}>
       <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -67,7 +67,7 @@ const SignedInNavbar = ({ pathname }: any) => {
             ? navShowing
               ? styles.sideNavTrue
               : styles.sideNavFalse
-            : undefined
+            : styles.phoneNav
         }
       >
         <div className={navShowing != null ? styles.phoneLinks : undefined}>

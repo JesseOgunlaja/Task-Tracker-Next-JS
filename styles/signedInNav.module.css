@@ -15,9 +15,19 @@
   z-index: 2;
 }
 
+.phoneNav,
+.phoneNav > *,
+.phoneNav > * > * {
+  display: none;
+}
+
 #faIcon {
   color: gray;
   font-size: 40px;
+}
+
+.wholeContainer {
+  margin-bottom: 20px;
 }
 
 .nav {
@@ -140,13 +150,12 @@
   .nav ul li:nth-child(3),
   .nav ul li:nth-child(4),
   .nav ul li:nth-child(5),
-  .nav ul li:nth-child(2) a,
-  .nav ul li:nth-child(3) a,
-  .nav ul li:nth-child(4) a,
-  .nav ul li:nth-child(5) a {
+  .nav ul li:nth-child(2) li a,
+  .nav ul li:nth-child(3) li a,
+  .nav ul li:nth-child(4) li a,
+  .nav ul li:nth-child(5) li a {
     display: none;
   }
-
   .actualBar {
     display: flex;
     flex-direction: column;
@@ -159,7 +168,7 @@
     display: block;
     transform: rotateY(180deg);
     position: absolute;
-    top: 20px;
+    top: 25px;
     right: 20px;
   }
 

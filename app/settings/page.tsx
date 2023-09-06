@@ -11,12 +11,15 @@ const Page = () => {
   const back = useSearchParams().get("back");
   const [user, setUser] = useState<any>();
   const dialog = useRef<HTMLDialogElement>(null);
-  const [settingsSection, setSettingsSection] = useState<"profile" | "app">(
-    "profile",
-  );
+  const [settingsSection, setSettingsSection] = useState<
+    "profile" | "app" | "everything"
+  >("profile");
 
   useEffect(() => {
     async function getData() {
+      if (window.innerHeight > window.innerWidth) {
+        setSettingsSection("everything");
+      }
       const res = await fetch("/api/user");
       const data = await res.json();
       setUser(data.user);
@@ -58,8 +61,20 @@ const Page = () => {
       <title>Settings</title>
 
       <ul className={styles.sideNav}>
-        <li onClick={() => setSettingsSection("profile")}>Account</li>
-        <li onClick={() => setSettingsSection("app")}>App settings</li>
+        <li
+          onClick={() =>
+            settingsSection !== "everything" && setSettingsSection("profile")
+          }
+        >
+          Account
+        </li>
+        <li
+          onClick={() =>
+            settingsSection !== "everything" && setSettingsSection("app")
+          }
+        >
+          App settings
+        </li>
         <li>Something</li>
         <li>Something</li>
         <li>Something</li>
@@ -72,10 +87,14 @@ const Page = () => {
       <div className={styles.container}>
         {user ? (
           <>
-            {settingsSection === "profile" && (
-              <ProfileSettings back={back} user={user} dialog={dialog} />
-            )}
-            {settingsSection === "app" && <TaskSettings user={user} />}
+            {settingsSection === "profile" ||
+              (settingsSection === "everything" && (
+                <ProfileSettings back={back} user={user} dialog={dialog} />
+              ))}
+            {settingsSection === "app" ||
+              (settingsSection === "everything" && (
+                <TaskSettings user={user} />
+              ))}
           </>
         ) : (
           <p style={{ fontSize: "20px" }}>Loading...</p>

@@ -14,7 +14,7 @@
     "start": "next start -p 8000",
     "lint": "next lint",
     "format": "prettier --write \"./**/*.{js,ts,tsx,json,css}\"",
-    "unlighthouse-test": "npx unlighthouse --site https://taskmasterapp.com"
+    "unlighthouse-test": "npx unlighthouse --site https://taskmasterapp.com --desktop --no-cache"
   },
   "dependencies": {
     "@fvilers/disable-react-devtools": "^1.3.0",

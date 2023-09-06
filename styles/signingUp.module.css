@@ -169,3 +169,10 @@
 .checkbox {
   transform: translate(5px, 3px);
 }
+
+@media (min-height: 100vw) {
+  .continue {
+    width: 100vw;
+    text-align: center;
+  }
+}

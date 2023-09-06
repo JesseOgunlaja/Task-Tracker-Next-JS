@@ -55,7 +55,7 @@ const Navbar = () => {
             ? navShowing
               ? styles.sideNavTrue
               : styles.sideNavFalse
-            : undefined
+            : styles.phoneNav
         }
       >
         <div className={navShowing != null ? styles.phoneLinks : undefined}>

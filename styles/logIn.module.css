@@ -114,3 +114,10 @@
     width: 100vw;
   }
 }
+
+@media (min-height: 100vw) {
+  .continue {
+    width: 100vw;
+    text-align: center;
+  }
+}
