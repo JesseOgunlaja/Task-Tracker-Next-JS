@@ -91,10 +91,8 @@ const Page = () => {
               settingsSection === "everything") && (
               <ProfileSettings back={back} user={user} dialog={dialog} />
             )}
-            {settingsSection === "app" ||
-              (settingsSection === "everything" && (
-                <TaskSettings user={user} />
-              ))}
+            {(settingsSection === "app" ||
+              settingsSection === "everything") && <TaskSettings user={user} />}
           </>
         ) : (
           <p style={{ fontSize: "20px" }}>Loading...</p>
