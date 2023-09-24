@@ -6,7 +6,7 @@ import Image from "next/image";
 export const metadata: Metadata = {
   title: "Why TaskMaster",
   description:
-    "TaskMaster allows you to store your tasks, notes and scheldues all in one place. All for free.",
+    "TaskMaster allows you to store your tasks, notes and schedules all in one place. All for free.",
 };
 
 const page = () => {
@@ -15,7 +15,7 @@ const page = () => {
       <main className={styles.container}>
         <h3 className={styles.title}>Why choose TaskMaster?</h3>
         <p className={styles.text}>
-          TaskMaster allows you to store notes, tasks and scheldues all in one
+          TaskMaster allows you to store notes, tasks and schedules all in one
           place. TaskMaster makes it easy to find what you need, whenever. And
           most importantly, for free.
         </p>

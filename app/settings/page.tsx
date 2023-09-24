@@ -81,16 +81,16 @@ const Page = () => {
         <li>Something</li>
         <li>Something</li>
         <li>Something</li>
-        <Link href={back ? String(back) : "/"}>Back</Link>
+        <Link href={back ? String(back) : "/projects"}>Back</Link>
       </ul>
 
       <div className={styles.container}>
         {user ? (
           <>
-            {settingsSection === "profile" ||
-              (settingsSection === "everything" && (
-                <ProfileSettings back={back} user={user} dialog={dialog} />
-              ))}
+            {(settingsSection === "profile" ||
+              settingsSection === "everything") && (
+              <ProfileSettings back={back} user={user} dialog={dialog} />
+            )}
             {settingsSection === "app" ||
               (settingsSection === "everything" && (
                 <TaskSettings user={user} />
