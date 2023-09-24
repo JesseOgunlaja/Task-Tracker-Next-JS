@@ -93,10 +93,22 @@
   cursor: pointer;
   width: 200px;
   text-align: center;
-  padding: 25px;
   border-bottom: 2px solid white;
 }
 
+.something,
+.sideNav > * > a {
+  padding: 25px 0px;
+}
+
+.sideNav * > * {
+  display: block;
+
+  text-align: center;
+  width: 200px;
+}
+
+.sideNav > * > a,
 .sideNav > a {
   color: white;
   text-decoration: none;

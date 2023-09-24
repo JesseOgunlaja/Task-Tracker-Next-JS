@@ -314,7 +314,7 @@ const ProfileSettings = ({
               crossOrigin="anonymous"
             ></script>
             <h1>Account</h1>
-            <Link href={back ? String(back) : "/"}>
+            <Link href={back ? String(back) : "/projects"}>
               <i
                 aria-hidden
                 style={{ fontSize: "30px" }}
