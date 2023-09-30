@@ -18,7 +18,7 @@ const ProfileSettings = ({
   dialog,
 }: {
   user: User;
-  back: string | undefined;
+  back: string | null;
   dialog: RefObject<HTMLDialogElement>;
 }) => {
   const authForm = useRef<HTMLFormElement>(null);
