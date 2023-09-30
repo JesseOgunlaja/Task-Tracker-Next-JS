@@ -97,7 +97,7 @@ const SignUpForm = () => {
       } else {
         errorToast(
           "To proceed, please review and agree to our Terms of Service and Privacy Policy by checking the box below",
-          10000,
+          10000
         );
         return { error: true };
       }
@@ -116,7 +116,7 @@ const SignUpForm = () => {
       if (
         await checkDuplicate(
           nameInput.current?.value || "",
-          emailInput.current?.value || "",
+          emailInput.current?.value || ""
         )
       ) {
         const element = passwordInput.current?.firstChild as HTMLDivElement;
@@ -124,7 +124,7 @@ const SignUpForm = () => {
         password.current = innerElement.value;
         const CODE = encryptString(
           String(Math.floor(Math.random() * 1000000000)),
-          true,
+          true
         );
         const body = {
           email: emailInput.current?.value,
@@ -156,7 +156,7 @@ const SignUpForm = () => {
     if (data.message === "Success") {
       window.location.href = window.location.href.replace(
         window.location.pathname,
-        "/projects",
+        "/projects"
       );
     }
     if (data.message === "Email in use") {
@@ -189,7 +189,7 @@ const SignUpForm = () => {
     await promiseToast(fetchUrl, fetchOptions, message, () => {
       window.location.href = window.location.href.replace(
         window.location.pathname,
-        "/projects",
+        "/projects"
       );
     });
   }
@@ -267,10 +267,10 @@ const SignUpForm = () => {
         style={submitted ? { display: "flex" } : { display: "none" }}
       >
         <VerificationCodeForm
-          name={nameInput.current?.value}
+          name={String(nameInput.current?.value)}
           ready={submitted}
           password={password.current}
-          email={emailInput.current?.value}
+          email={String(emailInput.current?.value)}
         />
         <button
           onClick={() => setSubmitted(false)}

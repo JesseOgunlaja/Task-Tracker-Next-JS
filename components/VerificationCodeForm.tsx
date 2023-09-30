@@ -6,6 +6,7 @@ const VerificationCodeForm = (props: {
   name: string;
   email: string;
   password: string;
+  ready: boolean;
 }) => {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
