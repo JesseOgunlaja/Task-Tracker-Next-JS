@@ -25,6 +25,10 @@
   font-size: 22.5px;
 }
 
+.feature:nth-child(2) > .description {
+  width: calc(100vw - 700px);
+}
+
 .description {
   padding: 25px;
   display: flex;
@@ -76,6 +80,12 @@
   }
   .feature:nth-child(2) > .image {
     height: 65vw;
+  }
+}
+
+@media (min-width: 1350px) {
+  .feature:nth-child(even) {
+    flex-direction: row-reverse;
   }
 }
 

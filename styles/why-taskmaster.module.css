@@ -51,7 +51,7 @@
 
 .fact {
   background: #222;
-  width: 22.5vw;
+  width: min(350px, 22.5vw);
   color: white;
   padding: 20px;
   border-radius: 10px;
