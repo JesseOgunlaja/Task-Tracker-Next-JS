@@ -20,10 +20,10 @@
 }
 
 .container {
-  transform: translateY(75px);
+  transform: translateY(85px);
   padding: 50px 100px 20px 100px;
   background: black;
-  border-radius: 10px;
+  border-radius: 15px;
   display: flex;
   align-items: center;
   min-height: 650px;
