@@ -76,7 +76,7 @@ const Page = () => {
             </>
           ) : (
             <>
-              <CheckCode name={name.current} email={email.current} />
+              <CheckCode email={email.current} />
               <button
                 onClick={() => {
                   setValidName(false);
