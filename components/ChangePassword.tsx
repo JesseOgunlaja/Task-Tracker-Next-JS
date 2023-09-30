@@ -1,11 +1,9 @@
 import styles from "@/styles/reset-password.module.css";
 import Password from "./FormPassword";
-import { errorToast, promiseToast, successToast } from "@/utils/toast";
+import { errorToast, successToast } from "@/utils/toast";
 import { FormEvent, useRef, useState } from "react";
-const jwt = require("jsrsasign");
 import { z } from "zod";
 import { changePassword } from "@/utils/serverless";
-import { toast } from "react-toastify";
 
 const passwordSchema = z
   .string()
@@ -19,7 +17,7 @@ const passwordSchema = z
     message: "String must contain at least one symbol",
   });
 
-const ChangePassword = (props: any) => {
+const ChangePassword = (props: { email: string; code: number }) => {
   const passwordInput = useRef<HTMLDivElement>(null);
   const [passwordError, setPasswordError] = useState<string>();
   const style = {
@@ -34,13 +32,13 @@ const ChangePassword = (props: any) => {
       const result = await changePassword(
         props,
         formValues,
-        window.location.origin,
+        window.location.origin
       );
       if (result.success) {
         successToast("Successfully changed password");
         window.location.href = window.location.href.replace(
           window.location.pathname,
-          "/logIn",
+          "/logIn"
         );
       } else {
         errorToast("An error occurred. Please try again");

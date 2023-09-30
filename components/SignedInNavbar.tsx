@@ -5,7 +5,7 @@ import { useState } from "react";
 import styles from "@/styles/signedInNav.module.css";
 import Image from "next/image";
 
-const SignedInNavbar = ({ pathname }: any) => {
+const SignedInNavbar = ({ pathname }: { pathname: string }) => {
   const [navShowing, setNavShowing] = useState<boolean | null>(null);
 
   return (

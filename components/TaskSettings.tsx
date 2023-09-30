@@ -1,18 +1,12 @@
 "use client";
 
 import styles from "@/styles/taskSettings.module.css";
+import { User } from "@/utils/redis";
 import { errorToast, successToast } from "@/utils/toast";
 import { FormEvent, useState } from "react";
 import { toast } from "react-toastify";
 
-const TaskSettings = ({
-  user: userProp,
-}: {
-  user: {
-    projects: [any];
-    settings: { timeFormat: number; calendars: [string]; dateFormat: string };
-  };
-}) => {
+const TaskSettings = ({ user: userProp }: { user: User }) => {
   const [user, setUser] = useState(userProp);
 
   async function changeTimeFormat(e: FormEvent<HTMLFormElement>) {
@@ -65,7 +59,7 @@ const TaskSettings = ({
     e.preventDefault();
 
     const amountOfEmptyStrings = user.settings.calendars.filter(
-      (val) => val === "",
+      (val) => val === ""
     ).length;
 
     if (amountOfEmptyStrings === 0) {
@@ -122,7 +116,7 @@ const TaskSettings = ({
     } else {
       errorToast(
         `Remove all projects with "${user.settings.calendars[index]}" tag before removing it`,
-        5000,
+        5000
       );
     }
   }

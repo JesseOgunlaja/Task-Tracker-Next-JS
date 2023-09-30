@@ -1,6 +1,12 @@
 import styles from "@/styles/projects.module.css";
 
-const Slider = ({ completedTasks, totalTasks }: any) => {
+const Slider = ({
+  completedTasks,
+  totalTasks,
+}: {
+  completedTasks: number;
+  totalTasks: number;
+}) => {
   const noTasks = completedTasks === 0;
   const completionPercentage = noTasks
     ? 0

@@ -4,8 +4,9 @@ import ProfileSettings from "@/components/ProfileSettings";
 import TaskSettings from "@/components/TaskSettings";
 import styles from "@/styles/settings.module.css";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import GetUser from "@/hooks/GetUser";
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -19,17 +20,8 @@ const Page = () => {
         paramsSection === "app"
       ? paramsSection
       : "profile";
-  const [user, setUser] = useState<any>();
+  const [user, setUser] = GetUser();
   const dialog = useRef<HTMLDialogElement>(null);
-
-  useEffect(() => {
-    async function getData() {
-      const res = await fetch("/api/user");
-      const data = await res.json();
-      setUser(data.user);
-    }
-    getData();
-  }, []);
 
   if (window != undefined) {
     window.onbeforeunload = () => {

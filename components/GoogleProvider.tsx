@@ -4,7 +4,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
-const GoogleProvider = ({ children }: { children: React.ReactNode }) => {
+const GoogleProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
   if (
     pathname.includes("/signUp") ||

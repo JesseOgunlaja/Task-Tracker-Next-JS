@@ -81,6 +81,8 @@
 }
 
 .website {
+  display: flex;
+  align-items: center;
   font-size: 25px !important;
   margin-right: 35px;
   background: -webkit-linear-gradient(
@@ -91,6 +93,7 @@
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  transform: translateY(0.5px);
 }
 
 .bar,
@@ -211,5 +214,5 @@
 }
 
 .image {
-  transform: translate(-5px, 3px);
+  transform: translate(-5px, 1px);
 }

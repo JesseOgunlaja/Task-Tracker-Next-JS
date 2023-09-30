@@ -27,8 +27,8 @@ export async function userJWT(request: NextRequest) {
           }
           return NextResponse.json({ message: message.join(" and ") });
         }
-        const CODE = (await redis.get(body.email)) as string;
-        if (CODE == undefined) {
+        const CODE = (await redis.get(body.email)) as unknown;
+        if (CODE == undefined || typeof CODE != "string") {
           return NextResponse.json(
             { message: "Code expired" },
             { status: 400 }

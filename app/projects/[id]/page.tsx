@@ -41,19 +41,10 @@ async function getData(id: number) {
         return data.user.projects.indexOf(a) - data.user.projects.indexOf(b);
       });
 
-      console.log(
-        data.user.projects.map((project: any, index: number) => ({
-          id: index,
-        }))
-      );
-
       return data.user;
     }
   }
 }
-
-const element = document.querySelector(".gr_");
-console.log(element);
 
 function createDateFromFormat(dateString: string, dateFormat: string) {
   let dayIndex, monthIndex, yearIndex;

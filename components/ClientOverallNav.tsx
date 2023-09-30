@@ -5,7 +5,7 @@ import React from "react";
 import SignedInNavbar from "./SignedInNavbar";
 import Navbar from "./Navbar";
 
-const ClientOverallNav = ({ signedIn }: any) => {
+const ClientOverallNav = ({ signedIn }: { signedIn: boolean }) => {
   const pathname = usePathname();
 
   const showBar =

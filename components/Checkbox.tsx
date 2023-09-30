@@ -1,6 +1,6 @@
 import styles from "@/styles/checkbox.module.css";
 import { useState } from "react";
-const Checkbox = ({ checked }: any) => {
+const Checkbox = ({ checked }: { checked: boolean }) => {
   const [checkValue, setCheckValue] = useState<boolean>(checked);
 
   return (

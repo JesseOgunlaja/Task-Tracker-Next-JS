@@ -1,28 +1,24 @@
 "use client";
 
 import styles from "@/styles/profileSettings.module.css";
-import { FormEvent, RefObject, useRef, useState } from "react";
+import { FormEvent, RefObject, useRef } from "react";
 import SettingsPassword from "./SettingsPassword";
 import Checkbox from "./Checkbox";
 import { emailSchema, passwordSchema, usernameSchema } from "@/utils/zod";
 import { errorToast } from "@/utils/toast";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import {
-  GoogleLogin,
-  GoogleOAuthProvider,
-  useGoogleLogin,
-} from "@react-oauth/google";
-import FormPassword from "./FormPassword";
+import { useGoogleLogin } from "@react-oauth/google";
 import GoogleButton from "./GoogleButton";
+import { User } from "@/utils/redis";
 
 const ProfileSettings = ({
   user,
   back,
   dialog,
 }: {
-  user: any;
-  back: any;
+  user: User;
+  back: string | undefined;
   dialog: RefObject<HTMLDialogElement>;
 }) => {
   const authForm = useRef<HTMLFormElement>(null);

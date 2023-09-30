@@ -4,26 +4,20 @@ import styles from "@/styles/projects.module.css";
 import Slider from "@/components/Slider";
 import Link from "next/link";
 import DatePicker from "react-datepicker";
-import {
-  CSSProperties,
-  FormEvent,
-  MouseEvent,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { CSSProperties, FormEvent, MouseEvent, useRef, useState } from "react";
 import { z } from "zod";
 import { errorToast } from "@/utils/toast";
 import "react-datepicker/dist/react-datepicker.css";
-import { User } from "@/utils/redis";
+import GetUser from "@/hooks/GetUser";
 
 const titleSchema = z.string().max(40, { message: "Title too long" });
 
 const Page = () => {
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = GetUser();
   const [startDate, setStartDate] = useState(new Date());
   const [startDate2, setStartDate2] = useState(new Date());
   const [searchField, setSearchField] = useState<string>("");
+
   const dialog = useRef<HTMLDialogElement>(null);
   const dialog2 = useRef<HTMLDialogElement>(null);
   const dialog3 = useRef<HTMLDialogElement>(null);
@@ -33,19 +27,6 @@ const Page = () => {
   const priorityInput2 = useRef<HTMLSelectElement>(null);
   const typeInput = useRef<HTMLSelectElement>(null);
   const editInput = useRef<number>(0);
-
-  useEffect(() => {
-    async function getData() {
-      const res = await fetch(`/api/user`);
-      const data = await res.json();
-      if (data.user != undefined && Object.keys(data.user).length !== 0) {
-        setUser(data.user);
-      } else {
-        errorToast("An error occured. Please reload the page and try again.");
-      }
-    }
-    getData();
-  }, []);
 
   function showModal(modal: Number) {
     if (modal === 1) {

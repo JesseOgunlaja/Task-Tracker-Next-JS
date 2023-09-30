@@ -2,9 +2,11 @@ import styles from "@/styles/signingUp.module.css";
 import { promiseToast } from "@/utils/toast";
 import { FormEvent } from "react";
 
-let sent = false;
-
-const VerificationCodeForm = (props: any) => {
+const VerificationCodeForm = (props: {
+  name: string;
+  email: string;
+  password: string;
+}) => {
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
@@ -33,8 +35,8 @@ const VerificationCodeForm = (props: any) => {
       () =>
         (window.location.href = window.location.href.replace(
           window.location.pathname,
-          "/logIn",
-        )),
+          "/logIn"
+        ))
     );
   }
 

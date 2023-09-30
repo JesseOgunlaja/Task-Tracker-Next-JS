@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "@/styles/settingsPassword.module.css";
 
-const SettingsPassword = (props: any) => {
+const SettingsPassword = (props: { name: string }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   function togglePasswordVisibility() {

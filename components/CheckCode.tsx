@@ -6,7 +6,7 @@ import ChangePassword from "./ChangePassword";
 import { sendEmail } from "@/utils/serverless";
 import { getCode } from "@/utils/serverless";
 
-const CheckCode = (props: any) => {
+const CheckCode = (props: { email: string }) => {
   const changePassword = useRef<HTMLDivElement>(null);
   const form = useRef<HTMLFormElement>(null);
   const emailParagraph = useRef<HTMLParagraphElement>(null);
@@ -24,10 +24,10 @@ const CheckCode = (props: any) => {
         email: props.email,
         code: encryptString(
           String(Math.floor(Math.random() * 1000000000)),
-          true,
+          true
         ),
       },
-      window.location.origin,
+      window.location.origin
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -59,7 +59,7 @@ const CheckCode = (props: any) => {
         <input type="submit" />
       </form>
       <div ref={changePassword}>
-        <ChangePassword email={props.email} code={code.current} />
+        <ChangePassword email={props.email} code={Number(code.current)} />
       </div>
     </>
   );

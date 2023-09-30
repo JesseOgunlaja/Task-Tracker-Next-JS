@@ -1,7 +1,16 @@
 import { useDrop } from "react-dnd";
 import styles from "@/styles/projectPage.module.css";
+import { ReactNode } from "react";
 
-const DropComponent = ({ children, onDrop, type }: any) => {
+const DropComponent = ({
+  children,
+  onDrop,
+  type,
+}: {
+  children: ReactNode;
+  onDrop: (arg0: any, arg1: any) => any;
+  type: number | string;
+}) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "item",
     drop: (item) => onDrop(item, type),

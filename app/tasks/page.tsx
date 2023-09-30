@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import styles from "@/styles/projectPage.module.css";
 import { errorToast } from "@/utils/toast";
 import { DndProvider } from "react-dnd";
@@ -10,7 +10,8 @@ import DropComponent from "@/components/DropComponent";
 import { z } from "zod";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { redis } from "@/utils/redis";
+import GetUser from "@/hooks/GetUser";
+import { Priorities, Types } from "@/utils/redis";
 
 type Task = {
   title: string;
@@ -45,16 +46,6 @@ const descriptionSchema = z
   .string()
   .max(250, { message: "Description too long" });
 
-async function getData() {
-  const res = await fetch("/api/user");
-  const data: { user: User } = await res.json();
-  if (data.user == undefined || Object.keys(data.user).length === 0) {
-    errorToast("An error occured. Please reload the page and try again.");
-  } else {
-    return data.user;
-  }
-}
-
 function createDateFromFormat(dateString: string, dateFormat: string) {
   let dayIndex, monthIndex, yearIndex;
 
@@ -87,7 +78,7 @@ const Page = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [startDate2, setStartDate2] = useState(new Date());
   const [searchField, setSearchField] = useState<string>("");
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = GetUser();
   const dialog = useRef<HTMLDialogElement>(null);
   const dialog2 = useRef<HTMLDialogElement>(null);
   const dialog3 = useRef<HTMLDialogElement>(null);
@@ -99,15 +90,6 @@ const Page = () => {
   const priorityInput2 = useRef<HTMLSelectElement>(null);
   const typeInput = useRef<HTMLSelectElement>(null);
   const editInput = useRef<number>(0);
-
-  useEffect(() => {
-    async function awaitPromise() {
-      const data = await getData();
-      setUser(data);
-    }
-    awaitPromise();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   function showModal(modal: Number) {
     if (modal === 1) {
@@ -231,9 +213,9 @@ const Page = () => {
           priority: String(
             String(String(formValues.priority2)[0])
               .toUpperCase()
-              .concat(String(formValues.priority2.slice(1))),
-          ),
-          type: String(formValues.type2),
+              .concat(String(formValues.priority2.slice(1)))
+          ) as Priorities,
+          type: String(formValues.type2) as Types,
         };
         const res = await fetch("/api/user", {
           method: "PATCH",
@@ -319,7 +301,7 @@ const Page = () => {
         months[dateObject.getMonth()]
       } ${day}, ${year} ${twelveHourFormat}:${minutes.padStart(
         2,
-        "0",
+        "0"
       )} ${ampm}`;
     }
   }
@@ -343,13 +325,13 @@ const Page = () => {
 
   function checkAllValues(
     formValues: { [k: string]: FormDataEntryValue },
-    index: number,
+    index: number
   ) {
     const results: boolean[] = [];
     if (index === 1) {
       results.push(
         checkLengths(String(formValues.title), String(formValues.description))
-          .error,
+          .error
       );
       results.push(checkValue("Title", 1).error);
       results.push(checkValue("Date", 1).error);
@@ -357,7 +339,7 @@ const Page = () => {
     } else {
       results.push(
         checkLengths(String(formValues.title2), String(formValues.description2))
-          .error,
+          .error
       );
       results.push(checkValue("Title", 2).error);
       results.push(checkValue("Date", 2).error);
@@ -404,16 +386,16 @@ const Page = () => {
           .padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
       }
 
-      const newTask: Task = {
+      const newTask = {
         title: String(formValues.title),
         date: formattedDate,
         priority: String(
           String(String(formValues.priority)[0])
             .toUpperCase()
-            .concat(String(formValues.priority.slice(1))),
-        ),
+            .concat(String(formValues.priority.slice(1)))
+        ) as Priorities,
         description: String(formValues.description),
-        type: "to-do",
+        type: "to-do" as Types,
       };
       if (tasks) {
         tasks?.push(newTask);
@@ -440,7 +422,7 @@ const Page = () => {
 
   function createDateWithTimeFormat(
     dateTimeString: string,
-    dateFormat: string,
+    dateFormat: string
   ) {
     let dayIndex, monthIndex, yearIndex;
 
@@ -486,7 +468,7 @@ const Page = () => {
 
       const formattedDate = createDateWithTimeFormat(
         taskBeingEdited.date,
-        user.settings.dateFormat,
+        user.settings.dateFormat
       ); // Create a new Date object with the components
       setStartDate2(formattedDate);
 
@@ -520,7 +502,7 @@ const Page = () => {
 
   async function handleDrop(drag: { id: number }, drop: any) {
     let newUser: any;
-    setUser((prevUser) => {
+    setUser((prevUser: User) => {
       newUser = prevUser as User;
       return prevUser;
     });
@@ -588,7 +570,7 @@ const Page = () => {
                     typeof user?.tasks === "string"
                       ? createDateFromFormat(
                           user?.tasks,
-                          user?.settings.dateFormat,
+                          user?.settings.dateFormat
                         )
                       : null
                   }
@@ -648,7 +630,7 @@ const Page = () => {
                     typeof user?.tasks === "string"
                       ? createDateFromFormat(
                           user?.tasks,
-                          user?.settings.dateFormat,
+                          user?.settings.dateFormat
                         )
                       : null
                   }
@@ -733,7 +715,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === ""),
+                          searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user?.tasks.map(
@@ -758,7 +740,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user?.tasks.map(
@@ -786,7 +768,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user?.tasks.map(
@@ -811,7 +793,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
@@ -826,7 +808,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === ""),
+                          searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user?.tasks.map(
@@ -851,7 +833,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user?.tasks.map(
@@ -879,7 +861,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user?.tasks.map(
@@ -904,7 +886,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
@@ -918,7 +900,7 @@ const Page = () => {
                         (val.title
                           .toUpperCase()
                           .includes(searchField.toUpperCase()) ||
-                          searchField === ""),
+                          searchField === "")
                     ).length === 0 && <div>No tasks</div>}
                   {user &&
                     user?.tasks.map(
@@ -943,7 +925,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user?.tasks.map(
@@ -971,7 +953,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                   {user &&
                     user?.tasks.map(
@@ -996,7 +978,7 @@ const Page = () => {
                               </div>
                             </div>
                           </DragComponent>
-                        ),
+                        )
                     )}
                 </div>
               </DropComponent>
