@@ -1,3 +1,3 @@
-This is a task tracker application to use go to https://taskmasterapp.com or https://task-tracker-next-js.vercel.app.
+A Task Tracker Application viewable at https://taskmasterapp.com.
 
-Any suggestions would be greatly appreciated.
+If you find any bugs please report create an issue on the repository.

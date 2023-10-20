@@ -13,6 +13,18 @@ function switchDateFormat(dateString: string) {
   return `${day}/${month}/${year}`;
 }
 
+Array.prototype.sortByPriority = function () {
+  return this.sort((a, b) => {
+    // Sort tasks based on priority (High -> Medium -> Low)
+    if (a.priority === "High" && b.priority !== "High") return -1;
+    if (a.priority !== "High" && b.priority === "High") return 1;
+    if (a.priority === "Medium" && b.priority !== "Medium") return -1;
+    if (a.priority !== "Medium" && b.priority === "Medium") return 1;
+    // If priorities are the same, preserve original index order
+    return this.indexOf(a) - this.indexOf(b);
+  });
+};
+
 function isDateLowerThanMax(inputDate: string, index: number, user: any) {
   const dateFormat = user.settings.dateFormat;
 
