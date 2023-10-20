@@ -176,7 +176,7 @@
 .doneText {
   font-size: 30px;
   width: 100%;
-  grid-column: 1 / span 3; /* Takes up all 3 columns */
+  grid-column: 1 / span 2; /* Takes up all 3 columns */
   text-align: center;
   padding: 5px;
 }
@@ -201,12 +201,17 @@
 .projects > *:nth-child(2) {
   margin-top: 20px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 25px;
+  align-items: stretch;
 }
 
 .projects > *:nth-child(2) > * {
   width: 100%;
+}
+
+.taskTitle > :nth-child(1) > p {
+  width: 87.5%;
 }
 
 .sectionText {

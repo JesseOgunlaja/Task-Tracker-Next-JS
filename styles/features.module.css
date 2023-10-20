@@ -51,6 +51,9 @@
 }
 
 @media (min-height: 100vw) {
+  .feature:nth-child(2) > .description {
+    width: auto;
+  }
   .container {
     margin: 0px;
   }

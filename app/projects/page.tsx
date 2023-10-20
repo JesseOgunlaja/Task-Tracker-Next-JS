@@ -186,7 +186,11 @@ const Page = () => {
         setUser(currentUser);
         hideModal(1);
       } else {
-        errorToast("An error occurred. Please try again.");
+        if (data.message === "Duplicate task title") {
+          errorToast("There's already a project with this title");
+        } else {
+          errorToast("An error occurred. Please try again.");
+        }
       }
     }
   }
