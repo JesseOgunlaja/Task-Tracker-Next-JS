@@ -90,7 +90,10 @@ const Page = () => {
     if (value === "" || value == null || typeof value !== "string") {
       errorToast(`${valueChecking} required`);
       return { error: true };
-    } else if (symbols.test(value) && valueChecking === "Title") {
+    } else if (
+      symbols.test(value.replaceAll("'", "")) &&
+      valueChecking === "Title"
+    ) {
       errorToast(`No symbols allowed in the ${valueChecking.toLowerCase()}`);
       return { error: true };
     } else if (
