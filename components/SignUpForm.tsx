@@ -205,7 +205,7 @@ const SignUpForm = () => {
           style={!submitted ? { display: "block" } : { display: "none" }}
           className={styles.google}
         >
-          <GoogleButton googleFunction={login} />
+          <GoogleButton text="Sign up with Google" googleFunction={login} />
         </div>
         <p
           style={!submitted ? { display: "block" } : { display: "none" }}

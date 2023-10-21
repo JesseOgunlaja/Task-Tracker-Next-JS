@@ -319,7 +319,7 @@ const ProfileSettings = ({
             </Link>
             <br />
             <>
-              <p>Change username</p>
+              <p>Username</p>
               <form
                 ref={usernameForm}
                 onSubmit={submitUsername}
@@ -334,7 +334,8 @@ const ProfileSettings = ({
                 />
                 <input type="submit" />
               </form>
-              <p>Change password</p>
+              <br />
+              <p>Password</p>
               {gmailUser ? (
                 <>
                   <br />
@@ -372,11 +373,12 @@ const ProfileSettings = ({
                   <input type="submit" />
                 </form>
               )}
-              <p>Change email</p>
+              <p>Email</p>
 
               {gmailUser ? (
                 <div style={{ marginBottom: "10px", marginTop: "10px" }}>
-                  <GoogleButton googleFunction={login} />
+                  <GoogleButton text="Change email" googleFunction={login} />
+                  <br />
                   <br />
                 </div>
               ) : (

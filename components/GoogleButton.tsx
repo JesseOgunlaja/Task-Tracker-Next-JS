@@ -1,6 +1,12 @@
 import React from "react";
 
-const GoogleButton = ({ googleFunction }: { googleFunction: () => any }) => {
+const GoogleButton = ({
+  googleFunction,
+  text = "Sign in with Google",
+}: {
+  googleFunction: () => any;
+  text?: string;
+}) => {
   return (
     <>
       <style jsx>{`
@@ -52,7 +58,7 @@ const GoogleButton = ({ googleFunction }: { googleFunction: () => any }) => {
         onClick={() => googleFunction()}
         className="loginWithGoogleBtn"
       >
-        Sign in with Google
+        {text}
       </button>
     </>
   );
