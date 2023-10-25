@@ -308,6 +308,17 @@ export async function DELETE() {
     });
 
     await redis.del(String(id));
+    const users = (await redis.lrange(
+      "Username and emails",
+      0,
+      -1
+    )) as unknown as Record<string, unknown>[];
+    const ids = users.map((val) => val.id);
+    await redis.lrem(
+      "Username and emails",
+      0,
+      JSON.stringify(users[ids.indexOf(String(id))])
+    );
 
     return NextResponse.json({ message: "Success" }, { status: 200 });
   } catch (err) {

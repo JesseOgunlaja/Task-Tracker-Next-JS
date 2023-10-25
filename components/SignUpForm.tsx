@@ -14,6 +14,7 @@ import { sendEmail } from "@/utils/serverless";
 
 const SignUpForm = () => {
   const password = useRef("");
+  const submitButton = useRef<HTMLInputElement>(null);
   const termsCheckbox = useRef<HTMLInputElement>(null);
   const [nameError, setNameError] = useState<String>("");
   const [emailError, setEmailError] = useState<String>("");
@@ -103,6 +104,8 @@ const SignUpForm = () => {
       }
     }
 
+    submitButton.current!.disabled = true;
+
     e.preventDefault();
     if (
       !checkCheckBox().error &&
@@ -130,11 +133,14 @@ const SignUpForm = () => {
           email: emailInput.current?.value,
           code: CODE,
         };
-
+        submitButton.current!.disabled = true;
         sendEmail(body, window.location.origin);
         setSubmitted(true);
+      } else {
+        submitButton.current!.disabled = false;
       }
     } else {
+      submitButton.current!.disabled = false;
       checkEmail()?.error;
       checkPassword()?.error;
       checkName()?.error;
@@ -252,7 +258,7 @@ const SignUpForm = () => {
               className={styles.checkbox}
             />
           </label>
-          <input type="submit" value="Sign up" readOnly />
+          <input ref={submitButton} type="submit" value="Sign up" readOnly />
         </form>
         <div
           style={!submitted ? { display: "block" } : { display: "none" }}
@@ -273,7 +279,10 @@ const SignUpForm = () => {
           email={String(emailInput.current?.value)}
         />
         <button
-          onClick={() => setSubmitted(false)}
+          onClick={() => {
+            setSubmitted(false);
+            submitButton.current!.disabled = false;
+          }}
           className={styles.backButton}
         >
           Back

@@ -620,6 +620,19 @@ export async function PATCH(request: NextRequest) {
         id: id,
         uuid: uuid,
       };
+      const names: any[] = (
+        await redis.lrange("Username and emails", 0, -1)
+      ).map((val) => (val as unknown as Record<string, unknown>)?.name);
+
+      await redis.lset(
+        "Username and emails",
+        names.indexOf(user.name),
+        JSON.stringify({
+          name: updateFields.name || user.name,
+          email: updateFields.email || user.email,
+          id: String(id),
+        })
+      );
       const token = jwt.sign(payload, process.env.SECRET_KEY);
       const expirationDate = new Date();
       expirationDate.setSeconds(expirationDate.getSeconds() + 2592000);

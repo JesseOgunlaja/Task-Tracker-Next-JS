@@ -74,11 +74,13 @@ export async function POST(req: NextRequest) {
       });
       const uuid2 = uuidv4();
       await redis.hset(uuid2, user);
-      await fetch(`${process.env.REDIS_URL}/del/${body.email}`, {
-        headers: {
-          Authorization: `Bearer ${process.env.REDIS_TOKEN}`,
-        },
+      await redis.rpush("Username and emails", {
+        name: body.name.toUpperCase(),
+        email: body.email.toLowerCase(),
+        id: uuid2,
       });
+      await redis.del(body.email);
+
       return NextResponse.json({ user, message: "Success" }, { status: 201 });
     } catch (error: any) {
       return NextResponse.json({ error: error }, { status: 400 });

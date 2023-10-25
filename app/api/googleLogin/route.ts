@@ -43,11 +43,16 @@ export async function POST(req: NextRequest) {
         const uuid2 = uuidv4();
 
         await redis.hset(uuid2, user);
+        await redis.rpush("Username and emails", {
+          name: email,
+          email: email,
+          id: uuid2,
+        });
 
         const payload = {
           iat: Date.now(),
           exp: Math.floor(
-            (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000,
+            (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000
           ),
           username: user.name,
           email: user.email,
@@ -57,7 +62,7 @@ export async function POST(req: NextRequest) {
         const token = jwt.sign(payload, process.env.SECRET_KEY);
         const expirationDate = new Date();
         expirationDate.setSeconds(
-          expirationDate.getSeconds() + 30 * 24 * 60 * 60 * 1000,
+          expirationDate.getSeconds() + 30 * 24 * 60 * 60 * 1000
         );
         cookies().set({
           name: "token",
@@ -72,14 +77,14 @@ export async function POST(req: NextRequest) {
         if (checkUser.password !== "GMAIL") {
           return NextResponse.json(
             { message: "Account isn't registered with GMAIL" },
-            { status: 400 },
+            { status: 400 }
           );
         } else {
           const uuid = await redis.hget(key, "uuid");
           const payload = {
             iat: Date.now(),
             exp: Math.floor(
-              (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000,
+              (new Date().getTime() + 30 * 24 * 60 * 60 * 1000) / 1000
             ),
             username: checkUser.name,
             email: checkUser.email,
@@ -89,7 +94,7 @@ export async function POST(req: NextRequest) {
           const token = jwt.sign(payload, process.env.SECRET_KEY);
           const expirationDate = new Date();
           expirationDate.setSeconds(
-            expirationDate.getSeconds() + 30 * 24 * 60 * 60 * 1000,
+            expirationDate.getSeconds() + 30 * 24 * 60 * 60 * 1000
           );
           cookies().set({
             name: "token",

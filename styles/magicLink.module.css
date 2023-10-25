@@ -29,11 +29,17 @@
 }
 
 .container > div {
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   background: rgba(0, 0, 0, 0.25);
   padding: 15px;
   position: relative;
   gap: 15px;
+}
+
+.container > div > * {
+  text-align: center;
 }
 
 .container > div::before {
@@ -65,6 +71,9 @@
 
 .container2 {
   align-items: center;
+  height: auto;
+  min-height: 250px;
+  padding-bottom: 20px;
 }
 
 .container2 > p:nth-child(2) {

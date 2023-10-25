@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
           key = result.key;
         } else {
           return NextResponse.json(
-            { message: "Invalid credentials" },
+            { message: "User not found (email)" },
             { status: 400 }
           );
         }
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
           key = result.key;
         } else {
           return NextResponse.json(
-            { message: "Invalid credentials" },
+            { message: "User not found (username)" },
             { status: 400 }
           );
         }

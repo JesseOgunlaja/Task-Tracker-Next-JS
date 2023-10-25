@@ -75,7 +75,11 @@ const Page = () => {
         success: "Valid credentials",
         error: {
           render({ data }: any) {
-            if (data.message === "Invalid credentials") {
+            if (data.message === "User not found (email)") {
+              return "No user was found with that email";
+            } else if (data.message === "User not found (username)") {
+              return "No user was found with that username";
+            } else if (data.message === "Invalid credentials") {
               return "Invalid credentials";
             } else {
               return "An error occurred. Please try again";
@@ -125,7 +129,7 @@ const Page = () => {
   function redirect() {
     window.location.href = window.location.href.replace(
       window.location.pathname,
-      "/reset-password",
+      "/reset-password"
     );
   }
 
