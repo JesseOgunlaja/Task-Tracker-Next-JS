@@ -48,12 +48,18 @@ const Page = () => {
 
       <ul className={styles.sideNav}>
         <li>
-          <Link href={`/settings?section=profile&back=${back || "/projects"}`}>
+          <Link
+            replace={false}
+            href={`/settings?section=profile&back=${back || "/projects"}`}
+          >
             Account
           </Link>
         </li>
         <li>
-          <Link href={`/settings?section=app&back=${back || "/projects"}`}>
+          <Link
+            replace={false}
+            href={`/settings?section=app&back=${back || "/projects"}`}
+          >
             App settings
           </Link>
         </li>
