@@ -1,4 +1,4 @@
-import React, { CSSProperties, useState } from "react";
+import { CSSProperties, useState } from "react";
 import styles from "@/styles/formPassword.module.css";
 
 const FormPassword = (props: { style?: CSSProperties }) => {
