@@ -49,7 +49,7 @@ const Page = () => {
       <ul className={styles.sideNav}>
         <li>
           <Link
-            replace={false}
+            replace={true}
             href={`/settings?section=profile&back=${back || "/projects"}`}
           >
             Account
@@ -57,7 +57,7 @@ const Page = () => {
         </li>
         <li>
           <Link
-            replace={false}
+            replace={true}
             href={`/settings?section=app&back=${back || "/projects"}`}
           >
             App settings
