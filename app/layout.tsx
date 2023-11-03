@@ -12,7 +12,11 @@ export const metadata: Metadata = {
   description: "The best task tracker around.",
 };
 
-const poppins = Poppins({ weight: "400", subsets: ["latin"], display: "swap" });
+const poppins = Poppins({
+  weight: ["400", "600"],
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default function RootLayout({
   children,
