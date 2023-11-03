@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const poppins = Poppins({ weight: "400", subsets: ["latin"] });
 import { Analytics } from "@vercel/analytics/react";
 import OverallNav from "@/components/OverallNav";
 import GoogleProvider from "@/components/GoogleProvider";
@@ -12,6 +11,8 @@ export const metadata: Metadata = {
   title: "TaskMaster",
   description: "The best task tracker around.",
 };
+
+const poppins = Poppins({ weight: "400", subsets: ["latin"], display: "swap" });
 
 export default function RootLayout({
   children,
