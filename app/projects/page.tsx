@@ -8,12 +8,12 @@ import { CSSProperties, FormEvent, MouseEvent, useRef, useState } from "react";
 import { z } from "zod";
 import { errorToast } from "@/utils/toast";
 import "react-datepicker/dist/react-datepicker.css";
-import GetUser from "@/hooks/GetUser";
+import useGetUser from "@/hooks/useGetUser";
 
 const titleSchema = z.string().max(40, { message: "Title too long" });
 
 const Page = () => {
-  const [user, setUser] = GetUser();
+  const [user, setUser] = useGetUser();
   const [startDate, setStartDate] = useState(new Date());
   const [startDate2, setStartDate2] = useState(new Date());
   const [searchField, setSearchField] = useState<string>("");
