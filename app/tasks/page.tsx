@@ -502,8 +502,8 @@ const Page = () => {
 
   async function handleDrop(drag: { id: number }, drop: any) {
     let newUser: any;
-    setUser((prevUser: User) => {
-      newUser = prevUser as User;
+    setUser((prevUser) => {
+      newUser = prevUser;
       return prevUser;
     });
     const tasks = newUser?.tasks;

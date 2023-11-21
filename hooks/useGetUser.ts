@@ -1,6 +1,6 @@
 import { User } from "@/utils/redis";
 import { errorToast } from "@/utils/toast";
-import { Dispatch, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export default function useGetUser() {
   const [user, setUser] = useState<User>();
@@ -18,5 +18,8 @@ export default function useGetUser() {
     getData();
   }, []);
 
-  return [user, setUser] as [User | undefined, Dispatch<User | undefined>];
+  return [user, setUser] as [
+    User | undefined,
+    Dispatch<SetStateAction<User | undefined>>,
+  ];
 }
