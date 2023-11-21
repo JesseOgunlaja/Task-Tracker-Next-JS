@@ -10,7 +10,7 @@ import DropComponent from "@/components/DropComponent";
 import { z } from "zod";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import GetUser from "@/hooks/GetUser";
+import GetUser from "@/hooks/useGetUser";
 import { Priorities, Types } from "@/utils/redis";
 
 type Task = {

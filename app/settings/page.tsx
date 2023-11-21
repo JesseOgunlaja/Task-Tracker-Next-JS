@@ -6,7 +6,7 @@ import styles from "@/styles/settings.module.css";
 import Link from "next/link";
 import { useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import GetUser from "@/hooks/GetUser";
+import GetUser from "@/hooks/useGetUser";
 
 const Page = () => {
   const searchParams = useSearchParams();
