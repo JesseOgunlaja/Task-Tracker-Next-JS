@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Analytics } from "@vercel/analytics/react";
 import OverallNav from "@/components/OverallNav";
 import GoogleProvider from "@/components/GoogleProvider";
+import Head from "next/head";
 
 export const metadata: Metadata = {
   title: "TaskMaster",
@@ -25,6 +26,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <Head>
+        <meta property="og:image" content="/homepageView-min.png" />
+        <meta property="og:image:alt" content="Homepage" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Head>
       <body className={poppins.className}>
         <main>
           <OverallNav />
