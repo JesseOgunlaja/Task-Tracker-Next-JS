@@ -26,6 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={poppins.className}>
+        <meta
+          property="og:image"
+          content="https://taskmasterapp.com/homepageViw-min.png"
+        />
         <main>
           <OverallNav />
           <GoogleProvider>{children}</GoogleProvider>
