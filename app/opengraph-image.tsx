@@ -16,6 +16,11 @@ export const contentType = "image/png";
 // Image generation
 export default async function Image() {
   return new ImageResponse(
-    <ImageComponent src="/homepageView-min.png" alt="Homepage image" />
+    (
+      <ImageComponent
+        src="https://taskmasterapp.com/homepageView-min.png"
+        alt="Homepage image"
+      />
+    )
   );
 }
