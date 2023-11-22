@@ -27,7 +27,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Head>
-        <meta property="og:image" content="/homepageView-min.png" />
+        <meta
+          property="og:image"
+          content="https://taskmasterapp.com/homepageView-min.png"
+        />
         <meta property="og:image:alt" content="Homepage" />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
