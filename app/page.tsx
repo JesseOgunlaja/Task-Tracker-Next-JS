@@ -1,10 +1,21 @@
 import styles from "@/styles/page.module.css";
 import Link from "next/link";
 import Image from "next/image";
+import Head from "next/head";
 
 const Page = () => {
   return (
     <>
+      <Head>
+        <meta
+          property="og:image"
+          content="https://taskmasterapp.com/homepageView-min.png"
+        />
+        <meta property="og:image:alt" content="Homepage" />
+        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+      </Head>
       <div className={styles.container}>
         <h1 className={styles.title}>Organize yourself, and your life.</h1>
         <p className={styles.paragraph}>
