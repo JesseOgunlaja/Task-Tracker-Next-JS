@@ -16,11 +16,6 @@ export const contentType = "image/png";
 // Image generation
 export default async function Image() {
   return new ImageResponse(
-    (
-      <ImageComponent
-        src="/homepageView-min.png"
-        alt="Homepage image"
-      ></ImageComponent>
-    )
+    <ImageComponent src="/homepageView-min.png" alt="Homepage image" />
   );
 }
